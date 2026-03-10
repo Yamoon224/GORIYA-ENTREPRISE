@@ -1,20 +1,43 @@
-import { AppSidebar } from "@/components/app-sidebar"
+"use client"
+
 import { AppHeader } from "@/components/app-header"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, useSidebar } from "@/components/sidebar-context"
 
 export default function DashboardLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode
+    children: React.ReactNode
 }) {
-  return (
-    <div className="min-h-screen bg-background">
-      <AppSidebar />
-      <div className="ml-64">
-        <AppHeader />
-        <main className="p-6">
-          {children}
-        </main>
-      </div>
-    </div>
-  )
+    return (
+        <SidebarProvider>
+            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+        </SidebarProvider>
+    )
+}
+
+// Composant séparé pour pouvoir utiliser useSidebar
+function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+    const { open, setOpen } = useSidebar()
+
+    return (
+        <div className="min-h-screen flex bg-background overflow-x-hidden">
+            {/* Sidebar */}
+            <AppSidebar />
+
+            {/* Overlay mobile */}
+            {open && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/40 md:hidden"
+                    onClick={() => setOpen(false)}
+                />
+            )}
+
+            {/* Contenu principal */}
+            <div className="flex-1 flex flex-col md:ml-64">
+                <AppHeader />
+                <main className="flex-1 p-4 md:p-6">{children}</main>
+            </div>
+        </div>
+    )
 }
