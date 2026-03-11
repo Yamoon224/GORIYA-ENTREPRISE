@@ -7,260 +7,236 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Camera, MapPin, Globe, Building2, Users, Calendar, Edit, Save } from "lucide-react"
+import { Camera, MapPin, Globe, Save, X, Plus, Users, Briefcase, Star, UserCheck } from "lucide-react"
+
+const benefitSuggestions = ["Télétravail flexible", "Mutuelle premium", "Tickets restaurant", "Formation continue", "Bonus annuel", "Congés supplémentaires"]
 
 export default function ProfilPage() {
-  const [isEditing, setIsEditing] = useState(false)
-  const [companyData, setCompanyData] = useState({
-    name: "Goriya Tech",
-    about: "Goriya est une plateforme innovante de recrutement utilisant l'intelligence artificielle pour connecter les meilleurs talents africains avec les entreprises les plus ambitieuses du continent.",
-    sector: "Technologie",
-    size: "51-200 employés",
-    location: "Abidjan, Côte d'Ivoire",
-    website: "https://goriya.com",
-    founded: "2020",
-    email: "contact@goriya.com",
-    phone: "+225 07 00 00 00",
-  })
+  const [benefits, setBenefits] = useState<string[]>(["Télétravail flexible", "Mutuelle premium", "Tickets restaurant"])
+  const [newBenefit, setNewBenefit] = useState("")
+
+  const addBenefit = () => {
+    if (newBenefit.trim() && !benefits.includes(newBenefit.trim())) {
+      setBenefits([...benefits, newBenefit.trim()])
+      setNewBenefit("")
+    }
+  }
+
+  const removeBenefit = (b: string) => {
+    setBenefits(benefits.filter((item) => item !== b))
+  }
 
   const stats = [
-    { label: "Offres publiées", value: "15" },
-    { label: "Candidatures reçues", value: "125" },
-    { label: "Recrutements", value: "8" },
-    { label: "Score entreprise", value: "4.8/5" },
+    { value: "156", label: "Employés", color: "text-primary" },
+    { value: "45", label: "Offres actives", color: "text-green-500" },
+    { value: "4.8", label: "Note moyenne", color: "text-orange-500" },
+    { value: "892", label: "Candidatures", color: "text-primary" },
   ]
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Profil Entreprise</h1>
-        <Button
-          variant={isEditing ? "default" : "outline"}
-          onClick={() => setIsEditing(!isEditing)}
-          className="gap-2"
-        >
-          {isEditing ? (
-            <>
-              <Save className="h-4 w-4" />
-              Enregistrer
-            </>
-          ) : (
-            <>
-              <Edit className="h-4 w-4" />
-              Modifier
-            </>
-          )}
-        </Button>
+    <div className="max-w-3xl space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold text-foreground">Profil Entreprise</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Gérez les informations publiques de votre entreprise</p>
       </div>
 
-      {/* Company Header */}
-      <Card className="bg-card overflow-hidden">
-        {/* Cover Image */}
-        <div className="h-32 bg-gradient-to-r from-primary to-blue-600 relative">
-          {isEditing && (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="absolute top-4 right-4 gap-2"
-            >
-              <Camera className="h-4 w-4" />
-              Modifier la bannière
-            </Button>
-          )}
-        </div>
-        
-        <CardContent className="relative pt-0">
-          {/* Logo */}
-          <div className="absolute -top-12 left-6">
-            <div className="relative">
-              <Avatar className="h-24 w-24 border-4 border-card">
-                <AvatarImage src="/placeholder-company.jpg" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                  G
-                </AvatarFallback>
-              </Avatar>
-              {isEditing && (
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
-              )}
+      {/* Company Identity */}
+      <Card className="border border-border">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-6">
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div className="h-20 w-20 rounded-full bg-primary flex items-center justify-center ring-4 ring-primary/20">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src="" alt="Company" />
+                  <AvatarFallback className="bg-primary text-white text-2xl font-bold rounded-full">
+                    TC
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <button className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-primary text-white flex items-center justify-center shadow-sm border-2 border-white">
+                <Camera className="h-3.5 w-3.5" />
+              </button>
             </div>
-          </div>
 
-          <div className="pt-14 pb-4">
-            <div className="flex items-start justify-between">
+            {/* Fields */}
+            <div className="flex-1 grid grid-cols-2 gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-foreground">{companyData.name}</h2>
-                <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {companyData.location}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Building2 className="h-4 w-4" />
-                    {companyData.sector}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    {companyData.size}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    Fondée en {companyData.founded}
-                  </span>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">
+                  Nom de l&apos;entreprise*
+                </label>
+                <Input defaultValue="TechCorp Solutions" className="h-9 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">
+                  Secteur d&apos;activité*
+                </label>
+                <Input defaultValue="Technologies de l'information" className="h-9 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">
+                  Adresse du siège
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <Input defaultValue="Paris, France" className="h-9 text-sm pl-8" />
                 </div>
               </div>
-              <Badge className="bg-green-100 text-green-700">Profil vérifié</Badge>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">
+                  Site web
+                </label>
+                <div className="relative">
+                  <Globe className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <Input defaultValue="https://techcorp.com" className="h-9 text-sm pl-8" />
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.label} className="bg-card">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Company Info */}
-      <Card className="bg-card">
-        <CardHeader>
-          <CardTitle>Informations de l&apos;entreprise</CardTitle>
+      {/* Informations générales */}
+      <Card className="border border-border">
+        <CardHeader className="pb-3 pt-5 px-6">
+          <CardTitle className="text-base font-semibold">Informations générales</CardTitle>
         </CardHeader>
-        <CardContent>
-          <FieldGroup>
-            <Field>
-              <FieldLabel>À propos</FieldLabel>
-              {isEditing ? (
-                <Textarea
-                  value={companyData.about}
-                  onChange={(e) => setCompanyData({ ...companyData, about: e.target.value })}
-                  rows={4}
-                />
-              ) : (
-                <p className="text-muted-foreground">{companyData.about}</p>
-              )}
-            </Field>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <Field>
-                <FieldLabel>Secteur d&apos;activité</FieldLabel>
-                {isEditing ? (
-                  <Select
-                    value={companyData.sector}
-                    onValueChange={(value) => setCompanyData({ ...companyData, sector: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Technologie">Technologie</SelectItem>
-                      <SelectItem value="Finance">Finance</SelectItem>
-                      <SelectItem value="Marketing">Marketing</SelectItem>
-                      <SelectItem value="Services">Services</SelectItem>
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p className="text-foreground">{companyData.sector}</p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel>Taille de l&apos;entreprise</FieldLabel>
-                {isEditing ? (
-                  <Select
-                    value={companyData.size}
-                    onValueChange={(value) => setCompanyData({ ...companyData, size: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1-10 employés">1-10 employés</SelectItem>
-                      <SelectItem value="11-50 employés">11-50 employés</SelectItem>
-                      <SelectItem value="51-200 employés">51-200 employés</SelectItem>
-                      <SelectItem value="200+ employés">200+ employés</SelectItem>
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p className="text-foreground">{companyData.size}</p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel>Email</FieldLabel>
-                {isEditing ? (
-                  <Input
-                    type="email"
-                    value={companyData.email}
-                    onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
-                  />
-                ) : (
-                  <p className="text-foreground">{companyData.email}</p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel>Téléphone</FieldLabel>
-                {isEditing ? (
-                  <Input
-                    type="tel"
-                    value={companyData.phone}
-                    onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
-                  />
-                ) : (
-                  <p className="text-foreground">{companyData.phone}</p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel>Site web</FieldLabel>
-                {isEditing ? (
-                  <Input
-                    type="url"
-                    value={companyData.website}
-                    onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
-                  />
-                ) : (
-                  <a
-                    href={companyData.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline flex items-center gap-1"
-                  >
-                    <Globe className="h-4 w-4" />
-                    {companyData.website}
-                  </a>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel>Localisation</FieldLabel>
-                {isEditing ? (
-                  <Input
-                    value={companyData.location}
-                    onChange={(e) => setCompanyData({ ...companyData, location: e.target.value })}
-                  />
-                ) : (
-                  <p className="text-foreground">{companyData.location}</p>
-                )}
-              </Field>
+        <CardContent className="px-6 pb-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">
+                Taille de l&apos;entreprise
+              </label>
+              <div className="relative">
+                <Users className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input defaultValue="50-200 employés" className="h-9 text-sm pl-8" />
+              </div>
             </div>
-          </FieldGroup>
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">
+                Année de création
+              </label>
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input defaultValue="2018" className="h-9 text-sm pl-8" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">
+              Description de l&apos;entreprise
+            </label>
+            <Textarea
+              defaultValue="TechCorp Solutions est une entreprise innovante spécialisée dans le développement de solutions technologiques pour les entreprises. Nous aidons nos clients à digitaliser leurs processus et à optimiser leur productivité grâce à des solutions sur mesure."
+              rows={3}
+              className="text-sm resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">
+              Mission et valeurs
+            </label>
+            <Textarea
+              defaultValue="Notre mission est de rendre la technologie accessible à tous, en développant des solutions intuitives et performantes. Nos valeurs : innovation, excellence, collaboration et respect de l'environnement."
+              rows={3}
+              className="text-sm resize-none"
+            />
+          </div>
         </CardContent>
       </Card>
+
+      {/* Avantages et bénéfices */}
+      <Card className="border border-border">
+        <CardHeader className="pb-3 pt-5 px-6">
+          <CardTitle className="text-base font-semibold">Avantages et bénéfices</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6 pb-6 space-y-3">
+          <div className="flex gap-2">
+            <Input
+              value={newBenefit}
+              onChange={(e) => setNewBenefit(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addBenefit()}
+              placeholder="Ajouter un avantage"
+              className="h-9 text-sm flex-1"
+            />
+            <Button size="sm" variant="outline" className="h-9 w-9 p-0" onClick={addBenefit}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {benefits.map((b) => (
+              <Badge
+                key={b}
+                variant="secondary"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-normal"
+              >
+                {b}
+                <button onClick={() => removeBenefit(b)} className="ml-1 hover:text-destructive">
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+          <p className="text-xs text-primary">
+            Ces avantages seront affichés sur vos offres d&apos;emploi pour attirer les meilleurs candidats.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Informations de contact */}
+      <Card className="border border-border">
+        <CardHeader className="pb-3 pt-5 px-6">
+          <CardTitle className="text-base font-semibold">Informations de contact</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6 pb-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">Responsable RH</label>
+              <Input defaultValue="Marie Dupont" className="h-9 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">Email de contact</label>
+              <Input defaultValue="marie.dupont@techcorp.com" className="h-9 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">Téléphone</label>
+              <Input defaultValue="+33 1 23 45 67 89" className="h-9 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground mb-1.5 block">LinkedIn entreprise</label>
+              <Input defaultValue="https://linkedin.com/company/techcorp-solutions" className="h-9 text-sm" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Statistiques */}
+      <Card className="border border-border">
+        <CardHeader className="pb-3 pt-5 px-6">
+          <CardTitle className="text-base font-semibold">Statistiques de l&apos;entreprise</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6 pb-6">
+          <div className="grid grid-cols-4 gap-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+                <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Save button */}
+      <div className="flex justify-center pb-6">
+        <Button className="gap-2 px-8">
+          <Save className="h-4 w-4" />
+          Enregistrer les modifications
+        </Button>
+      </div>
     </div>
   )
 }
