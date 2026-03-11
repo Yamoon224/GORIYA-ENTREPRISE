@@ -124,13 +124,14 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {statsData.map((stat) => (
                     <Card key={stat.label} className="bg-card">
-                        <CardContent className="px-3"> {/* ici py-2 réduit le padding vertical */}
+                        <CardContent className="px-3">
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                                 <div>
                                     <p className="text-sm text-muted-foreground">{stat.label}</p>
                                     <p className="mt-2 text-3xl font-bold text-foreground">{stat.value}</p>
                                 </div>
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
+                                {/* Ajout de ml-auto pour pousser l'icône à droite */}
+                                <div className="ml-auto flex h-12 w-12 items-center justify-center rounded-sm bg-secondary">
                                     <stat.icon className={`h-6 w-6 ${stat.color}`} />
                                 </div>
                             </div>

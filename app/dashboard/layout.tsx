@@ -27,10 +27,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
             {/* Overlay mobile */}
             {open && (
-                <div
-                    className="fixed inset-0 z-30 bg-black/40 md:hidden"
-                    onClick={() => setOpen(false)}
-                />
+                <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setOpen(false)} />
             )}
 
             {/* Contenu principal */}
