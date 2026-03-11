@@ -268,7 +268,7 @@ export default function AssistancePage() {
 
             <div className="mb-6">
                 {/* Pricing Section */}
-                <div className="text-center">
+                <div className="text-center mb-6">
                     <h2 className="text-3xl font-bold text-foreground mb-4">
                         Choisissez votre forfait
                     </h2>
