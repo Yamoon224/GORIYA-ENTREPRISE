@@ -20,24 +20,24 @@ export default function ParametresPage() {
     })
 
     return (
-        <div className="max-w-4xl space-y-4">
+        <div className="w-full space-y-4">
             <h1 className="text-2xl font-bold text-foreground">Paramètres</h1>
 
-            <Tabs defaultValue="general" className="space-y-4 width-full">
-                <TabsList>
-                    <TabsTrigger value="general" className="gap-2">
+            <Tabs defaultValue="general" className="space-y-4">
+                <TabsList className="w-full">
+                    <TabsTrigger value="general" className="flex-1 gap-2">
                         <Globe className="h-4 w-4" />
                         Général
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="gap-2">
+                    <TabsTrigger value="notifications" className="flex-1 gap-2">
                         <Bell className="h-4 w-4" />
                         Notifications
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="gap-2">
+                    <TabsTrigger value="security" className="flex-1 gap-2">
                         <Lock className="h-4 w-4" />
                         Sécurité
                     </TabsTrigger>
-                    <TabsTrigger value="billing" className="gap-2">
+                    <TabsTrigger value="billing" className="flex-1 gap-2">
                         <CreditCard className="h-4 w-4" />
                         Facturation
                     </TabsTrigger>
@@ -225,7 +225,7 @@ export default function ParametresPage() {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
+                                <CardTitle className="flex items-center flex-1 gap-2">
                                     <Shield className="h-5 w-5" />
                                     Authentification à deux facteurs
                                 </CardTitle>
