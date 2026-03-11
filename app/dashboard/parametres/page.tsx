@@ -23,21 +23,21 @@ export default function ParametresPage() {
         <div className="w-full space-y-4">
             <h1 className="text-2xl font-bold text-foreground">Paramètres</h1>
 
-            <Tabs defaultValue="general" className="space-y-4">
-                <TabsList className="w-full">
-                    <TabsTrigger value="general" className="flex-1 gap-2">
+            <Tabs defaultValue="general" className="space-y-2">
+                <TabsList className="w-full rounded-sm">
+                    <TabsTrigger value="general" className="flex-1 gap-2 rounded-sm">
                         <Globe className="h-4 w-4" />
                         Général
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="flex-1 gap-2">
+                    <TabsTrigger value="notifications" className="flex-1 gap-2 rounded-sm">
                         <Bell className="h-4 w-4" />
                         Notifications
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="flex-1 gap-2">
+                    <TabsTrigger value="security" className="flex-1 gap-2 rounded-sm">
                         <Lock className="h-4 w-4" />
                         Sécurité
                     </TabsTrigger>
-                    <TabsTrigger value="billing" className="flex-1 gap-2">
+                    <TabsTrigger value="billing" className="flex-1 gap-2 rounded-sm">
                         <CreditCard className="h-4 w-4" />
                         Facturation
                     </TabsTrigger>
@@ -52,7 +52,7 @@ export default function ParametresPage() {
                                 Gérez les paramètres généraux de votre compte
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-4">
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel>Langue</FieldLabel>
@@ -196,7 +196,7 @@ export default function ParametresPage() {
 
                 {/* Security Settings */}
                 <TabsContent value="security">
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Changer le mot de passe</CardTitle>
@@ -204,7 +204,7 @@ export default function ParametresPage() {
                                     Mettez à jour votre mot de passe pour sécuriser votre compte
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-2">
                                 <FieldGroup>
                                     <Field>
                                         <FieldLabel>Mot de passe actuel</FieldLabel>
