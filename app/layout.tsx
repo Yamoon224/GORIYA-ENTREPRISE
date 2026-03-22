@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import { Toaster } from 'sonner';
 
 const inter = Inter({
     subsets: ["latin"],
@@ -15,15 +16,15 @@ export const metadata: Metadata = {
     icons: {
         icon: [
             {
-                url: '/icon-light-32x32.png',
+                url: '/images/icon-light-32x32.png',
                 media: '(prefers-color-scheme: light)',
             },
             {
-                url: '/icon-dark-32x32.png',
+                url: '/images/icon-dark-32x32.png',
                 media: '(prefers-color-scheme: dark)',
             },
             {
-                url: '/icon.svg',
+                url: '/images/icon.svg',
                 type: 'image/svg+xml',
             },
         ],
@@ -46,7 +47,15 @@ export default function RootLayout({
         <html lang="fr">
             <body className={`${inter.variable} font-sans antialiased`}>
                 {children}
+                
                 <Analytics />
+                <Toaster
+                    position="top-right"
+                    toastOptions={{
+                        className: "text-sm",
+                    }}
+                    richColors
+                />
             </body>
         </html>
     )

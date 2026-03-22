@@ -27,35 +27,36 @@ import { GoriyaLogo } from "./goriya-logo"
 import { useSidebar } from "./sidebar-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useState } from "react"
+import UserMenu from "./user-menu"
 
 const mainNavItems = [
     { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Poster une offre d'emploi", href: "/dashboard/poster-offre", icon: Send },
-    { label: "Mes annonces", href: "/dashboard/annonces", icon: Briefcase },
-    { label: "Candidatures", href: "/dashboard/candidatures", icon: Users },
-    { label: "Messages", href: "/dashboard/messages", icon: MessageSquare },
-    // { label: "Service RH", href: "/dashboard/service-rh", icon: Building2 },
-    // { label: "Profil Entreprise", href: "/dashboard/profil", icon: Building2 },
+    { label: "Poster une offre d'emploi", href: "/poster-offre", icon: Send },
+    { label: "Mes annonces", href: "/annonces", icon: Briefcase },
+    { label: "Candidatures", href: "/candidatures", icon: Users },
+    { label: "Messages", href: "/messages", icon: MessageSquare },
+    // { label: "Service RH", href: "/service-rh", icon: Building2 },
+    // { label: "Profil Entreprise", href: "/profil", icon: Building2 },
 ]
 
 const serviceRhItems = [
-    { label: "Employés", href: "/dashboard/services-rh/employes", icon: UserCheck },
-    { label: "Recrutements", href: "/dashboard/services-rh/recrutements", icon: UserPlus },
-    { label: "Contrats", href: "/dashboard/services-rh/contrats", icon: FileSignature },
-    { label: "Congés", href: "/dashboard/services-rh/conges", icon: CalendarDays },
-    { label: "Gestion de Paie", href: "/dashboard/services-rh/paie", icon: DollarSign },
-    { label: "Documents RH", href: "/dashboard/services-rh/documents", icon: FolderOpen },
+    { label: "Employés", href: "/services-rh/employes", icon: UserCheck },
+    { label: "Recrutements", href: "/services-rh/recrutements", icon: UserPlus },
+    { label: "Contrats", href: "/services-rh/contrats", icon: FileSignature },
+    { label: "Congés", href: "/services-rh/conges", icon: CalendarDays },
+    { label: "Gestion de Paie", href: "/services-rh/paie", icon: DollarSign },
+    { label: "Documents RH", href: "/services-rh/documents", icon: FolderOpen },
 ]
 
 const settingsNavItems = [
-    { label: "Paramètres", href: "/dashboard/parametres", icon: Settings },
-    { label: "Centre d'assistance", href: "/dashboard/assistance", icon: HelpCircle },
+    { label: "Paramètres", href: "/parametres", icon: Settings },
+    { label: "Centre d'assistance", href: "/assistance", icon: HelpCircle },
 ]
 
 export function AppSidebar() {
     const pathname = usePathname()
     const { open, setOpen } = useSidebar()
-    const isRhActive = pathname.startsWith("/dashboard/services-rh")
+    const isRhActive = pathname.startsWith("/services-rh")
     const [rhOpen, setRhOpen] = useState(isRhActive)
 
     return (
@@ -128,14 +129,14 @@ export function AppSidebar() {
                     )}
 
                     <Link
-                        href="/dashboard/profil"
+                        href="/profil"
                         className={cn(
                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                            pathname === "/dashboard/profil"
-                                ? "text-primary font-semibold"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            pathname === "/profil"
+                                ? "bg-primary text-primary-foreground"
+                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         )}>
-                        <Building2 className={cn("h-4 w-4 shrink-0", pathname === "/dashboard/profil" ? "text-primary" : "")} />
+                        <Building2 className={cn("h-4 w-4 shrink-0", pathname === "/profil" ? "text-primary-foreground" : "text-muted-foreground")} />
                         Profil Entreprise
                     </Link>
                 </nav>
@@ -168,23 +169,7 @@ export function AppSidebar() {
                 </div>
 
                 {/* User */}
-                <div className="border-t border-border p-4">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                            <AvatarImage src="/placeholder-user.jpg" />
-                            <AvatarFallback>UN</AvatarFallback>
-                        </Avatar>
-
-                        <div className="flex-1 truncate">
-                            <p className="text-sm font-medium text-foreground">
-                                User name
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
-                                user@domaine.com
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <UserMenu triggerOnly />
             </aside>
 
             {/* Overlay mobile */}

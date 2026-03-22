@@ -54,10 +54,10 @@ export default function HomePage() {
                             Tarifs
                         </Link>
                         <Button variant="outline" asChild>
-                            <Link href="/signup">Se connecter</Link>
+                            <Link href="/auth/signin">Se connecter</Link>
                         </Button>
                         <Button asChild>
-                            <Link href="/signup">Commencer</Link>
+                            <Link href="/auth/signup">Commencer</Link>
                         </Button>
                     </nav>
                 </div>
@@ -85,7 +85,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button size="lg" asChild>
-                            <Link href="/signup" className="gap-2">
+                            <Link href="/auth/signup" className="gap-2">
                                 Commencer gratuitement
                                 <ArrowRight className="h-4 w-4" />
                             </Link>
@@ -147,7 +147,7 @@ export default function HomePage() {
                                 ))}
                             </ul>
                             <Button className="mt-8" asChild>
-                                <Link href="/signup" className="gap-2">
+                                <Link href="/auth/signup" className="gap-2">
                                     Rejoindre Goriya
                                     <ChevronRight className="h-4 w-4" />
                                 </Link>
@@ -202,7 +202,7 @@ export default function HomePage() {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button variant="secondary" size="lg" asChild>
-                            <Link href="/signup">Commencer gratuitement</Link>
+                            <Link href="/auth/signup">Commencer gratuitement</Link>
                         </Button>
                         <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
                             <Link href="/dashboard/assistance">Voir les tarifs</Link>

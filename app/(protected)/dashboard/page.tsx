@@ -144,7 +144,7 @@ export default function DashboardPage() {
             <Card className="bg-card">
                 <CardContent className="flex flex-col sm:flex-row sm:items-center gap-4 p-2">
                     <Avatar className="h-12 w-12">
-                        <AvatarImage src="/placeholder-user.jpg" />
+                        <AvatarImage src="/images/placeholder-user.jpg" />
                         <AvatarFallback className="bg-primary text-primary-foreground">JD</AvatarFallback>
                     </Avatar>
                     <div>

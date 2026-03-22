@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Sparkles, X, Calendar } from "lucide-react"
 import Image from "next/image"
+import { type } from "os"
 
 const departments = [
     "Technologie", "Marketing", "Finance", "Ressources Humaines", "Design", "Ventes", "Opérations",
@@ -37,8 +38,8 @@ export default function PosterOffrePage() {
     const [visibility, setVisibility] = useState("public")
 
     const [formData, setFormData] = useState({
-        title: "", department: "", location: "", contractType: "", salary: "", salaryMax: "",
-        experience: "", studyLevel: "", description: "", requirements: "", benefits: "",
+        title: "", location: "", type: "", salary: "",
+        experience: "", description: "", requirements: "", benefits: "",
         publishDate: "", endDate: "",
     })
 
@@ -61,7 +62,7 @@ export default function PosterOffrePage() {
 
             <div className="grid gap-8 lg:grid-cols-3">
                 {/* Main Form */}
-                <div className="lg:col-span-2 space-y-8 w-full">
+                <div className="lg:col-span-2 space-y-4 w-full">
                     {/* Basic Information */}
                     <section>
                         <h2 className="text-lg font-semibold text-foreground mb-4">Informations de base</h2>
@@ -70,7 +71,7 @@ export default function PosterOffrePage() {
                                 <FieldLabel>Titre du poste <span className="text-destructive">*</span></FieldLabel>
                                 <Input className="w-full" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="ex: Développeur Full Stack Senior" />
                             </Field>
-                            <Field className="w-full">
+                            {/* <Field className="w-full">
                                 <FieldLabel>Département <span className="text-destructive">*</span></FieldLabel>
                                 <Select value={formData.department} onValueChange={v => setFormData({ ...formData, department: v })}>
                                     <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un département" /></SelectTrigger>
@@ -78,38 +79,43 @@ export default function PosterOffrePage() {
                                         {departments.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
-                            </Field>
+                            </Field> */}
                             <Field className="w-full">
                                 <FieldLabel>Localisation</FieldLabel>
                                 <Input className="w-full" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} placeholder="Paris, France" />
                             </Field>
                             <Field className="w-full">
                                 <FieldLabel>Type de contrat</FieldLabel>
-                                <Select value={formData.contractType} onValueChange={v => setFormData({ ...formData, contractType: v })}>
+                                <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v })}>
                                     <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner" /></SelectTrigger>
                                     <SelectContent>{contractTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                                 </Select>
                             </Field>
                             <Field className="w-full">
-                                <FieldLabel>Salaire min XOF</FieldLabel>
+                                <FieldLabel>Salaire XOF</FieldLabel>
                                 <Input className="w-full" type="number" value={formData.salary} onChange={e => setFormData({ ...formData, salary: e.target.value })} placeholder="0000" />
                             </Field>
-                            <Field className="w-full">
+                            {/* <Field className="w-full">
                                 <FieldLabel>Salaire max XOF</FieldLabel>
                                 <Input className="w-full" type="number" value={formData.salaryMax} onChange={e => setFormData({ ...formData, salaryMax: e.target.value })} placeholder="0000" />
-                            </Field>
-                            <Field className="w-full">
-                                <FieldLabel>Expérience requise</FieldLabel>
-                                <Select value={formData.experience} onValueChange={v => setFormData({ ...formData, experience: v })}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner" /></SelectTrigger>
-                                    <SelectContent>{experienceLevels.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}</SelectContent>
-                                </Select>
-                            </Field>
-                            <Field className="w-full">
+                            </Field> */}
+                            
+                            {/* <Field className="w-full">
                                 <FieldLabel>Années d'étude</FieldLabel>
                                 <Input className="w-full" value={formData.studyLevel} onChange={e => setFormData({ ...formData, studyLevel: e.target.value })} placeholder="Bac+5" />
-                            </Field>
+                            </Field> */}
                         </div>
+                    </section>
+
+                    {/* Expériences */}
+                    <section>
+                        <Field className="w-full">
+                            <FieldLabel>Expérience requise</FieldLabel>
+                            <Select value={formData.experience} onValueChange={v => setFormData({ ...formData, experience: v })}>
+                                <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner" /></SelectTrigger>
+                                <SelectContent>{experienceLevels.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}</SelectContent>
+                            </Select>
+                        </Field>
                     </section>
 
                     {/* Textareas */}
@@ -117,10 +123,10 @@ export default function PosterOffrePage() {
                         <h2 className="text-lg font-semibold text-foreground mb-2">Description du poste</h2>
                         <FieldGroup><Textarea className="w-full" rows={5} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} placeholder="Décrivez le poste..." /></FieldGroup>
                     </section>
-                    <section>
+                    {/* <section>
                         <h2 className="text-lg font-semibold text-foreground mb-2">Exigences et qualifications</h2>
                         <FieldGroup><Textarea className="w-full" rows={4} value={formData.requirements} onChange={e => setFormData({ ...formData, requirements: e.target.value })} placeholder="Liste compétences, formations..." /></FieldGroup>
-                    </section>
+                    </section> */}
                     <section>
                         <h2 className="text-lg font-semibold text-foreground mb-2">Avantages offerts</h2>
                         <FieldGroup><Textarea className="w-full" rows={3} value={formData.benefits} onChange={e => setFormData({ ...formData, benefits: e.target.value })} placeholder="Télétravail, mutuelle..." /></FieldGroup>
@@ -165,18 +171,18 @@ export default function PosterOffrePage() {
                             <Field className="w-full"><FieldLabel>Date limite de candidature</FieldLabel><Input className="w-full" type="date" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} /></Field>
                         </div>
 
-                        <div className="mt-4">
+                        {/* <div className="mt-4">
                             <p className="text-sm font-medium text-foreground mb-3">Visibilité</p>
                             <RadioGroup value={visibility} onValueChange={setVisibility} className="flex flex-col gap-2">
                                 <div className="flex items-center space-x-2"><RadioGroupItem value="public" id="public" /><Label htmlFor="public">Public - Visible par tous</Label></div>
                                 <div className="flex items-center space-x-2"><RadioGroupItem value="private" id="private" /><Label htmlFor="private">Privée - Visible uniquement</Label></div>
                             </RadioGroup>
-                        </div>
+                        </div> */}
                     </section>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                        <Button className="w-full sm:w-auto" variant="outline" onClick={handleSaveDraft}>Enregistrer comme brouillon</Button>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                        {/* <Button className="w-full sm:w-auto" variant="outline" onClick={handleSaveDraft}>Enregistrer comme brouillon</Button> */}
                         <Button className="w-full sm:w-auto" onClick={handlePublish}>Publier l'offre</Button>
                     </div>
                 </div>

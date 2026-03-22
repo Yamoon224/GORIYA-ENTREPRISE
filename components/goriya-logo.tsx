@@ -19,7 +19,7 @@ export function GoriyaLogo({
     return (
         <Link href="/" className={`flex items-center gap-2 ${className}`}>
             <Image
-                src="/logo.png"
+                src="/images/logo.png"
                 alt="Goriya"
                 width={width}
                 height={height}

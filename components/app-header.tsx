@@ -1,18 +1,18 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Search, Bell, RefreshCw, Menu } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+import { usePathname } from "next/navigation"
 import { useSidebar } from "./sidebar-context"
+import { Button } from "@/components/ui/button"
+import { Search, Bell, RefreshCw, Menu } from "lucide-react"
+import UserMenu from "./user-menu"
 
 const navItems = [
     { label: "Accueil", href: "/" },
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Tarifs d'abonnement", href: "/dashboard/assistance" },
+    { label: "Tarifs d'abonnement", href: "/assistance" },
 ]
 
 export function AppHeader() {
@@ -60,7 +60,6 @@ export function AppHeader() {
 
             {/* Right side */}
             <div className="flex items-center gap-2 md:gap-4">
-
                 {/* Search (hidden mobile) */}
                 <div className="relative hidden sm:block">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -76,9 +75,8 @@ export function AppHeader() {
                     <Bell className="h-5 w-5" />
                 </Button>
 
-                <Button variant="ghost" size="icon">
-                    <RefreshCw className="h-5 w-5" />
-                </Button>
+                {/* User Menu Dropdown */}
+                <UserMenu />
             </div>
         </header>
     )
