@@ -1,7 +1,7 @@
 // lib/proxy.ts
 import axios, { AxiosRequestConfig } from 'axios';
 import { RequestOptions } from '@/@types/interface';
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://goriya-backend-production.up.railway.app';
 
 export async function apiRequest<T>({ endpoint, method = 'GET', data, token, params }: RequestOptions): Promise<T> {
     try {
