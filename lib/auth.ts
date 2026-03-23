@@ -1,7 +1,7 @@
-/* /pages/api/auth/[...nextauth].ts */
-import NextAuth, { DefaultUser, DefaultSession, User } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt"
 import { apiRequest } from "./api-client-http";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { DefaultUser, DefaultSession, User, Session } from "next-auth";
 
 // 🔹 Étendre les types NextAuth
 declare module "next-auth" {
@@ -16,9 +16,11 @@ declare module "next-auth" {
     }
 
     interface User extends DefaultUser {
-        id: string;
-        role: string;
-        token: string;
+        id: string
+        name: string
+        email: string
+        role: string
+        access_token: string
     }
 }
 
@@ -46,25 +48,48 @@ export const authOptions = {
 
                 if (!data?.access_token || !data?.user) return null;
 
-                localStorage.setItem(
-                    "auth",
-                    JSON.stringify({
-                        token: data.access_token,
-                        user: data.user,
-                        companyId: data.user.company?.id,
-                    })
-                )
-
                 return {
                     id: data.user.id,
                     name: data.user.name,
                     email: data.user.email,
                     role: data.user.role,
-                    token: data.access_token,
+                    access_token: data.access_token,
                 };
             },
         }),
     ],
     session: { strategy: "jwt" as const },
     secret: process.env.NEXT_AUTH_SECRET,
+    // ✅ ICI tu ajoutes les callbacks
+    callbacks: {
+        async jwt({
+            token,
+            user,
+        }: {
+            token: JWT
+            user?: User & { access_token?: string; role?: string }
+        }) {
+            if (user) {
+                token.access_token = user.access_token
+                token.role = user.role
+                token.id = user.id
+            }
+            return token
+        },
+
+        async session({
+            session,
+            token,
+        }: {
+            session: Session
+            token: JWT
+        }) {
+            if (session.user) {
+                session.user.id = token.id as string
+                session.user.role = token.role as string
+                session.user.access_token = token.access_token as string
+            }
+            return session
+        },
+    }
 };

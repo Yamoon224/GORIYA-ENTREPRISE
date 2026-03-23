@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
-import { signIn, useSession } from "next-auth/react"
+import { getSession, signIn, useSession } from "next-auth/react"
 
 export default function Page() {
     const router = useRouter()
@@ -37,6 +37,20 @@ export default function Page() {
                 password,
                 redirect: false,
             })
+
+            // 🔥 Récupérer la session
+            const session = await getSession()
+
+            if (session?.user) {
+                localStorage.setItem(
+                    "auth",
+                    JSON.stringify({
+                        token: session.user.access_token,
+                        user: session.user,
+                        companyId: (session.user as any)?.company?.id,
+                    })
+                )
+            }
 
             if (res?.error) {
                 throw new Error("Email ou mot de passe incorrect")
