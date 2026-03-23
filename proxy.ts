@@ -16,8 +16,6 @@ export async function proxy(request: NextRequest) {
         secret: process.env.NEXT_AUTH_SECRET,  
     });
 
-    console.log("Auth Token:", token);
-
     // ✅ si pas de token, redirige vers /auth/signin
     if (!token) {
         return redirectToLogin(request);
