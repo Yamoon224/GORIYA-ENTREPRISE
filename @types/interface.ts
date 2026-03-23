@@ -14,3 +14,21 @@ export interface SessionUser {
     role: string;
     access_token: string;
 }
+
+export interface CompanyCreateDto {
+    logo: File | null
+    coverImage: File | null
+    companyName: string
+    about: string
+    sector: string
+    creationDate: string
+    companySize: string
+    website: string
+    socialLinks: string[]
+    country: string
+    headquarters: string
+    location: string
+    phone: string
+    email: string
+    password: string
+}

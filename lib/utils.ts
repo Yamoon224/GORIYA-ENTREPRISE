@@ -47,3 +47,9 @@ export function redirectToLogin(request: NextRequest) {
 
     return response
 }
+
+export const getAuth = () => {
+    const stored = localStorage.getItem("auth")
+    if (!stored) return null
+    return JSON.parse(stored)
+}

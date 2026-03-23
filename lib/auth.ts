@@ -46,6 +46,15 @@ export const authOptions = {
 
                 if (!data?.access_token || !data?.user) return null;
 
+                localStorage.setItem(
+                    "auth",
+                    JSON.stringify({
+                        token: data.access_token,
+                        user: data.user,
+                        companyId: data.user.company?.id,
+                    })
+                )
+
                 return {
                     id: data.user.id,
                     name: data.user.name,

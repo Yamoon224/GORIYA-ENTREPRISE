@@ -64,7 +64,7 @@ export default function HomePage() {
             </header>
 
             {/* Hero Section */}
-            <section className="relative overflow-hidden py-24">
+            <section className="relative overflow-hidden py-10">
                 {/* Background Decoration */}
                 <div className="absolute left-0 top-0 h-full w-32 pointer-events-none opacity-20">
                     <svg viewBox="0 0 100 400" className="h-full w-full" fill="none">
@@ -98,7 +98,7 @@ export default function HomePage() {
             </section>
 
             {/* Features Section */}
-            <section className="py-24 bg-muted/30">
+            <section className="py-10 bg-muted/30">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -113,9 +113,8 @@ export default function HomePage() {
                         {features.map((feature) => (
                             <div
                                 key={feature.title}
-                                className="rounded-2xl bg-card p-8 shadow-sm border border-border hover:shadow-md transition-shadow"
-                            >
-                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                                className="rounded-sm bg-card p-8 shadow-sm border border-border hover:shadow-md transition-shadow">
+                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-sm bg-primary/10">
                                     <feature.icon className="h-6 w-6 text-primary" />
                                 </div>
                                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
@@ -127,7 +126,7 @@ export default function HomePage() {
             </section>
 
             {/* Benefits Section */}
-            <section className="py-24">
+            <section className="py-10">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-center">
                         <div>
@@ -154,9 +153,9 @@ export default function HomePage() {
                             </Button>
                         </div>
                         <div className="relative">
-                            <div className="rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 p-6 md:p-8 border border-primary/20">
+                            <div className="rounded-sm bg-gradient-to-br from-primary/10 to-primary/5 p-6 md:p-8 border border-primary/20">
                                 <div className="space-y-4">
-                                    <div className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-sm">
+                                    <div className="flex items-center gap-4 rounded-sm bg-card p-4 shadow-sm">
                                         <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
                                             <CheckCircle2 className="h-5 w-5 text-green-600" />
                                         </div>
@@ -165,7 +164,7 @@ export default function HomePage() {
                                             <p className="text-sm text-muted-foreground">Candidat parfait trouvé</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-sm">
+                                    <div className="flex items-center gap-4 rounded-sm bg-card p-4 shadow-sm">
                                         <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                                             <Users className="h-5 w-5 text-blue-600" />
                                         </div>
@@ -174,7 +173,7 @@ export default function HomePage() {
                                             <p className="text-sm text-muted-foreground">Reçues ce mois</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-sm">
+                                    <div className="flex items-center gap-4 rounded-sm bg-card p-4 shadow-sm">
                                         <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
                                             <Sparkles className="h-5 w-5 text-orange-600" />
                                         </div>
@@ -191,7 +190,7 @@ export default function HomePage() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-24 bg-primary text-primary-foreground">
+            <section className="py-10 bg-primary text-primary-foreground">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-3xl font-bold mb-4">
                         Prêt à transformer votre recrutement ?
@@ -204,7 +203,7 @@ export default function HomePage() {
                         <Button variant="secondary" size="lg" asChild>
                             <Link href="/auth/signup">Commencer gratuitement</Link>
                         </Button>
-                        <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
+                        <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground bg-primary hover:bg-primary-foreground hover:text-primary" asChild>
                             <Link href="/dashboard/assistance">Voir les tarifs</Link>
                         </Button>
                     </div>
@@ -212,12 +211,12 @@ export default function HomePage() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-border py-12 bg-card">
-                <div className="container mx-auto px-6">
+            <footer className="border-t border-border py-3 bg-card">
+                <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                         <GoriyaLogo showTagline={false} />
                         <p className="text-sm text-muted-foreground">
-                            © 2024 Goriya. Tous droits réservés. Boost ta carrière.
+                            © {new Date().getFullYear()} Goriya. Tous droits réservés. Boost ta carrière.
                         </p>
                     </div>
                 </div>

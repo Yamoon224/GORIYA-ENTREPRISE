@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -10,20 +10,50 @@ import { Badge } from "@/components/ui/badge"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Camera, MapPin, Globe, Building2, Users, Calendar, Edit, Save } from "lucide-react"
+import { getAuth } from "@/lib/utils"
+import { updateCompany } from "@/actions/companies"
 
 export default function ProfilPage() {
     const [isEditing, setIsEditing] = useState(false)
+    const [logo, setLogo] = useState<File | null>(null)
+    const [coverImage, setCoverImage] = useState<File | null>(null)
     const [companyData, setCompanyData] = useState({
-        name: "Goriya Tech",
-        about: "Goriya est une plateforme innovante de recrutement utilisant l'intelligence artificielle pour connecter les meilleurs talents africains avec les entreprises les plus ambitieuses du continent.",
-        sector: "Technologie",
-        size: "51-200 employés",
-        location: "Abidjan, Côte d'Ivoire",
-        website: "https://goriya.com",
-        founded: "2020",
-        email: "contact@goriya.com",
-        phone: "+225 07 00 00 00",
+        name: "",
+        about: "",
+        sector: "",
+        size: "",
+        location: "",
+        website: "",
+        founded: "",
+        email: "",
+        phone: "",
     })
+
+    useEffect(() => {
+        const storedAuth = localStorage.getItem("auth")
+    
+        if (!storedAuth) return
+    
+        const auth = JSON.parse(storedAuth)
+    
+        const user = auth.user
+        const company = user.company
+    
+        setCompanyData({
+            name: company?.name || "",
+            about: company?.about || "", // ⚠️ pas présent dans login
+            sector: company?.sector || "",
+            size: company?.companySize || "", // ⚠️ pas présent
+            location: company?.location || "", // ⚠️ pas présent
+            website: company?.website || "", // ⚠️ pas présent
+            founded: company?.creationDate
+                ? new Date(company.creationDate).getFullYear().toString()
+                : "",
+            email: company?.email || "",
+            phone: company?.phone || "",
+        })
+    }, [])
+
 
     const stats = [
         { label: "Offres publiées", value: "15" },
@@ -32,13 +62,54 @@ export default function ProfilPage() {
         { label: "Score entreprise", value: "4.8/5" },
     ]
 
+    const handleSubmit = async () => {
+        try {
+            const auth = getAuth()
+            if (!auth) throw new Error("Not authenticated")
+    
+            const { token, companyId } = auth
+    
+            const formData = new FormData()
+    
+            // Mapping frontend → backend
+            formData.append("companyName", companyData.name)
+            formData.append("about", companyData.about)
+            formData.append("sector", companyData.sector)
+            formData.append("companySize", companyData.size)
+            formData.append("location", companyData.location)
+            formData.append("website", companyData.website)
+            formData.append("email", companyData.email)
+            formData.append("phone", companyData.phone)
+    
+            if (companyData.founded) {
+                formData.append("creationDate", new Date(companyData.founded).toISOString())
+            }
+    
+            // fichiers
+            if (logo) formData.append("logo", logo)
+            if (coverImage) formData.append("coverImage", coverImage)
+    
+            // appel API via abstraction
+            const data = await updateCompany(companyId, formData, token)
+    
+            console.log("UPDATED:", data)
+    
+            setIsEditing(false)
+    
+        } catch (error: any) {
+            console.error("Update failed:", error)
+    
+            alert(error?.message || "Une erreur est survenue")
+        }
+    }
+
     return (
         <div className="space-y-3 w-full">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-foreground">Profil Entreprise</h1>
                 <Button
                     variant={isEditing ? "default" : "outline"}
-                    onClick={() => setIsEditing(!isEditing)}
+                    onClick={isEditing ? handleSubmit : () => setIsEditing(true)}
                     className="gap-2">
                     {
                         isEditing ? ( <><Save className="h-4 w-4" /> Enregistrer </> ) : ( <><Edit className="h-4 w-4" /> Modifier</> )
@@ -51,14 +122,20 @@ export default function ProfilPage() {
                 {/* Cover Image */}
                 <div className="h-32 bg-gradient-to-r from-primary to-blue-600 relative">
                     {isEditing && (
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            className="absolute top-4 right-4 gap-2"
-                        >
-                            <Camera className="h-4 w-4" />
-                            Modifier la bannière
-                        </Button>
+                        <>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                className="absolute top-4 right-4 gap-2">
+                                <Camera className="h-4 w-4" />
+                                Modifier la bannière
+                            </Button>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={(e) => setCoverImage(e.target.files?.[0] || null)} />
+                        </>
                     )}
                 </div>
 
@@ -73,13 +150,19 @@ export default function ProfilPage() {
                                 </AvatarFallback>
                             </Avatar>
                             {isEditing && (
-                                <Button
-                                    size="icon"
-                                    variant="secondary"
-                                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-                                >
-                                    <Camera className="h-4 w-4" />
-                                </Button>
+                                <>
+                                    <Button
+                                        size="icon"
+                                        variant="secondary"
+                                        className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                                        <Camera className="h-4 w-4" />
+                                    </Button>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={(e) => setLogo(e.target.files?.[0] || null)} />
+                                </>
                             )}
                         </div>
                     </div>
