@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest) {
     // ✅ récupérer le token JWT côté middleware
     const token = await getToken({
         req: request,
-        secret: process.env.NEXT_PUBLIC_AUTH_SECRET,  
+        secret: process.env.NEXT_AUTH_SECRET,  
     });
 
     console.log("Auth Token:", token);
