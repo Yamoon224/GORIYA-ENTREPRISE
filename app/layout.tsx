@@ -1,8 +1,8 @@
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Toaster } from 'sonner';
+import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 
 const inter = Inter({
     subsets: ["latin"],
@@ -12,20 +12,20 @@ const inter = Inter({
 export const metadata: Metadata = {
     title: 'Goriya - Plateforme de Recrutement',
     description: 'Goriya - Plateforme moderne de recrutement et gestion des candidatures',
-    generator: 'v0.app',
+    // generator: 'v0.app',
     icons: {
         icon: [
             {
-                url: '/images/icon-light-32x32.png',
+                url: '/images/favicon.png',
                 media: '(prefers-color-scheme: light)',
             },
             {
-                url: '/images/icon-dark-32x32.png',
+                url: '/images/favicon.png',
                 media: '(prefers-color-scheme: dark)',
             },
             {
-                url: '/images/icon.svg',
-                type: 'image/svg+xml',
+                url: '/images/favicon.png',
+                type: 'image/png',
             },
         ],
         apple: '/apple-icon.png',
