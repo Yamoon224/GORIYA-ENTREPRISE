@@ -3,16 +3,16 @@
 import { toast } from "sonner"
 import { useState } from "react"
 import { setCookie } from "cookies-next"
-import { Upload, Plus, ArrowRight, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { createCompany } from "@/actions/companies"
 import { CompanyCreateDto } from "@/@types/interface"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { SignupStepper } from "@/components/signup-stepper"
+import { Upload, Plus, ArrowRight, ArrowLeft, EyeOff, Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createCompany } from "@/actions/companies"
 
 const steps = ["Entreprise", "Détails", "Contact"]
 
@@ -39,6 +39,8 @@ export default function Page() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
+    const [showPassword, setShowPassword] = useState(false);
+
     const [formData, setFormData] = useState<CompanyCreateDto>({
         logo: null,
         coverImage: null,
@@ -320,10 +322,28 @@ export default function Page() {
                             </Field>
                         </div>
 
+                        // Remplacer ton champ mot de passe par :
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Mot de passe</FieldLabel>
-                                <Input type="password" value={formData.password} onChange={(e) => updateFormData("password", e.target.value)} />
+                                <div className="relative">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={(e) => updateFormData("password", e.target.value)}
+                                        placeholder="Votre mot de passe"
+                                        required
+                                        className="pr-10"
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    >
+                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </button>
+                                </div>
                             </Field>
                         </div>
                     </div>
