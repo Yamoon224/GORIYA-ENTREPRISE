@@ -133,9 +133,19 @@ export default function Page() {
                         <div className="grid gap-4 md:grid-cols-2">
                             {/* Logo Upload */}
                             <label className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/30 bg-secondary/30 p-8 text-center cursor-pointer hover:border-primary/50 transition-colors">
-                                <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                <p className="text-sm font-medium text-foreground">Importer votre logo</p>
-                                <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
+                                {formData.logo ? (
+                                    <img
+                                        src={URL.createObjectURL(formData.logo as File)}
+                                        alt="Logo"
+                                        className="h-24 w-24 object-contain rounded-sm"
+                                    />
+                                ) : (
+                                    <>
+                                        <Upload className="h-8 w-8 text-primary/60 mb-2" />
+                                        <p className="text-sm font-medium text-foreground">Importer votre logo</p>
+                                        <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
+                                    </>
+                                )}
                                 <input
                                     type="file"
                                     accept=".png,.jpeg,.jpg,.webp"
@@ -148,9 +158,19 @@ export default function Page() {
 
                             {/* Cover Image Upload */}
                             <label className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/30 bg-secondary/30 p-8 text-center cursor-pointer hover:border-primary/50 transition-colors">
-                                <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                <p className="text-sm font-medium text-foreground">Importer votre image de couverture</p>
-                                <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
+                                {formData.coverImage ? (
+                                    <img
+                                        src={URL.createObjectURL(formData.coverImage as File)}
+                                        alt="Cover Image"
+                                        className="h-32 w-full object-cover rounded-sm"
+                                    />
+                                ) : (
+                                    <>
+                                        <Upload className="h-8 w-8 text-primary/60 mb-2" />
+                                        <p className="text-sm font-medium text-foreground">Importer votre image de couverture</p>
+                                        <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
+                                    </>
+                                )}
                                 <input
                                     type="file"
                                     accept=".png,.jpeg,.jpg,.webp"
@@ -314,9 +334,9 @@ export default function Page() {
             <div className="mt-8 flex justify-center gap-2">
                 {currentStep >= 1 ? (
                     <Button onClick={handlePrevious} variant="outline" className="w-30" size="lg"><ArrowLeft /></Button>
-                ): ''}
+                ) : ''}
                 <Button onClick={handleNext} className="w-30" size="lg">
-                    {currentStep === steps.length - 1 ? "Terminer" : ( <ArrowRight /> )}
+                    {currentStep === steps.length - 1 ? "Terminer" : (<ArrowRight />)}
                 </Button>
             </div>
         </div>
