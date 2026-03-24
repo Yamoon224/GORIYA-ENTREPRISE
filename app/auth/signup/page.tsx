@@ -67,11 +67,31 @@ export default function Page() {
     }
 
     const handleNext = async () => {
+        // Définir les champs obligatoires par étape
+        const requiredFieldsByStep: Record<number, (keyof CompanyCreateDto)[]> = {
+            0: ["logo", "coverImage", "companyName", "about", "sector"],
+            1: ["creationDate", "companySize"],
+            2: ["country", "headquarters", "location", "phone", "email", "password"],
+        }
+    
+        const requiredFields = requiredFieldsByStep[currentStep] || []
+        const missingFields = requiredFields.filter(field => {
+            const value = formData[field]
+            if (Array.isArray(value)) return value.filter(Boolean).length === 0
+            return !value
+        })
+    
+        if (missingFields.length > 0) {
+            toast.error("Veuillez remplir tous les champs obligatoires avant de continuer")
+            return
+        }
+    
         if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1)
             return
         }
-
+    
+        // Si c'est la dernière étape, soumettre le formulaire
         setLoading(true)
         try {
             const body = new FormData()
@@ -92,14 +112,10 @@ export default function Page() {
             body.append("password", formData.password)
             body.append("partnershipDate", new Date().toISOString().split("T")[0])
             body.append("status", "ACTIVE")
-
+    
             const res = await createCompany(body)
-
-            // Stocker le token pour l'authentification future
             setCookie("token", res.accessToken, { path: "/" })
-            // Stocker éventuellement l'user dans un store global ou context
             localStorage.setItem("user", JSON.stringify(res.user))
-
             toast.success("Entreprise créée avec succès !")
             router.push("/signup/success")
         } catch (error: any) {
@@ -308,7 +324,7 @@ export default function Page() {
 
                         <div className="col-span-12 md:col-span-6">
                             <Field>
-                                <FieldLabel>Téléphone</FieldLabel>
+                                <FieldLabel>Téléphone <span className="text-destructive">*</span></FieldLabel>
                                 <Input type="tel" value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)} />
                             </Field>
                         </div>
@@ -322,7 +338,6 @@ export default function Page() {
                             </Field>
                         </div>
 
-                        // Remplacer ton champ mot de passe par :
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Mot de passe</FieldLabel>

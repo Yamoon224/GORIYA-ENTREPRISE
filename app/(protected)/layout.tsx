@@ -1,9 +1,9 @@
 "use client"
 
+import { SessionProvider } from "next-auth/react"
 import { AppHeader } from "@/components/app-header"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, useSidebar } from "@/components/sidebar-context"
-import { SessionProvider } from "next-auth/react"
 
 export default function ProtectedLayout({
     children,
