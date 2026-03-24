@@ -7,8 +7,8 @@ export const stats = async (token: string, params?: DashboardStatsParams) => {
         return await apiRequest<DashboardContentProps>({
             endpoint: `/dashboard/stats`,
             method: "GET",
-            params, // start et end seront ajoutés à l'URL
-            token,
+            params: params, // start et end seront ajoutés à l'URL
+            token: token,
         })
     } catch (err) {
         console.error("Erreur fetch stats:", err)

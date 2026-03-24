@@ -1,6 +1,20 @@
 import { Method } from "axios";
 import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
+// PAGINATION
+export interface IPaginationMeta {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+}
+
+// Interface générique pour pagination
+export interface IPaginatedResponse<T> {
+    data: T[]
+    meta: IPaginationMeta
+}
+
 export interface RequestOptions {
     endpoint: string;
     method?: Method; // GET, POST, PUT, PATCH, DELETE
@@ -123,18 +137,18 @@ export interface IOffer {
     id: string
     title: string
     location: string
-    type: "CDI" | "CDD" | "Stage" | "Alternance" // map à JobType
-    experience: "Junior" | "Confirmé" | "Senior" | "Expert" // map à JobExperienceType
+    type: "CDI" | "CDD" | "STAGE" | "ALTERNANCE" | "FREELANCE" | "TEMPS_PARTIEL" // map à JobType
+    experience: "JUNIOR" | "INTERMEDIAIRE" | "SENIOR" | "EXPERT" // map à JobExperienceType
     salary: string
     description: string
     benefits: string
     requirements: string[]
-    status: "ACTIVE" | "PAUSED" | "ARCHIVED"  // JobStatus
+    status: "ACTIVE" | "CLOSED" | "DRAFT"  // JobStatus
     publishDate: string
     endDate: string
     applicants: number
-    company?: {
-        id: string
-        name: string
-    }
+    candidatures: any[]
+    company?: ICompany
+    createdAt: string
+    updatedAt: string
 }

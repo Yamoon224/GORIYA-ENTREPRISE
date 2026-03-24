@@ -36,7 +36,7 @@ export default function Content({ company }: ProfilContentProps) {
             const auth = getAuth()
             if (!auth) throw new Error("Not authenticated")
     
-            const { token, companyId } = auth
+            const { token, user } = auth
     
             const formData = new FormData()
     
@@ -59,7 +59,7 @@ export default function Content({ company }: ProfilContentProps) {
             if (coverImage) formData.append("coverImage", coverImage)
     
             // appel API via abstraction
-            const data = await updateCompany(companyId, formData, token)
+            const data = await updateCompany(user.companyId, formData, token)
     
             toast.success("Profil Entreprise modifié")
             // console.log("UPDATED:", data)

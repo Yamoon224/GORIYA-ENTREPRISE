@@ -1,11 +1,11 @@
 import { ICompany } from "@/@types/interface"
 import { apiRequest } from "@/lib/api-client-http"
 
-export const updateCompany = (id: string, formData: FormData, token: string) => {
+export const updateCompany = (id: string, data: FormData, token: string) => {
     return apiRequest({
         endpoint: `/companies/${id}`,
         method: "PATCH",
-        data: formData,
+        data: data,
         token,
     })
 }
@@ -15,8 +15,7 @@ export const findCompany = async (id: string, token: string): Promise<ICompany> 
         const company = await apiRequest<ICompany>({
             endpoint: `/companies/${id}`,
             method: "GET",
-            data: {},
-            token,
+            token: token,
         })
 
         if (!company) {
