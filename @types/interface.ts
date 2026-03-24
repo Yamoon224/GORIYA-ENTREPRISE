@@ -1,4 +1,5 @@
 import { Method } from "axios";
+import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 export interface RequestOptions {
     endpoint: string;
@@ -14,6 +15,41 @@ export interface SessionUser {
     role: string;
     access_token: string;
 }
+
+// PARAMETERS
+export interface DashboardStatsParams {
+    start?: string; // format ISO date
+    end?: string;   // format ISO date
+}
+
+// RESPONSES TYPE
+export interface StatCard {
+    label: string
+    value: string | number
+    icon: Icon
+    color: string
+}
+
+export interface ChartDataItem {
+    name: string
+    value: number
+}
+
+export interface TopOffer {
+    id: string
+    title: string
+    companyName: string
+}
+
+export interface DashboardData {
+    statsData: StatCard[]
+    chartData: ChartDataItem[]
+    lineChartData: ChartDataItem[]
+    recentCandidates: ICandidate[]
+    topOffers: TopOffer[]
+    recentOffers: IOffer[]
+}
+
 
 export interface CompanyCreateDto {
     logo: File | null
@@ -31,4 +67,74 @@ export interface CompanyCreateDto {
     phone: string
     email: string
     password: string
+}
+
+
+// INTERFACE ENTITE
+
+export interface IUser {
+    id: string
+    name: string
+    email: string
+    role: string
+    status: string
+    avatar?: string | null
+    registrationDate: string
+    createdAt: string
+    updatedAt: string
+}
+
+export interface ICompany {
+    id: string
+    name: string
+    about: string
+    sector: string
+    companySize: string
+    location: string
+    website: string
+    creationDate?: string
+    partnershipDate?: string
+    email: string
+    phone: string
+    logo?: string | null
+    coverImage?: string | null
+    socialLinks: string[]
+    country: string
+    headquarters: string
+    status: string
+    jobOffers: any[]       // Si tu veux, tu peux créer une interface IJobOffer
+    users: IUser[]
+    createdAt: string
+    updatedAt: string
+}
+
+export interface ICandidate {
+    id: string
+    name: string           // candidateName
+    email: string          // candidateEmail
+    score: number
+    status: "EN_ATTENTE" | "ACCEPTEE" | "REFUSEE"  // correspond à CandidatureStatus
+    appliedDate: string    // ISO date string
+    avatar?: string        // optionnel, pour l'affichage UI
+    jobOfferId?: string    // ID du JobOffer lié
+}
+
+export interface IOffer {
+    id: string
+    title: string
+    location: string
+    type: "CDI" | "CDD" | "Stage" | "Alternance" // map à JobType
+    experience: "Junior" | "Confirmé" | "Senior" | "Expert" // map à JobExperienceType
+    salary: string
+    description: string
+    benefits: string
+    requirements: string[]
+    status: "ACTIVE" | "PAUSED" | "ARCHIVED"  // JobStatus
+    publishDate: string
+    endDate: string
+    applicants: number
+    company?: {
+        id: string
+        name: string
+    }
 }

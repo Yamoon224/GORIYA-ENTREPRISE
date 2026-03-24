@@ -340,7 +340,7 @@ export default function Page() {
 
                         <div className="col-span-12 md:col-span-6">
                             <Field>
-                                <FieldLabel>Mot de passe</FieldLabel>
+                                <FieldLabel>Mot de passe <span className="text-destructive">*</span></FieldLabel>
                                 <div className="relative">
                                     <Input
                                         type={showPassword ? "text" : "password"}

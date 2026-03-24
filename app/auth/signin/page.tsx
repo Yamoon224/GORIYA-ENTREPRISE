@@ -9,6 +9,7 @@ import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 import { getSession, signIn, useSession } from "next-auth/react"
+import { setCookie } from "cookies-next"
 
 export default function Page() {
     const router = useRouter()
@@ -42,14 +43,20 @@ export default function Page() {
             const session = await getSession()
 
             if (session?.user) {
-                localStorage.setItem(
-                    "auth",
-                    JSON.stringify({
-                        token: session.user.access_token,
-                        user: session.user,
-                        companyId: (session.user as any)?.company?.id,
-                    })
-                )
+                const authData = {
+                    token: session.user.access_token,
+                    user: session.user,
+                }
+
+                // 🔹 Stocker dans localStorage (optionnel)
+                localStorage.setItem("auth", JSON.stringify(authData))
+
+                // 🔹 Stocker côté cookie pour server component
+                setCookie("auth", JSON.stringify(authData), {
+                    maxAge: 60 * 60, // 7 jours
+                    path: "/", // accessible sur tout le site
+                    sameSite: "lax",
+                })
             }
 
             if (res?.error) {

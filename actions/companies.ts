@@ -1,3 +1,4 @@
+import { ICompany } from "@/@types/interface"
 import { apiRequest } from "@/lib/api-client-http"
 
 export const updateCompany = (id: string, formData: FormData, token: string) => {
@@ -7,6 +8,26 @@ export const updateCompany = (id: string, formData: FormData, token: string) => 
         data: formData,
         token,
     })
+}
+
+export const findCompany = async (id: string, token: string): Promise<ICompany> => {
+    try {
+        const company = await apiRequest<ICompany>({
+            endpoint: `/companies/${id}`,
+            method: "GET",
+            data: {},
+            token,
+        })
+
+        if (!company) {
+            throw new Error("Entreprise introuvable")
+        }
+
+        return company
+    } catch (err) {
+        console.error("Erreur fetch company:", err)
+        throw err
+    }
 }
 
 export const createCompany = (formData: FormData) => {

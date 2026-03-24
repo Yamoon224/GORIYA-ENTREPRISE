@@ -11,6 +11,7 @@ declare module "next-auth" {
             name: string;
             email: string;
             role: string;
+            companyId: string;
             access_token: string;
         } & DefaultSession["user"];
     }
@@ -20,6 +21,7 @@ declare module "next-auth" {
         name: string
         email: string
         role: string
+        companyId: string
         access_token: string
     }
 }
@@ -53,6 +55,7 @@ export const authOptions = {
                     name: data.user.name,
                     email: data.user.email,
                     role: data.user.role,
+                    companyId: data.user.company.id,
                     access_token: data.access_token,
                 };
             },
@@ -73,6 +76,7 @@ export const authOptions = {
                 token.access_token = user.access_token
                 token.role = user.role
                 token.id = user.id
+                token.companyId = user.companyId
             }
             return token
         },
@@ -88,6 +92,7 @@ export const authOptions = {
                 session.user.id = token.id as string
                 session.user.role = token.role as string
                 session.user.access_token = token.access_token as string
+                session.user.companyId = token.companyId as string // 🔹 Ajouté
             }
             return session
         },
