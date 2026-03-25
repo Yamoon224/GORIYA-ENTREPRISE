@@ -28,7 +28,7 @@ import {
 import { IOffer, IPaginatedResponse } from "@/@types/interface"
 import { getJobOffers } from "@/actions/offers"
 import { AnnonceContentProps } from "@/@types/props"
-import { formatDate } from "@/lib/utils"
+import { formatAmount, formatDate } from "@/lib/utils"
 
 type JobStatus = "ACTIVE" | "DRAFT" | "CLOSED"
 
@@ -132,7 +132,7 @@ export function Content({ init, token }: AnnonceContentProps) {
                                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3"> 
                                         <span className="flex items-center gap-1"> <MapPin className="h-4 w-4" /> {job.location} </span> 
                                         <span>{job.experience}</span> 
-                                        <span>{job.salary}</span> 
+                                        <span>{formatAmount(job.salary)}</span> 
                                     </div> 
                                     <div className="flex items-center gap-6 text-sm"> 
                                         <span className="flex items-center gap-1 text-muted-foreground"> 

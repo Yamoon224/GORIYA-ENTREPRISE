@@ -27,6 +27,7 @@ import {
     Line,
 } from "recharts"
 import { DashboardContentProps } from "@/@types/props"
+import { formatAmount } from "@/lib/utils"
 
 export default function Content({
     statsData = [],
@@ -252,7 +253,7 @@ export default function Content({
                                                 </Badge>
                                                 <Badge variant="secondary" className="gap-1">
                                                     <DollarSign className="h-3 w-3" />
-                                                    {offer.salary}
+                                                    {formatAmount(offer.salary)}
                                                 </Badge>
                                             </div>
                                         </div>

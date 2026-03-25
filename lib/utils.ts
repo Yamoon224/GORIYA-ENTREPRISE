@@ -90,3 +90,24 @@ export function formatDate(
 
     return new Intl.DateTimeFormat(locale, optionsMap[type]).format(date)
 }
+
+export function formatAmount(
+    value: number | string,
+    currency: string = 'Fcfa',   // Devise par défaut
+    locale: string = 'fr-FR',  // Localisation par défaut
+    minimumFractionDigits: number = 0,
+    maximumFractionDigits: number = 0
+): string {
+    if (value === null || value === undefined || value === '') return ''
+
+    const amount = typeof value === 'string' ? parseFloat(value) : value
+
+    if (isNaN(amount)) return ''
+
+    return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        minimumFractionDigits,
+        maximumFractionDigits
+    }).format(amount)
+}

@@ -14,7 +14,7 @@ import { Sparkles, X, Calendar } from "lucide-react"
 import Image from "next/image"
 import { createJobOffer } from "@/actions/offers"
 import { IOffer } from "@/@types/interface"
-import { formatDate, getAuth } from "@/lib/utils"
+import { formatAmount, formatDate, getAuth } from "@/lib/utils"
 import {
     Dialog,
     DialogContent,
@@ -297,7 +297,7 @@ export default function Content() {
 
                         {formData.salary && (
                             <div className="text-sm">
-                                💰 Salaire : {formData.salary} XOF
+                                💰 Salaire : {formatAmount(formData.salary)}
                             </div>
                         )}
 
