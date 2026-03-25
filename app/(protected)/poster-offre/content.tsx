@@ -14,8 +14,13 @@ import { Sparkles, X, Calendar } from "lucide-react"
 import Image from "next/image"
 import { createJobOffer } from "@/actions/offers"
 import { IOffer } from "@/@types/interface"
-import { PosterOffreContentProps } from "@/@types/props"
-import { getAuth } from "@/lib/utils"
+import { formatDate, getAuth } from "@/lib/utils"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 
 const contractTypes = ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE", "TEMPS_PARTIEL"]
 const suggestedSkills = [
@@ -34,11 +39,12 @@ const experienceOptions = [
 
 export default function Content() {
     const router = useRouter()
+    const [previewOpen, setPreviewOpen] = useState(false)
     const [aiOptimization, setAiOptimization] = useState(true)
     const [showCoverPhoto, setShowCoverPhoto] = useState(true)
     const [skills, setSkills] = useState<string[]>([])
     const [newSkill, setNewSkill] = useState("")
-    const [visibility, setVisibility] = useState("public")
+    // const [visibility, setVisibility] = useState("public")
 
     const [formData, setFormData] = useState({
         title: "", location: "", type: "", salary: "",
@@ -83,6 +89,14 @@ export default function Content() {
             console.error("Erreur lors de la création de l'offre:", error);
         }
     }
+
+    const isFormValid =
+        formData.title &&
+        formData.location &&
+        formData.type &&
+        formData.experience &&
+        formData.description &&
+        skills.length > 0
     
     // const handleSaveDraft = () => router.push("/dashboard/annonces")
 
@@ -224,9 +238,20 @@ export default function Content() {
                         </div> */}
                     </section>
 
+                    {/* Validation message */}
+                    {!isFormValid && (
+                        <p className="text-xs text-destructive text-center">
+                            Veuillez remplir tous les champs requis pour prévisualiser ou publier
+                        </p>
+                    )}
+
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                        {/* <Button className="w-full sm:w-auto" variant="outline" onClick={handleSaveDraft}>Enregistrer comme brouillon</Button> */}
+                        <Button 
+                            className="w-full sm:w-auto" 
+                            variant="outline" 
+                            disabled={!isFormValid}
+                            onClick={() => setPreviewOpen(true)}>Prévisualiser l'offre</Button>
                         <Button className="w-full sm:w-auto" onClick={handlePublish}>Publier l'offre</Button>
                     </div>
                 </div>
@@ -253,6 +278,63 @@ export default function Content() {
                     </Card>
                 </div>
             </div>
+
+
+            <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+                <DialogContent className="max-w-2xl rounded-sm [&>button]:text-white [&>button]:hover:bg-white/20 [&>button]:top-4 [&>button]:right-4">
+                    <DialogHeader className="bg-primary text-white px-6 py-4 -mx-6 -mt-6 rounded-t-sm">
+                        <DialogTitle className="text-white">
+                            Prévisualisation de l'offre
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-bold">{formData.title}</h2>
+
+                        <div className="text-sm text-muted-foreground">
+                            {formData.location} • {formData.type} • {formData.experience}
+                        </div>
+
+                        {formData.salary && (
+                            <div className="text-sm">
+                                💰 Salaire : {formData.salary} XOF
+                            </div>
+                        )}
+
+                        <div>
+                            <h3 className="font-semibold mb-1">Description</h3>
+                            <p className="text-sm text-muted-foreground whitespace-pre-line">
+                                {formData.description}
+                            </p>
+                        </div>
+
+                        {formData.benefits && (
+                            <div>
+                                <h3 className="font-semibold mb-1">Avantages</h3>
+                                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                                    {formData.benefits}
+                                </p>
+                            </div>
+                        )}
+
+                        <div>
+                            <h3 className="font-semibold mb-1">Compétences</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {skills.map((skill) => (
+                                    <Badge key={skill}>{skill}</Badge>
+                                ))}
+                            </div>
+                        </div>
+
+                        {(formData.publishDate || formData.endDate) && (
+                            <div className="text-sm text-muted-foreground">
+                                {formData.publishDate && `Publié le ${formatDate(formData.publishDate)}`}
+                                {formData.endDate && ` • Fin le ${formatDate(formData.endDate)}`}
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

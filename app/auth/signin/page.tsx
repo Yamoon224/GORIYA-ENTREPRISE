@@ -1,15 +1,17 @@
 // app/auth/signin/page.tsx
 "use client"
 
+import Link from "next/link"
+import { toast } from "sonner"
 import { useEffect, useState } from "react"
+import { setCookie } from "cookies-next"
+import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
-import { Eye, EyeOff } from "lucide-react"
-import { toast } from "sonner"
 import { getSession, signIn, useSession } from "next-auth/react"
-import { setCookie } from "cookies-next"
+import { getAuth } from "@/lib/utils"
 
 export default function Page() {
     const router = useRouter()
@@ -26,6 +28,13 @@ export default function Page() {
     //         router.replace("/dashboard")
     //     }
     // }, [session, router])
+
+    useEffect(() => {
+        const auth = getAuth()
+        if (auth?.token) {
+            router.replace("/dashboard")
+        }
+    }, [router])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -119,6 +128,15 @@ export default function Page() {
                     {loading ? "Connexion..." : "Se connecter"}
                 </Button>
             </form>
+
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+                Vous n'avez pas de Compte Entreprise ? 
+                <Link
+                    href="/auth/signup"
+                    className="text-primary font-medium hover:underline">
+                    S'inscrire
+                </Link>
+            </div>
         </div>
     )
 }

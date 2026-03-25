@@ -53,3 +53,39 @@ export const getAuth = () => {
     if (!stored) return null
     return JSON.parse(stored)
 }
+
+
+export function formatDate(
+    value: string | Date,
+    type: 'date' | 'datetime' | 'time' = 'date',
+    locale: string = 'fr-FR'
+): string {
+    if (!value) return ''
+
+    const date = new Date(value)
+
+    if (isNaN(date.getTime())) {
+        return ''
+    }
+
+    const optionsMap: Record<typeof type, Intl.DateTimeFormatOptions> = {
+        date: {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        },
+        datetime: {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        },
+        time: {
+            hour: '2-digit',
+            minute: '2-digit',
+        },
+    }
+
+    return new Intl.DateTimeFormat(locale, optionsMap[type]).format(date)
+}

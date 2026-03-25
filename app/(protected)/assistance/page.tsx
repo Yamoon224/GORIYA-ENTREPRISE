@@ -72,30 +72,30 @@ const faqs = [
 ]
 
 const plans = [
+    // {
+    //     name: "Grouilleur",
+    //     description: "Pour les chercheurs d'emploi actifs",
+    //     price: "0",
+    //     currency: "FCFA",
+    //     period: "/ mois - Gratuit",
+    //     popular: false,
+    //     icon: Zap,
+    //     iconColor: "text-blue-500",
+    //     iconBg: "bg-blue-100",
+    //     buttonVariant: "outline" as const,
+    //     buttonText: "Commencer l'essai gratuit",
+    //     features: [
+    //         "20 analyses CV par mois",
+    //         "Suggestions avancées IA",
+    //         "Multi-formats export",
+    //         "Personnalisation sectorielle",
+    //         "Support prioritaire",
+    //     ],
+    // },
     {
-        name: "Grouilleur",
-        description: "Pour les chercheurs d'emploi actifs",
-        price: "0",
-        currency: "FCFA",
-        period: "/ mois - Gratuit",
-        popular: false,
-        icon: Zap,
-        iconColor: "text-blue-500",
-        iconBg: "bg-blue-100",
-        buttonVariant: "outline" as const,
-        buttonText: "Commencer l'essai gratuit",
-        features: [
-            "20 analyses CV par mois",
-            "Suggestions avancées IA",
-            "Multi-formats export",
-            "Personnalisation sectorielle",
-            "Support prioritaire",
-        ],
-    },
-    {
-        name: "Standard",
+        name: "Business",
         description: "La solution complète",
-        price: "1 999",
+        price: "35 500",
         currency: "FCFA",
         period: "/ mois",
         popular: true,
@@ -113,9 +113,9 @@ const plans = [
         ],
     },
     {
-        name: "Premium",
+        name: "Business +",
         description: "Pour les professionnels exigeants",
-        price: "4 999",
+        price: "351 900",
         currency: "FCFA",
         period: "/ mois",
         popular: false,
@@ -125,7 +125,7 @@ const plans = [
         buttonVariant: "outline" as const,
         buttonText: "Opter pour ça",
         features: [
-            "20 analyses CV par mois",
+            "100 analyses CV par mois",
             "Suggestions avancées IA",
             "Multi-formats export",
             "Personnalisation sectorielle",
@@ -173,7 +173,7 @@ const resources = [
     },
 ]
 
-export default function AssistancePage() {
+export default function Page() {
     const [openFaq, setOpenFaq] = useState<number | null>(null)
 
     return (
@@ -280,7 +280,7 @@ export default function AssistancePage() {
                 </div>
 
                 {/* Pricing Cards */}
-                <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+                <div className="grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
                     {plans.map((plan) => (
                         <Card
                             key={plan.name}
