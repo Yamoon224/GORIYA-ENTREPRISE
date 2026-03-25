@@ -12,6 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 export function isPublicRoute(pathname: string) {
     const exactPublicRoutes = [
         '/',
+        '/assistance',
         '/manifest.json',
         '/service-worker.js',
         '/favicon.ico',

@@ -50,7 +50,7 @@ export default function HomePage() {
                         <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">
                             Dashboard
                         </Link>
-                        <Link href="/dashboard/assistance" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                        <Link href="/assistance" className="text-sm font-medium text-muted-foreground hover:text-foreground">
                             Tarifs
                         </Link>
                         <Button variant="outline" asChild>
