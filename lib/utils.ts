@@ -93,7 +93,7 @@ export function formatDate(
 
 export function formatAmount(
     value: number | string,
-    currency: string = 'Fcfa',   // Devise par défaut
+    currency: string = 'XOF',   // Devise par défaut
     locale: string = 'fr-FR',  // Localisation par défaut
     minimumFractionDigits: number = 0,
     maximumFractionDigits: number = 0
