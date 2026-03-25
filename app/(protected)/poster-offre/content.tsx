@@ -140,7 +140,7 @@ export default function Content() {
                             </Field>
                             <Field className="w-full">
                                 <FieldLabel>Salaire XOF</FieldLabel>
-                                <Input className="w-full" type="number" value={formData.salary} onChange={e => setFormData({ ...formData, salary: e.target.value })} placeholder="0000" />
+                                <Input className="w-full" type="number" value={formData.salary} onChange={e => setFormData({ ...formData, salary: e.target.value })} placeholder="Ex: 500 000" />
                             </Field>
                             {/* <Field className="w-full">
                                 <FieldLabel>Salaire max XOF</FieldLabel>
