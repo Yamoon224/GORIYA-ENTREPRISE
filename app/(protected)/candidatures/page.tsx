@@ -1,361 +1,121 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    Search,
-    MapPin,
-    Calendar,
-    GraduationCap,
-    Briefcase,
-    ExternalLink,
-    MessageSquare,
-    MoreVertical,
-    Check,
-    X,
-} from "lucide-react"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Search, User, MapPin, Calendar, GraduationCap, CircleDollarSign, Clock3, Star, FileText, MessageSquare, Plus, Check, X } from "lucide-react"
 
-type CandidateStatus = "new" | "shortlisted" | "interview" | "accepted" | "rejected"
+type CandidateStatus = "pending" | "interview" | "analyzed" | "accepted" | "rejected"
 
-interface Candidate {
-    id: number
-    name: string
-    title: string
-    location: string
-    age: number
-    applicationDate: string
-    skills: string[]
-    education: string
-    salary: string
-    availability: string
-    score: number
-    matchScore: number
-    status: CandidateStatus
-    avatar: string
-    cvLink: string
-}
+type Candidate = { id: number; name: string; title: string; status: CandidateStatus; statusLabel: string; statusClass: string; location: string; years: number; date: string; skills: string[]; degree: string; salary: string; availability: string; score: number }
 
-const candidates: Candidate[] = [
-    {
-        id: 1,
-        name: "Marie Dubois",
-        title: "Développeur Full Stack Senior",
-        location: "Paris, France",
-        age: 32,
-        applicationDate: "2024-01-18",
-        skills: ["React", "Node.js", "Python", "PostgreSQL"],
-        education: "Master Informatique",
-        salary: "55k/60k",
-        availability: "Disponible immédiatement",
-        score: 92,
-        matchScore: 92,
-        status: "new",
-        avatar: "MD",
-        cvLink: "#",
-    },
-    {
-        id: 2,
-        name: "Jean Martin",
-        title: "Nouveau programmeur",
-        location: "Lyon, France",
-        age: 28,
-        applicationDate: "2024-01-14",
-        skills: ["Figma", "Prototyping", "User Research"],
-        education: "Master Design",
-        salary: "45-50k",
-        availability: "Préavis 1 mois",
-        score: 88,
-        matchScore: 88,
-        status: "shortlisted",
-        avatar: "JM",
-        cvLink: "#",
-    },
-    {
-        id: 3,
-        name: "Sophie Laurent",
-        title: "CV manager",
-        location: "Marseille, France",
-        age: 35,
-        applicationDate: "2024-01-12",
-        skills: ["Agile", "Scrum", "Management", "Jira"],
-        education: "École de Commerce",
-        salary: "60-70k",
-        availability: "Disponible immédiatement",
-        score: 85,
-        matchScore: 85,
-        status: "interview",
-        avatar: "SL",
-        cvLink: "#",
-    },
-    {
-        id: 4,
-        name: "Thomas Rousseau",
-        title: "Refusé",
-        location: "Toulouse, France",
-        age: 27,
-        applicationDate: "2024-01-10",
-        skills: ["Python", "Machine Learning", "SQL", "Pandas"],
-        education: "Doctorat Data Science",
-        salary: "55-65k",
-        availability: "Préavis 2 mois",
-        score: 89,
-        matchScore: 89,
-        status: "rejected",
-        avatar: "TR",
-        cvLink: "#",
-    },
-    {
-        id: 5,
-        name: "Emma Leroy",
-        title: "Nouveau",
-        location: "Bordeaux, France",
-        age: 29,
-        applicationDate: "2024-01-08",
-        skills: ["Vue.js", "Django", "Docker"],
-        education: "École d'Ingénieur",
-        salary: "50-55k",
-        availability: "Disponible immédiatement",
-        score: 84,
-        matchScore: 84,
-        status: "new",
-        avatar: "EL",
-        cvLink: "#",
-    },
+const CANDIDATES: Candidate[] = [
+  { id: 1, name: "Marie Dubois", title: "Developpeuse Full-Stack Senior", status: "pending", statusLabel: "En attente", statusClass: "bg-orange-100 text-orange-500", location: "Paris, France", years: 5, date: "2024-01-15", skills: ["React", "Node.js", "Python", "PostgreSQL"], degree: "Master Informatique", salary: "550.000 F", availability: "Disponible immediatement", score: 92 },
+  { id: 2, name: "Jean Martin", title: "UX/UI Designer", status: "interview", statusLabel: "Entretien programme", statusClass: "bg-blue-100 text-blue-600", location: "Lyon, France", years: 3, date: "2024-01-14", skills: ["Figma", "Adobe XD", "Prototyping", "User Research"], degree: "Master Design", salary: "45-50K", availability: "Preavis 1 mois", score: 88 },
+  { id: 3, name: "Sophie Laurent", title: "Chef de Projet Digital", status: "analyzed", statusLabel: "CV analyse", statusClass: "bg-gray-100 text-gray-500", location: "Marseille, France", years: 7, date: "2024-01-13", skills: ["Agile", "Scrum", "Management", "Jira"], degree: "Ecole de Commerce", salary: "60-70K", availability: "Disponible immediatement", score: 85 },
+  { id: 4, name: "Thomas Rousseau", title: "Data Scientist", status: "rejected", statusLabel: "Refuse", statusClass: "bg-red-500 text-white", location: "Toulouse, France", years: 2, date: "2024-01-12", skills: ["Python", "Machine Learning", "SQL", "Pandas"], degree: "Master Data Science", salary: "45-55K", availability: "Preavis 2 mois", score: 65 },
+  { id: 5, name: "Emma Leroy", title: "Developpeuse Full-Stack Senior", status: "accepted", statusLabel: "Accepte", statusClass: "bg-green-500 text-white", location: "Paris, France", years: 6, date: "2024-01-11", skills: ["Vue.js", "Django", "AWS", "Docker"], degree: "Ecole d'Ingenieur", salary: "60-70K", availability: "Disponible immediatement", score: 94 },
 ]
 
-const statusConfig: Record<CandidateStatus, { label: string; className: string }> = {
-    new: { label: "Nouveau", className: "bg-blue-100 text-blue-700" },
-    shortlisted: { label: "Présélection", className: "bg-orange-100 text-orange-700" },
-    interview: { label: "Entretien", className: "bg-purple-100 text-purple-700" },
-    accepted: { label: "Accepté", className: "bg-green-100 text-green-700" },
-    rejected: { label: "Refusé", className: "bg-red-100 text-red-700" },
-}
-
-const tabCounts = {
-    all: candidates.length,
-    new: candidates.filter((c) => c.status === "new").length,
-    shortlisted: candidates.filter((c) => c.status === "shortlisted").length,
-    interview: candidates.filter((c) => c.status === "interview").length,
-    accepted: candidates.filter((c) => c.status === "accepted").length,
-    rejected: candidates.filter((c) => c.status === "rejected").length,
-}
+const TAB_LABELS = [
+  { key: "all", label: "Toutes" },
+  { key: "pending", label: "En attente" },
+  { key: "interview", label: "Entretiens" },
+  { key: "analyzed", label: "Analysees" },
+  { key: "accepted", label: "Acceptees" },
+  { key: "rejected", label: "Refusees" },
+] as const
 
 export default function CandidaturesPage() {
-    const [searchQuery, setSearchQuery] = useState("")
-    const [selectedTab, setSelectedTab] = useState("all")
-    const [selectedJob, setSelectedJob] = useState("all")
+  const [query, setQuery] = useState("")
+  const [jobFilter, setJobFilter] = useState("all")
+  const [tab, setTab] = useState<(typeof TAB_LABELS)[number]["key"]>("all")
 
-    const filteredCandidates = candidates.filter((candidate) => {
-        const matchesSearch =
-            candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            candidate.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()))
-        const matchesTab = selectedTab === "all" || candidate.status === selectedTab
-        return matchesSearch && matchesTab
+  const counts = useMemo(() => ({
+    all: CANDIDATES.length,
+    pending: CANDIDATES.filter((c) => c.status === "pending").length,
+    interview: CANDIDATES.filter((c) => c.status === "interview").length,
+    analyzed: CANDIDATES.filter((c) => c.status === "analyzed").length,
+    accepted: CANDIDATES.filter((c) => c.status === "accepted").length,
+    rejected: CANDIDATES.filter((c) => c.status === "rejected").length,
+  }), [])
+
+  const filtered = useMemo(() => {
+    return CANDIDATES.filter((candidate) => {
+      const inTab = tab === "all" || candidate.status === tab
+      const inJob = jobFilter === "all" || candidate.title.toLowerCase().includes(jobFilter.toLowerCase())
+      const q = query.toLowerCase().trim()
+      const inSearch = q.length === 0 || candidate.name.toLowerCase().includes(q) || candidate.title.toLowerCase().includes(q) || candidate.skills.some((s) => s.toLowerCase().includes(q))
+      return inTab && inJob && inSearch
     })
+  }, [jobFilter, query, tab])
 
-    return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-foreground">Candidatures</h1>
-                <div className="flex items-center gap-4">
-                    <Button variant="outline">
-                        Publier une annonce
-                    </Button>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input placeholder="Rechercher..." className="w-64 pl-9" />
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Candidatures</h1>
 
-            {/* Search and Filters */}
-            <div className="flex items-center gap-4">
-                <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Rechercher un candidat ou un poste..."
-                        className="pl-9"
-                    />
-                </div>
-                <Select value={selectedJob} onValueChange={setSelectedJob}>
-                    <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Tous les postes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tous les postes</SelectItem>
-                        <SelectItem value="dev">Développeur Full-Stack</SelectItem>
-                        <SelectItem value="design">UX/UI Designer</SelectItem>
-                        <SelectItem value="pm">Chef de Projet</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-
-            {/* Tabs */}
-            <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-                <TabsList className="bg-muted/50 p-1">
-                    <TabsTrigger value="all" className="gap-2">
-                        Tous ({tabCounts.all})
-                    </TabsTrigger>
-                    <TabsTrigger value="new" className="gap-2">
-                        En attente ({tabCounts.new})
-                    </TabsTrigger>
-                    <TabsTrigger value="shortlisted" className="gap-2">
-                        En étude ({tabCounts.shortlisted})
-                    </TabsTrigger>
-                    <TabsTrigger value="interview" className="gap-2">
-                        Analyses ({tabCounts.interview})
-                    </TabsTrigger>
-                    <TabsTrigger value="accepted" className="gap-2">
-                        Acceptées ({tabCounts.accepted})
-                    </TabsTrigger>
-                    <TabsTrigger value="rejected" className="gap-2">
-                        Refusées ({tabCounts.rejected})
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value={selectedTab} className="mt-6">
-                    <div className="space-y-4">
-                        {filteredCandidates.map((candidate) => (
-                            <Card key={candidate.id} className="bg-card hover:shadow-md transition-shadow">
-                                <CardContent className="p-6">
-                                    <div className="flex items-start gap-6">
-                                        {/* Avatar */}
-                                        <Avatar className="h-14 w-14 flex-shrink-0">
-                                            <AvatarImage src={`/images/placeholder-${candidate.id}.jpg`} />
-                                            <AvatarFallback className="bg-secondary text-secondary-foreground text-lg">
-                                                {candidate.avatar}
-                                            </AvatarFallback>
-                                        </Avatar>
-
-                                        {/* Main Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h3 className="text-lg font-semibold text-foreground">{candidate.name}</h3>
-                                                <Badge className={statusConfig[candidate.status].className}>
-                                                    {statusConfig[candidate.status].label}
-                                                </Badge>
-                                            </div>
-
-                                            <p className="text-sm text-muted-foreground mb-2">{candidate.title}</p>
-
-                                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                                                <span className="flex items-center gap-1">
-                                                    <MapPin className="h-4 w-4" />
-                                                    {candidate.location}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
-                                                    {candidate.age} ans
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
-                                                    {candidate.applicationDate}
-                                                </span>
-                                            </div>
-
-                                            {/* Skills */}
-                                            <div className="flex flex-wrap gap-2 mb-3">
-                                                {candidate.skills.map((skill) => (
-                                                    <Badge key={skill} variant="secondary" className="text-xs">
-                                                        {skill}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-
-                                            {/* Education & Salary */}
-                                            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-                                                <span className="flex items-center gap-1">
-                                                    <GraduationCap className="h-4 w-4" />
-                                                    {candidate.education}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Briefcase className="h-4 w-4" />
-                                                    Salaire: {candidate.salary}
-                                                </span>
-                                                <span>{candidate.availability}</span>
-                                            </div>
-
-                                            <Button variant="link" className="h-auto p-0 mt-2 text-primary text-sm">
-                                                Compatibilité IA
-                                            </Button>
-                                        </div>
-
-                                        {/* Score & Actions */}
-                                        <div className="flex flex-col items-end gap-4">
-                                            {/* Score */}
-                                            <div className="text-right">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-2xl font-bold text-primary">{candidate.score}</span>
-                                                    <span className="text-sm text-muted-foreground">/100</span>
-                                                </div>
-                                                <p className="text-xs text-muted-foreground">Score IA</p>
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="flex items-center gap-2">
-                                                <Button size="sm" className="gap-1">
-                                                    <ExternalLink className="h-4 w-4" />
-                                                    Voir CV
-                                                </Button>
-                                                <Button variant="outline" size="sm" className="gap-1">
-                                                    <MessageSquare className="h-4 w-4" />
-                                                    Message
-                                                </Button>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="sm">
-                                                            <MoreVertical className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem className="text-green-600">
-                                                            <Check className="h-4 w-4 mr-2" />
-                                                            Accepter
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-red-600">
-                                                            <X className="h-4 w-4 mr-2" />
-                                                            Refuser
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>Voir profil</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
-
-                                            {/* Progress Bar */}
-                                            <div className="w-32">
-                                                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                                                    <div
-                                                        className="h-full bg-primary rounded-full"
-                                                        style={{ width: `${candidate.matchScore}%` }}
-                                                    />
-                                                </div>
-                                                <p className="text-xs text-muted-foreground text-right mt-1">
-                                                    {candidate.matchScore}%
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </TabsContent>
-            </Tabs>
+      <div className="rounded-xl border border-border bg-white p-3 space-y-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher un candidat ou un poste..." className="h-10 pl-9" />
+          </div>
+          <Select value={jobFilter} onValueChange={setJobFilter}>
+            <SelectTrigger className="h-10 w-full md:w-[220px]"><SelectValue placeholder="Tous les postes" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les postes</SelectItem>
+              <SelectItem value="developpeuse full-stack senior">Developpeuse Full-Stack Senior</SelectItem>
+              <SelectItem value="ux/ui designer">UX/UI Designer</SelectItem>
+              <SelectItem value="chef de projet digital">Chef de Projet Digital</SelectItem>
+              <SelectItem value="data scientist">Data Scientist</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-    )
+
+        <div className="overflow-x-auto">
+          <div className="grid min-w-[720px] grid-cols-6 overflow-hidden rounded-lg border border-border bg-muted/35 text-xs">
+            {TAB_LABELS.map((item, i) => (
+              <button key={item.key} onClick={() => setTab(item.key)} className={`py-2.5 text-center transition-colors ${tab === item.key ? "bg-white text-foreground" : "text-muted-foreground hover:bg-muted/60"} ${i > 0 ? "border-l border-border" : ""}`}>{item.label} ({counts[item.key]})</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {filtered.map((candidate) => (
+          <div key={candidate.id} className="rounded-xl border border-border bg-white px-4 py-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500"><User className="h-4 w-4 text-white" /></div>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2 flex-wrap"><h3 className="text-lg font-semibold text-foreground">{candidate.name}</h3><span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${candidate.statusClass}`}>{candidate.statusLabel}</span></div>
+                    <p className="text-sm text-muted-foreground">{candidate.title}</p>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{candidate.location}</span><span className="inline-flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" />{candidate.years} ans</span><span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{candidate.date}</span></div>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">{candidate.skills.map((skill) => <span key={skill} className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-[10px] text-foreground">{skill}</span>)}</div>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-5 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1"><GraduationCap className="h-3.5 w-3.5" />{candidate.degree}</span><span className="inline-flex items-center gap-1"><CircleDollarSign className="h-3.5 w-3.5" />Salaire: {candidate.salary}</span><span className="inline-flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" />{candidate.availability}</span></div>
+                  </div>
+                </div>
+
+                <div className="mt-2.5 text-xs text-blue-500">Compatibilite IA</div>
+                <div className="mt-1 flex items-center gap-3"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-blue-100"><div className="h-full rounded-full bg-blue-500" style={{ width: `${candidate.score}%` }} /></div><span className={`w-8 text-right text-xs font-semibold ${candidate.score >= 90 ? "text-green-500" : candidate.score >= 80 ? "text-blue-500" : "text-muted-foreground"}`}>{candidate.score}%</span></div>
+              </div>
+
+              <div className="w-full lg:w-[165px] shrink-0">
+                <div className="mb-2 flex items-center lg:justify-end gap-1 text-sm font-semibold text-foreground"><Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" /><span>{candidate.score}</span><span className="text-muted-foreground">/100</span></div>
+                <p className="-mt-1 mb-2 lg:text-right text-[10px] text-muted-foreground">Score IA</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2">
+                  <Button size="sm" className="h-8 w-full justify-center gap-1 rounded-md bg-blue-500 text-xs hover:bg-blue-600"><FileText className="h-3.5 w-3.5" />Voir CV</Button>
+                  <Button variant="outline" size="sm" className="h-8 w-full justify-center gap-1 rounded-md text-xs"><MessageSquare className="h-3.5 w-3.5" />Message</Button>
+                  <Button variant="outline" size="sm" className="h-8 w-full justify-center gap-1 rounded-md text-xs"><Plus className="h-3.5 w-3.5" />Voir plus</Button>
+                </div>
+                {candidate.id === 1 && <div className="mt-2 overflow-hidden rounded-md border border-border bg-white shadow-sm"><button className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs text-green-600 hover:bg-green-50"><Check className="h-3.5 w-3.5" /> Accepter</button><button className="flex w-full items-center gap-1.5 border-t border-border px-3 py-1.5 text-xs text-red-500 hover:bg-red-50"><X className="h-3.5 w-3.5" /> Refuser</button></div>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }

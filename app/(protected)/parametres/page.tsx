@@ -1,303 +1,152 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Bell, Lock, Globe, Palette, CreditCard, Shield, Trash2 } from "lucide-react"
+import { AlertTriangle, Save, Smartphone } from "lucide-react"
 
 export default function ParametresPage() {
-    const [notifications, setNotifications] = useState({
-        email: true,
-        push: true,
-        newCandidature: true,
-        messages: true,
-        newsletter: false,
-    })
+    const [notifEmail, setNotifEmail] = useState(true)
+    const [notifPush, setNotifPush] = useState(true)
+    const [notifWeekly, setNotifWeekly] = useState(false)
 
     return (
-        <div className="w-full space-y-4">
-            <h1 className="text-2xl font-bold text-foreground">Paramètres</h1>
+        <div className="space-y-5 pb-12">
+            <div>
+                <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Parametres</h1>
+                <p className="text-sm text-muted-foreground">Gerez vos preferences et parametres de compte</p>
+            </div>
 
-            <Tabs defaultValue="general" className="space-y-2">
-                <TabsList className="w-full rounded-sm">
-                    <TabsTrigger value="general" className="flex-1 gap-2 rounded-sm">
-                        <Globe className="h-4 w-4" />
-                        Général
-                    </TabsTrigger>
-                    <TabsTrigger value="notifications" className="flex-1 gap-2 rounded-sm">
-                        <Bell className="h-4 w-4" />
-                        Notifications
-                    </TabsTrigger>
-                    <TabsTrigger value="security" className="flex-1 gap-2 rounded-sm">
-                        <Lock className="h-4 w-4" />
-                        Sécurité
-                    </TabsTrigger>
-                    <TabsTrigger value="billing" className="flex-1 gap-2 rounded-sm">
-                        <CreditCard className="h-4 w-4" />
-                        Facturation
-                    </TabsTrigger>
-                </TabsList>
+            <Section title="Informations du compte">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <Field label="Prenom"><Input defaultValue="Jean" /></Field>
+                    <Field label="Nom"><Input defaultValue="KONAN" /></Field>
+                    <Field label="Adresse email"><Input defaultValue="jean.konan@goriya-lab.com" /></Field>
+                    <Field label="Telephone"><Input defaultValue="+33 1 23 45 67 89" /></Field>
+                    <Field label="Fonction" className="md:col-span-2"><Input defaultValue="Responsable RH" /></Field>
+                </div>
+            </Section>
 
-                {/* General Settings */}
-                <TabsContent value="general">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Paramètres généraux</CardTitle>
-                            <CardDescription>
-                                Gérez les paramètres généraux de votre compte
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <FieldGroup>
-                                <Field>
-                                    <FieldLabel>Langue</FieldLabel>
-                                    <Select defaultValue="fr">
-                                        <SelectTrigger className="w-64">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="fr">Français</SelectItem>
-                                            <SelectItem value="en">English</SelectItem>
-                                            <SelectItem value="es">Español</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </Field>
+            <Section title="Notifications">
+                <div className="divide-y divide-border">
+                    <NotifRow label="Notifications par email" description="Recevoir des notifications sur les nouvelles candidatures" checked={notifEmail} onChange={setNotifEmail} />
+                    <NotifRow label="Notifications push" description="Recevoir des notifications push sur votre navigation" checked={notifPush} onChange={setNotifPush} />
+                    <NotifRow label="Rapports hebdomadaires" description="Recevoir un resume hebdomadaire de vos recrutements" checked={notifWeekly} onChange={setNotifWeekly} />
+                </div>
+                <div className="mt-4">
+                    <p className="mb-1.5 text-sm text-muted-foreground">Frequence des notifications</p>
+                    <Select defaultValue="instantane">
+                        <SelectTrigger className="w-full md:w-[300px]"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="instantane">Instantane</SelectItem>
+                            <SelectItem value="quotidien">Quotidien</SelectItem>
+                            <SelectItem value="hebdomadaire">Hebdomadaire</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </Section>
 
-                                <Field>
-                                    <FieldLabel>Fuseau horaire</FieldLabel>
-                                    <Select defaultValue="africa-abidjan">
-                                        <SelectTrigger className="w-64">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="africa-abidjan">Africa/Abidjan (GMT+0)</SelectItem>
-                                            <SelectItem value="europe-paris">Europe/Paris (GMT+1)</SelectItem>
-                                            <SelectItem value="america-ny">America/New_York (GMT-5)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </Field>
+            <Section title="Confidentialite et securite">
+                <div className="space-y-3">
+                    <p className="text-xs text-muted-foreground">Changer le mot de passe</p>
+                    <Input type="password" placeholder="Mot de passe actuel" />
+                    <Input type="password" placeholder="Nouveau mot de passe" />
+                    <Input type="password" placeholder="Confirmer le nouveau mot de passe" />
+                    <Button variant="outline" size="sm">Mettre a jour le mot de passe</Button>
+                </div>
 
-                                <Field>
-                                    <FieldLabel>Format de date</FieldLabel>
-                                    <Select defaultValue="dd-mm-yyyy">
-                                        <SelectTrigger className="w-64">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="dd-mm-yyyy">DD/MM/YYYY</SelectItem>
-                                            <SelectItem value="mm-dd-yyyy">MM/DD/YYYY</SelectItem>
-                                            <SelectItem value="yyyy-mm-dd">YYYY-MM-DD</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </Field>
-                            </FieldGroup>
-
-                            <div className="flex justify-end">
-                                <Button>Enregistrer les modifications</Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                {/* Notifications Settings */}
-                <TabsContent value="notifications">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Préférences de notification</CardTitle>
-                            <CardDescription>
-                                Choisissez comment vous souhaitez être notifié
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium text-foreground">Notifications par email</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Recevez des notifications par email
-                                        </p>
-                                    </div>
-                                    <Switch
-                                        checked={notifications.email}
-                                        onCheckedChange={(checked) =>
-                                            setNotifications({ ...notifications, email: checked })
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium text-foreground">Notifications push</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Recevez des notifications push dans votre navigateur
-                                        </p>
-                                    </div>
-                                    <Switch
-                                        checked={notifications.push}
-                                        onCheckedChange={(checked) =>
-                                            setNotifications({ ...notifications, push: checked })
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium text-foreground">Nouvelles candidatures</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Être notifié lors d&apos;une nouvelle candidature
-                                        </p>
-                                    </div>
-                                    <Switch
-                                        checked={notifications.newCandidature}
-                                        onCheckedChange={(checked) =>
-                                            setNotifications({ ...notifications, newCandidature: checked })
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium text-foreground">Messages</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Être notifié lors d&apos;un nouveau message
-                                        </p>
-                                    </div>
-                                    <Switch
-                                        checked={notifications.messages}
-                                        onCheckedChange={(checked) =>
-                                            setNotifications({ ...notifications, messages: checked })
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium text-foreground">Newsletter</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Recevoir notre newsletter mensuelle
-                                        </p>
-                                    </div>
-                                    <Switch
-                                        checked={notifications.newsletter}
-                                        onCheckedChange={(checked) =>
-                                            setNotifications({ ...notifications, newsletter: checked })
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                {/* Security Settings */}
-                <TabsContent value="security">
-                    <div className="space-y-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Changer le mot de passe</CardTitle>
-                                <CardDescription>
-                                    Mettez à jour votre mot de passe pour sécuriser votre compte
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-2">
-                                <FieldGroup>
-                                    <Field>
-                                        <FieldLabel>Mot de passe actuel</FieldLabel>
-                                        <Input type="password" className="max-w-md" />
-                                    </Field>
-                                    <Field>
-                                        <FieldLabel>Nouveau mot de passe</FieldLabel>
-                                        <Input type="password" className="max-w-md" />
-                                    </Field>
-                                    <Field>
-                                        <FieldLabel>Confirmer le nouveau mot de passe</FieldLabel>
-                                        <Input type="password" className="max-w-md" />
-                                    </Field>
-                                </FieldGroup>
-                                <Button>Mettre à jour le mot de passe</Button>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center flex-1 gap-2">
-                                    <Shield className="h-5 w-5" />
-                                    Authentification à deux facteurs
-                                </CardTitle>
-                                <CardDescription>
-                                    Ajoutez une couche de sécurité supplémentaire à votre compte
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button variant="outline">Activer 2FA</Button>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-destructive">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-destructive">
-                                    <Trash2 className="h-5 w-5" />
-                                    Zone dangereuse
-                                </CardTitle>
-                                <CardDescription>
-                                    Actions irréversibles pour votre compte
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button variant="destructive">Supprimer mon compte</Button>
-                            </CardContent>
-                        </Card>
+                <div className="mt-6 rounded-lg border border-border p-3">
+                    <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-foreground">Authentification a deux facteurs</p>
+                            <p className="text-xs text-muted-foreground">Securisez votre compte avec la tablette Samsung Tab 8</p>
+                        </div>
+                        <span className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-0.5 text-xs text-orange-500 w-fit">Non configure</span>
                     </div>
-                </TabsContent>
+                    <button className="inline-flex items-center gap-2 rounded border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-gray-50 transition-colors">
+                        <Smartphone className="h-3.5 w-3.5" />
+                        Configurer l'appareil Tab 8
+                    </button>
+                </div>
+            </Section>
 
-                {/* Billing Settings */}
-                <TabsContent value="billing">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Abonnement actuel</CardTitle>
-                            <CardDescription>
-                                Gérez votre abonnement et vos informations de paiement
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="rounded-lg border p-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-semibold text-foreground">Plan Standard</p>
-                                        <p className="text-sm text-muted-foreground">1 999 FCFA / mois</p>
-                                    </div>
-                                    <Button variant="outline">Changer de plan</Button>
-                                </div>
-                            </div>
+            <Section title="Abonnement et facturation">
+                <div className="rounded-xl bg-blue-600 px-4 py-4 text-white sm:px-5">
+                    <div className="flex items-center justify-between gap-3">
+                        <div>
+                            <p className="font-bold">Plan Premium</p>
+                            <p className="text-xs text-blue-200">Acces a toutes les fonctionnalites IA</p>
+                        </div>
+                        <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-medium text-white">Actif</span>
+                    </div>
+                </div>
 
-                            <div>
-                                <h4 className="font-medium text-foreground mb-3">Historique des paiements</h4>
-                                <div className="space-y-2">
-                                    {[
-                                        { date: "15 Jan 2024", amount: "1 999 FCFA", status: "Payé" },
-                                        { date: "15 Déc 2023", amount: "1 999 FCFA", status: "Payé" },
-                                        { date: "15 Nov 2023", amount: "1 999 FCFA", status: "Payé" },
-                                    ].map((payment, index) => (
-                                        <div
-                                            key={index}
-                                            className="flex items-center justify-between rounded-lg border p-3"
-                                        >
-                                            <span className="text-sm text-foreground">{payment.date}</span>
-                                            <span className="text-sm text-foreground">{payment.amount}</span>
-                                            <span className="text-sm text-green-600">{payment.status}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
+                <div className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                    <div><p className="text-xs text-muted-foreground">Prochaine facturation</p><p className="text-foreground">15 Fevrier 2024</p></div>
+                    <div><p className="text-xs text-muted-foreground">Montant</p><p className="text-foreground">5000 F/mois</p></div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                    <Button variant="outline" size="sm">Gerer l'abonnement</Button>
+                    <Button variant="outline" size="sm">Historique des factures</Button>
+                </div>
+            </Section>
+
+            <Section title="Langue et region">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <p className="mb-1.5 text-sm text-muted-foreground">Langue de l'interface</p>
+                        <Select defaultValue="fr"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="fr">Francais</SelectItem><SelectItem value="en">English</SelectItem></SelectContent></Select>
+                    </div>
+                    <div>
+                        <p className="mb-1.5 text-sm text-muted-foreground">Fuseau horaire</p>
+                        <Select defaultValue="africa-abidjan"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="africa-abidjan">Africa/Abidjan</SelectItem><SelectItem value="europe-paris">Europe/Paris</SelectItem></SelectContent></Select>
+                    </div>
+                </div>
+            </Section>
+
+            <div className="rounded-xl border border-red-200 bg-red-50/40 p-5">
+                <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-semibold text-red-600">Zone dangereuse</h2><AlertTriangle className="h-4 w-4 text-red-400" /></div>
+                <p className="mb-1 text-sm font-medium text-foreground">Supprimer le compte</p>
+                <p className="mb-4 text-xs text-muted-foreground">Une fois supprime, votre compte ne peut pas etre recupere. Toutes vos donnees seront perdues.</p>
+                <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">Supprimer le compte</Button>
+            </div>
+
+            <div className="flex justify-center pt-1">
+                <Button className="gap-2 rounded-full bg-primary px-6 text-white hover:bg-primary/90"><Save className="h-4 w-4" />Enregistrer les modifications</Button>
+            </div>
+        </div>
+    )
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div className="rounded-xl border border-border bg-white p-4 md:p-6">
+            <h2 className="mb-4 text-sm font-semibold text-foreground">{title}</h2>
+            {children}
+        </div>
+    )
+}
+
+function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
+    return (
+        <div className={className}>
+            <p className="mb-1 text-xs text-muted-foreground">{label}</p>
+            {children}
+        </div>
+    )
+}
+
+function NotifRow({ label, description, checked, onChange }: { label: string; description: string; checked: boolean; onChange: (v: boolean) => void }) {
+    return (
+        <div className="flex items-center justify-between gap-4 py-4">
+            <div>
+                <p className="text-sm font-medium text-foreground">{label}</p>
+                <p className="text-xs text-muted-foreground">{description}</p>
+            </div>
+            <Switch checked={checked} onCheckedChange={onChange} />
         </div>
     )
 }

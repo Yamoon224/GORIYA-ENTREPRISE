@@ -1,46 +1,51 @@
 "use client"
 
-import { getAuth } from "@/lib/utils"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { updateCompany } from "@/actions/companies"
 import { ProfilContentProps } from "@/@types/props"
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Camera, MapPin, Globe, Building2, Users, Calendar, Edit, Save } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ICompany } from "@/@types/interface"
+import { getAuth } from "@/lib/utils"
 import { toast } from "sonner"
+import { Camera, MapPin, Globe, Users, Calendar, Save, Plus, X } from "lucide-react"
+
+const defaultBenefits = ["Télétravail flexible", "Mutuelle premium", "Tickets restaurant"]
 
 export default function Content({ company }: ProfilContentProps) {
     const [loading, setLoading] = useState(false)
-    const [isEditing, setIsEditing] = useState(false)
     const [logo, setLogo] = useState<File | null>(null)
-    const [coverImage, setCoverImage] = useState<File | null>(null)
     const [companyData, setCompanyData] = useState<ICompany>(company)
+    const [benefits, setBenefits] = useState<string[]>(defaultBenefits)
+    const [newBenefit, setNewBenefit] = useState("")
+    const [mission, setMission] = useState(
+        "Notre mission est de rendre la technologie accessible à tous, en développant des solutions intuitives et performantes. Nos valeurs : Innovation, excellence, collaboration et respect de l'environnement."
+    )
 
     const stats = [
-        { label: "Offres publiées", value: "15" },
-        { label: "Candidatures reçues", value: "125" },
-        { label: "Recrutements", value: "8" },
-        { label: "Score entreprise", value: "4.8/5" },
+        { value: "156", label: "Employés",       color: "text-blue-500" },
+        { value: "45",  label: "Offres actives",  color: "text-orange-400" },
+        { value: "4.8", label: "Note moyenne",    color: "text-yellow-400" },
+        { value: "892", label: "Candidatures",    color: "text-green-500" },
     ]
+
+    const addBenefit = () => {
+        if (newBenefit.trim() && !benefits.includes(newBenefit.trim())) {
+            setBenefits([...benefits, newBenefit.trim()])
+            setNewBenefit("")
+        }
+    }
+
+    const removeBenefit = (b: string) => setBenefits(benefits.filter((x) => x !== b))
 
     const handleSubmit = async () => {
         try {
             setLoading(true)
             const auth = getAuth()
-            if (!auth) throw new Error("Not authenticated")
-    
+            if (!auth) throw new Error("Non authentifié")
             const { token, user } = auth
-    
             const formData = new FormData()
-    
-            // Mapping frontend → backend
             formData.append("companyName", companyData.name)
             formData.append("about", companyData.about)
             formData.append("sector", companyData.sector)
@@ -49,279 +54,250 @@ export default function Content({ company }: ProfilContentProps) {
             formData.append("website", companyData.website)
             formData.append("email", companyData.email)
             formData.append("phone", companyData.phone)
-    
             if (companyData.creationDate) {
                 formData.append("creationDate", new Date(companyData.creationDate).toISOString())
             }
-    
-            // fichiers
             if (logo) formData.append("logo", logo)
-            if (coverImage) formData.append("coverImage", coverImage)
-    
-            // appel API via abstraction
-            const data = await updateCompany(user.companyId, formData, token)
-    
-            toast.success("Profil Entreprise modifié")
-            // console.log("UPDATED:", data)
-    
-            setIsEditing(false)
-    
+            await updateCompany(user.companyId, formData, token)
+            toast.success("Profil Entreprise mis à jour")
         } catch (error: any) {
-            console.error("Update failed:", error)
-    
             toast.error(error.message)
-            // alert(error?.message || "Une erreur est survenue")
         } finally {
-            setLoading(false) // 🔹 bouton réactivé à la fin
+            setLoading(false)
         }
     }
 
     return (
-        <div className="space-y-3 w-full">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-foreground">Profil Entreprise</h1>
-                <Button
-                    variant={isEditing ? "default" : "outline"}
-                    onClick={isEditing ? handleSubmit : () => setIsEditing(true)}
-                    disabled={loading} // 🔹 ici
-                    className="gap-2">
-                    { isEditing ? ( <><Save className="h-4 w-4" /> Enregistrer </> ) : ( <><Edit className="h-4 w-4" /> Modifier</> ) }
-                </Button>
+        <div className="space-y-6 pb-10">
+            <div>
+                <h1 className="text-xl font-semibold text-foreground">Profil Entreprise</h1>
+                <p className="text-sm text-muted-foreground">Gérez les informations publiques de votre entreprise</p>
             </div>
 
-            {/* Company Header */}
-            <Card className="bg-card overflow-hidden">
-                {/* Cover Image */}
-                <div className="h-32 bg-gradient-to-r from-primary to-blue-600 relative">
-                    {/* Affichage de l'image si elle existe, sinon fallback */}
-                    <img
-                        src={companyData.coverImage ? 'https://goriya-backend-production.up.railway.app/' + companyData.coverImage : '/images/placeholder-cover.jpg'}
-                        alt="Cover"
-                        className="w-full h-full object-cover"
-                    />
-
-                    {isEditing && (
-                        <>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                className="absolute top-4 right-4 gap-2"
-                            >
-                                <Camera className="h-4 w-4" />
-                                Modifier la bannière
-                            </Button>
+            {/* ── Section identité ── */}
+            <div className="rounded-xl border border-border bg-white p-6">
+                <div className="flex flex-col items-start gap-5 md:flex-row">
+                    {/* Avatar + camera */}
+                    <div className="relative shrink-0">
+                        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-blue-500">
+                            {companyData.logo ? (
+                                <img
+                                    src={"https://goriya-backend-production.up.railway.app/" + companyData.logo}
+                                    alt="logo"
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-2xl font-bold text-white">
+                                    {companyData.name?.[0]?.toUpperCase() ?? "C"}
+                                </span>
+                            )}
+                        </div>
+                        <label className="absolute -bottom-1 -right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-blue-500 shadow">
+                            <Camera className="h-3 w-3 text-white" />
                             <input
                                 type="file"
                                 accept="image/*"
-                                hidden
-                                onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+                                className="hidden"
+                                onChange={(e) => setLogo(e.target.files?.[0] || null)}
                             />
-                        </>
-                    )}
-                </div>
+                        </label>
+                    </div>
 
-                <CardContent className="relative pt-0">
-                    {/* Logo */}
-                    <div className="absolute -top-12 left-6">
-                        <div className="relative">
-                            <Avatar className="h-24 w-24 border-4 border-card">
-                                {/* 🔹 Utilisation de || pour fallback */}
-                                <AvatarImage
-                                    src={
-                                        companyData.logo
-                                            ? 'https://goriya-backend-production.up.railway.app/' + companyData.logo
-                                            : '/images/placeholder-company.jpg'
-                                    }
+                    {/* Fields grid */}
+                    <div className="grid flex-1 grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+                        <div>
+                            <p className="mb-1 text-xs text-muted-foreground">Nom de l&apos;entreprise *</p>
+                            <Input
+                                value={companyData.name}
+                                onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
+                                className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                            />
+                        </div>
+                        <div>
+                            <p className="mb-1 text-xs text-muted-foreground">Secteur d&apos;activité *</p>
+                            <Input
+                                value={companyData.sector}
+                                onChange={(e) => setCompanyData({ ...companyData, sector: e.target.value })}
+                                className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                            />
+                        </div>
+                        <div>
+                            <p className="mb-1 text-xs text-muted-foreground">Adresse du siège</p>
+                            <div className="flex items-center gap-1.5 border-b border-border pb-1">
+                                <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Input
+                                    value={companyData.location}
+                                    onChange={(e) => setCompanyData({ ...companyData, location: e.target.value })}
+                                    className="h-7 border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                                 />
-                                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                                    {companyData.name ? companyData.name[0].toUpperCase() : 'C'}
-                                </AvatarFallback>
-                            </Avatar>
-                            {isEditing && (
-                                <>
-                                    <Button
-                                        size="icon"
-                                        variant="secondary"
-                                        className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
-                                        <Camera className="h-4 w-4" />
-                                    </Button>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        hidden
-                                        onChange={(e) => setLogo(e.target.files?.[0] || null)} />
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="pt-14 pb-4">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <h2 className="text-2xl font-bold text-foreground">{companyData.name}</h2>
-                                <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        <MapPin className="h-4 w-4" />
-                                        {companyData.location}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Building2 className="h-4 w-4" />
-                                        {companyData.sector}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Users className="h-4 w-4" />
-                                        {companyData.companySize}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Calendar className="h-4 w-4" />
-                                        Fondée en {companyData.creationDate}
-                                    </span>
-                                </div>
                             </div>
-                            <Badge className="bg-green-100 text-green-700">Profil vérifié</Badge>
+                        </div>
+                        <div>
+                            <p className="mb-1 text-xs text-muted-foreground">Site web</p>
+                            <div className="flex items-center gap-1.5 border-b border-border pb-1">
+                                <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Input
+                                    value={companyData.website}
+                                    onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
+                                    className="h-7 border-0 px-0 text-sm shadow-none focus-visible:ring-0"
+                                />
+                            </div>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
-
-            {/* Stats */}
-            <div className="grid gap-4 md:grid-cols-4">
-                {stats.map((stat) => (
-                    <Card key={stat.label} className="bg-card">
-                        <CardContent className="p-4 text-center">
-                            <p className="text-2xl font-bold text-primary">{stat.value}</p>
-                            <p className="text-sm text-muted-foreground">{stat.label}</p>
-                        </CardContent>
-                    </Card>
-                ))}
+                </div>
             </div>
 
-            {/* Company Info */}
-            <Card className="bg-card">
-                <CardHeader>
-                    <CardTitle>Informations de l&apos;entreprise</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <FieldGroup>
-                        <Field>
-                            <FieldLabel>À propos</FieldLabel>
-                            {isEditing ? (
-                                <Textarea
-                                    value={companyData.about}
-                                    onChange={(e) => setCompanyData({ ...companyData, about: e.target.value })}
-                                    rows={4}
-                                />
-                            ) : (
-                                <p className="text-muted-foreground">{companyData.about}</p>
-                            )}
-                        </Field>
+            {/* ── Informations générales ── */}
+            <div className="rounded-xl border border-border bg-white p-6 space-y-5">
+                <h2 className="text-base font-semibold text-foreground">Informations générales</h2>
 
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <Field>
-                                <FieldLabel>Secteur d&apos;activité</FieldLabel>
-                                {isEditing ? (
-                                    <Select
-                                        value={companyData.sector}
-                                        onValueChange={(value) => setCompanyData({ ...companyData, sector: value })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Technologie">Technologie</SelectItem>
-                                            <SelectItem value="Finance">Finance</SelectItem>
-                                            <SelectItem value="Marketing">Marketing</SelectItem>
-                                            <SelectItem value="Services">Services</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <p className="text-foreground">{companyData.sector}</p>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel>Taille de l&apos;entreprise</FieldLabel>
-                                {isEditing ? (
-                                    <Select
-                                        value={companyData.companySize}
-                                        onValueChange={(value) => setCompanyData({ ...companyData, companySize: value })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="1-10 employés">1-10 employés</SelectItem>
-                                            <SelectItem value="11-50 employés">11-50 employés</SelectItem>
-                                            <SelectItem value="51-200 employés">51-200 employés</SelectItem>
-                                            <SelectItem value="200+ employés">200+ employés</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <p className="text-foreground">{companyData.companySize}</p>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel>Email</FieldLabel>
-                                {isEditing ? (
-                                    <Input
-                                        type="email"
-                                        value={companyData.email}
-                                        onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
-                                    />
-                                ) : (
-                                    <p className="text-foreground">{companyData.email}</p>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel>Téléphone</FieldLabel>
-                                {isEditing ? (
-                                    <Input
-                                        type="tel"
-                                        value={companyData.phone}
-                                        onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
-                                    />
-                                ) : (
-                                    <p className="text-foreground">{companyData.phone}</p>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel>Site web</FieldLabel>
-                                {isEditing ? (
-                                    <Input
-                                        type="url"
-                                        value={companyData.website}
-                                        onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
-                                    />
-                                ) : (
-                                    <a
-                                        href={companyData.website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-primary hover:underline flex items-center gap-1">
-                                        <Globe className="h-4 w-4" />
-                                        {companyData.website}
-                                    </a>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel>Localisation</FieldLabel>
-                                {isEditing ? (
-                                    <Input
-                                        value={companyData.location}
-                                        onChange={(e) => setCompanyData({ ...companyData, location: e.target.value })}
-                                    />
-                                ) : (
-                                    <p className="text-foreground">{companyData.location}</p>
-                                )}
-                            </Field>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Taille de l&apos;entreprise</p>
+                        <div className="flex items-center gap-2 text-sm text-foreground">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <Input
+                                value={companyData.companySize}
+                                onChange={(e) => setCompanyData({ ...companyData, companySize: e.target.value })}
+                                className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                            />
                         </div>
-                    </FieldGroup>
-                </CardContent>
-            </Card>
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Année de création</p>
+                        <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <Input
+                                value={companyData.creationDate ?? ""}
+                                onChange={(e) => setCompanyData({ ...companyData, creationDate: e.target.value })}
+                                className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p className="mb-1.5 text-xs text-muted-foreground">Description de l&apos;entreprise</p>
+                    <Textarea
+                        value={companyData.about}
+                        onChange={(e) => setCompanyData({ ...companyData, about: e.target.value })}
+                        rows={3}
+                        className="text-sm resize-none"
+                    />
+                </div>
+
+                <div>
+                    <p className="mb-1.5 text-xs text-muted-foreground">Mission et valeurs</p>
+                    <Textarea
+                        value={mission}
+                        onChange={(e) => setMission(e.target.value)}
+                        rows={3}
+                        className="text-sm resize-none"
+                    />
+                </div>
+            </div>
+
+            {/* ── Avantages et bénéfices ── */}
+            <div className="rounded-xl border border-border bg-white p-6 space-y-4">
+                <h2 className="text-base font-semibold text-foreground">Avantages et bénéfices</h2>
+
+                <div className="flex items-center gap-2">
+                    <Input
+                        value={newBenefit}
+                        onChange={(e) => setNewBenefit(e.target.value)}
+                        placeholder="Ajouter un avantage"
+                        className="flex-1 text-sm"
+                        onKeyDown={(e) => { if (e.key === "Enter") addBenefit() }}
+                    />
+                    <button
+                        onClick={addBenefit}
+                        className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-gray-50 transition-colors"
+                    >
+                        <Plus className="h-4 w-4" />
+                    </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                    {benefits.map((b) => (
+                        <span
+                            key={b}
+                            className="flex items-center gap-1.5 rounded-full border border-border bg-gray-50 px-3 py-1 text-xs text-foreground"
+                        >
+                            {b}
+                            <button onClick={() => removeBenefit(b)} className="text-muted-foreground hover:text-foreground">
+                                <X className="h-3 w-3" />
+                            </button>
+                        </span>
+                    ))}
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                    Ces avantages seront affichés sur vos offres d&apos;emploi pour attirer les meilleurs candidats.
+                </p>
+            </div>
+
+            {/* ── Informations de contact ── */}
+            <div className="rounded-xl border border-border bg-white p-6 space-y-5">
+                <h2 className="text-base font-semibold text-foreground">Informations de contact</h2>
+
+                <div className="grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Responsable RH</p>
+                        <Input
+                            defaultValue="Marie Dupont"
+                            className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                        />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Email de contact</p>
+                        <Input
+                            value={companyData.email}
+                            onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
+                            className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                        />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Téléphone</p>
+                        <Input
+                            value={companyData.phone}
+                            onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
+                            className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                        />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Linkedin entreprise</p>
+                        <Input
+                            defaultValue="https://linkedin.com/company/techcorp-solutions"
+                            className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Statistiques ── */}
+            <div className="rounded-xl border border-border bg-white p-6 space-y-4">
+                <h2 className="text-base font-semibold text-foreground">Statistiques de l&apos;entreprise</h2>
+                <div className="grid grid-cols-2 divide-x divide-y divide-border md:grid-cols-4 md:divide-y-0">
+                    {stats.map((s) => (
+                        <div key={s.label} className="flex flex-col items-center py-3">
+                            <span className={`text-3xl font-bold ${s.color}`}>{s.value}</span>
+                            <span className="mt-1 text-xs text-muted-foreground">{s.label}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* ── Save button ── */}
+            <div className="flex justify-center pt-2">
+                <Button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="gap-2 rounded-full bg-primary px-8 text-sm font-semibold text-white hover:bg-primary/90"
+                >
+                    <Save className="h-4 w-4" />
+                    Enregistrer les modifications
+                </Button>
+            </div>
         </div>
     )
 }

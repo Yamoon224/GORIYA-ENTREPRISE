@@ -102,8 +102,8 @@ export default function EmployesPage() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-2xl">
+      <div className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
@@ -113,7 +113,7 @@ export default function EmployesPage() {
           />
         </div>
         <Select value={department} onValueChange={setDepartment}>
-          <SelectTrigger className="w-52 h-10">
+          <SelectTrigger className="h-10 w-full lg:w-52">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -124,9 +124,9 @@ export default function EmployesPage() {
             ))}
           </SelectContent>
         </Select>
-        <Button className="gap-2 h-10">
+        <Button className="h-10 gap-2 rounded-lg bg-primary font-semibold lg:w-auto">
           <UserPlus className="h-4 w-4" />
-          Ajouter un employé
+          + Ajouter un employé
         </Button>
       </div>
 
@@ -138,8 +138,9 @@ export default function EmployesPage() {
             <p className="text-sm text-muted-foreground">{filtered.length} employé(s) affiché(s)</p>
           </div>
         </CardHeader>
-        <CardContent className="px-6 pb-6">
-          <table className="w-full">
+        <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[980px]">
             <thead>
               <tr className="border-b border-border">
                 {["Employé", "Département", "Poste", "Contact", "Statut", "Date d'entrée", ""].map((h) => (
@@ -175,8 +176,8 @@ export default function EmployesPage() {
                     <Badge
                       className={
                         emp.status === "Actif"
-                          ? "bg-purple-100 text-purple-700 hover:bg-purple-100 font-normal"
-                          : "bg-orange-100 text-orange-700 hover:bg-orange-100 font-normal"
+                          ? "bg-purple-600 text-white hover:bg-purple-600 rounded-full px-3 font-normal"
+                          : "bg-orange-100 text-orange-600 hover:bg-orange-100 rounded-full px-3 font-normal"
                       }
                     >
                       {emp.status}
@@ -186,7 +187,7 @@ export default function EmployesPage() {
                   <td className="py-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -201,6 +202,7 @@ export default function EmployesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </CardContent>
       </Card>
     </div>

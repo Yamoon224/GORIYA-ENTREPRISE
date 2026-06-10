@@ -1,340 +1,380 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
-import { Sparkles, X, Calendar } from "lucide-react"
-import Image from "next/image"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createJobOffer } from "@/actions/offers"
 import { IOffer } from "@/@types/interface"
-import { formatAmount, formatDate, getAuth } from "@/lib/utils"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+import { getAuth } from "@/lib/utils"
+import { Calendar, Heart, MapPin, Plus, Sparkles } from "lucide-react"
 
+const departments = ["Technologie", "Design", "Data", "Marketing", "Management"]
 const contractTypes = ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE", "TEMPS_PARTIEL"]
-const suggestedSkills = [
-    "Améliorer CV et les mettre en avant",
-    "Amélioration description poste matching",
-    "Suggestion de compétences complémentaires",
-    "Ajouter compétences dans les autres",
-]
-
-const experienceOptions = [
-    { label: "Junior (0-2 ans)", value: "JUNIOR" },
-    { label: "Intermédiaire (3-5 ans)", value: "INTERMEDIAIRE" },
-    { label: "Senior (5-10 ans)", value: "SENIOR" },
-    { label: "Expert (10+ ans)", value: "EXPERT" },
-]
+const experienceOptions = ["0-2 ans d'exp.", "3-5 ans d'exp.", "5+ ans d'exp."]
 
 export default function Content() {
     const router = useRouter()
-    const [previewOpen, setPreviewOpen] = useState(false)
-    const [aiOptimization, setAiOptimization] = useState(true)
-    const [showCoverPhoto, setShowCoverPhoto] = useState(true)
-    const [skills, setSkills] = useState<string[]>([])
-    const [newSkill, setNewSkill] = useState("")
-    // const [visibility, setVisibility] = useState("public")
 
+    const [aiOptimization, setAiOptimization] = useState(true)
+    const [showCover, setShowCover] = useState(true)
+    const [newSkill, setNewSkill] = useState("")
+    const [skills, setSkills] = useState<string[]>([])
     const [formData, setFormData] = useState({
-        title: "", location: "", type: "", salary: "",
-        experience: "", description: "", requirements: "", benefits: "",
-        publishDate: "", endDate: ""
+        title: "",
+        department: "",
+        location: "",
+        type: "",
+        salaryMin: "",
+        salaryMax: "",
+        experience: "",
+        description: "",
+        requirements: "",
+        benefits: "",
+        publishDate: "",
+        endDate: "",
+        visibility: "PUBLIC",
     })
 
-    const handleAddSkill = () => {
-        if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-            setSkills([...skills, newSkill.trim()])
+    const addSkill = () => {
+        const value = newSkill.trim()
+        if (value.length > 0 && !skills.includes(value)) {
+            setSkills((prev) => [...prev, value])
             setNewSkill("")
         }
     }
-    const handleRemoveSkill = (skill: string) => setSkills(skills.filter(s => s !== skill))
+
     const handlePublish = async () => {
         try {
-            const auth = getAuth();
-            if (!auth) throw new Error("Not authenticated");
-    
-            const { token, user } = auth;
-    
-            // 🔹 Crée un objet JSON directement
+            const auth = getAuth()
+            if (!auth) throw new Error("Not authenticated")
+
             const payload = {
                 title: formData.title,
                 location: formData.location,
                 type: formData.type,
-                salary: formData.salary,
+                salary: formData.salaryMin,
                 experience: formData.experience,
                 description: formData.description,
                 benefits: formData.benefits,
                 publishDate: formData.publishDate,
                 endDate: formData.endDate,
-                companyId: user.companyId, // important
-                requirements: skills, // directement un tableau
-            };
-    
-            const offer: IOffer = await createJobOffer(payload, token);
-    
-            console.log("Offre créée:", offer);
-            router.push("/annonces"); // redirection après succès
+                companyId: auth.user.companyId,
+                requirements: skills,
+            }
+
+            await createJobOffer(payload, auth.token)
+            router.push("/annonces")
         } catch (error) {
-            console.error("Erreur lors de la création de l'offre:", error);
+            console.error("Erreur lors de la creation de l'offre:", error)
         }
     }
 
-    const isFormValid =
-        formData.title &&
-        formData.location &&
-        formData.type &&
-        formData.experience &&
-        formData.description &&
-        skills.length > 0
-    
-    // const handleSaveDraft = () => router.push("/dashboard/annonces")
-
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Publier une offre d'emploi</h1>
-            <p className="text-muted-foreground mb-8">
-                Créez une offre optimisée par Goriya pour attirer les meilleurs talents
+        <div className="space-y-4 pb-8">
+            <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Publier une offre d'emploi</h1>
+            <p className="text-sm font-medium text-muted-foreground">
+                Creez une offre optimisee par Goriya pour attirer les meilleurs talents
             </p>
 
-            <div className="grid gap-8 lg:grid-cols-3">
-                {/* Main Form */}
-                <div className="lg:col-span-2 space-y-4 w-full">
-                    {/* Basic Information */}
-                    <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-4">Informations de base</h2>
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <Field className="w-full">
-                                <FieldLabel>Titre du poste <span className="text-destructive">*</span></FieldLabel>
-                                <Input className="w-full" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="ex: Développeur Full Stack Senior" />
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+                <div className="space-y-4 xl:col-span-2">
+                    <section className="rounded-xl border border-border bg-white p-4">
+                        <h2 className="mb-3 text-sm font-semibold text-foreground">Informations de base</h2>
+
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <Field label="Titre du poste*">
+                                <Input
+                                    placeholder="ex: Developpeur Full-Stack Senior"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                />
                             </Field>
-                            {/* <Field className="w-full">
-                                <FieldLabel>Département <span className="text-destructive">*</span></FieldLabel>
-                                <Select value={formData.department} onValueChange={v => setFormData({ ...formData, department: v })}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un département" /></SelectTrigger>
+                            <Field label="Departement">
+                                <Select
+                                    value={formData.department}
+                                    onValueChange={(value) => setFormData({ ...formData, department: value })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selectionner un departement" />
+                                    </SelectTrigger>
                                     <SelectContent>
-                                        {departments.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                                        {departments.map((item) => (
+                                            <SelectItem key={item} value={item}>
+                                                {item}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
-                            </Field> */}
-                            <Field className="w-full">
-                                <FieldLabel>Localisation</FieldLabel>
-                                <Input className="w-full" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} placeholder="Paris, France" />
                             </Field>
-                            <Field className="w-full">
-                                <FieldLabel>Type de contrat</FieldLabel>
-                                <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v })}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner" /></SelectTrigger>
-                                    <SelectContent>{contractTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                            <Field label="Localisation*">
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Paris, France"
+                                        className="pl-9"
+                                        value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                    />
+                                </div>
+                            </Field>
+                            <Field label="Type de contrat*">
+                                <Select
+                                    value={formData.type}
+                                    onValueChange={(value) => setFormData({ ...formData, type: value })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Type de contrat" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {contractTypes.map((item) => (
+                                            <SelectItem key={item} value={item}>
+                                                {item}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
                                 </Select>
                             </Field>
-                            <Field className="w-full">
-                                <FieldLabel>Salaire XOF</FieldLabel>
-                                <Input className="w-full" type="number" value={formData.salary} onChange={e => setFormData({ ...formData, salary: e.target.value })} placeholder="Ex: 500 000" />
+                            <Field label="Salaire min (EUR)*">
+                                <Input
+                                    type="number"
+                                    placeholder="$ 45000"
+                                    value={formData.salaryMin}
+                                    onChange={(e) => setFormData({ ...formData, salaryMin: e.target.value })}
+                                />
                             </Field>
-                            {/* <Field className="w-full">
-                                <FieldLabel>Salaire max XOF</FieldLabel>
-                                <Input className="w-full" type="number" value={formData.salaryMax} onChange={e => setFormData({ ...formData, salaryMax: e.target.value })} placeholder="0000" />
-                            </Field> */}
-                            
-                            {/* <Field className="w-full">
-                                <FieldLabel>Années d'étude</FieldLabel>
-                                <Input className="w-full" value={formData.studyLevel} onChange={e => setFormData({ ...formData, studyLevel: e.target.value })} placeholder="Bac+5" />
-                            </Field> */}
+                            <Field label="Salaire max (EUR)*">
+                                <Input
+                                    type="number"
+                                    placeholder="$ 65000"
+                                    value={formData.salaryMax}
+                                    onChange={(e) => setFormData({ ...formData, salaryMax: e.target.value })}
+                                />
+                            </Field>
+                            <Field label="Experience requise" className="md:col-span-2">
+                                <Select
+                                    value={formData.experience}
+                                    onValueChange={(value) => setFormData({ ...formData, experience: value })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Annees d'exp." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {experienceOptions.map((item) => (
+                                            <SelectItem key={item} value={item}>
+                                                {item}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </Field>
                         </div>
                     </section>
 
-                    {/* Expériences */}
-                    <section>
-                        <Field className="w-full">
-                            <FieldLabel>Expérience requise</FieldLabel>
-                            <Select
-                                value={formData.experience}
-                                onValueChange={(v) => setFormData({ ...formData, experience: v })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Sélectionner" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {experienceOptions.map(opt => (
-                                        <SelectItem key={opt.value} value={opt.value}>
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                    <section className="rounded-xl border border-border bg-white p-4">
+                        <h2 className="mb-3 text-sm font-semibold text-foreground">Description du poste</h2>
+
+                        <Field label="Description complete">
+                            <Textarea
+                                rows={3}
+                                placeholder="Decrivez le poste, les responsabilites, et l'environnement de travail..."
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            />
+                        </Field>
+
+                        <Field label="Exigences et qualifications" className="mt-3">
+                            <Textarea
+                                rows={3}
+                                placeholder="Listez les competences, formations et experiences requises..."
+                                value={formData.requirements}
+                                onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                            />
+                        </Field>
+
+                        <Field label="Avantages offerts" className="mt-3">
+                            <Textarea
+                                rows={2}
+                                placeholder="Teletravail, mutuelle, tickets restaurant, formations..."
+                                value={formData.benefits}
+                                onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+                            />
                         </Field>
                     </section>
 
-                    {/* Textareas */}
-                    <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-2">Description du poste</h2>
-                        <FieldGroup><Textarea className="w-full" rows={5} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} placeholder="Décrivez le poste..." /></FieldGroup>
-                    </section>
-                    {/* <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-2">Exigences et qualifications</h2>
-                        <FieldGroup><Textarea className="w-full" rows={4} value={formData.requirements} onChange={e => setFormData({ ...formData, requirements: e.target.value })} placeholder="Liste compétences, formations..." /></FieldGroup>
-                    </section> */}
-                    <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-2">Avantages offerts</h2>
-                        <FieldGroup><Textarea className="w-full" rows={3} value={formData.benefits} onChange={e => setFormData({ ...formData, benefits: e.target.value })} placeholder="Télétravail, mutuelle..." /></FieldGroup>
-                    </section>
+                    <section className="rounded-xl border border-border bg-white p-4">
+                        <h2 className="mb-3 text-sm font-semibold text-foreground">Competences recherchees</h2>
 
-                    {/* Skills */}
-                    <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-2">Compétences recherchées</h2>
-                        <div className="flex flex-col sm:flex-row gap-2 mb-2">
-                            <Input className="flex-1 w-full" value={newSkill} onChange={e => setNewSkill(e.target.value)} placeholder="Ajouter une compétence" onKeyPress={e => e.key === "Enter" && handleAddSkill()} />
-                            <Button className="w-full sm:w-auto" onClick={handleAddSkill} variant="secondary">Ajouter</Button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">{skills.map(skill => (
-                            <Badge key={skill} variant="secondary" className="gap-1 pr-1">
-                                {skill}
-                                <button onClick={() => handleRemoveSkill(skill)} className="ml-1 rounded-full p-0.5 hover:bg-muted"><X className="h-3 w-3" /></button>
-                            </Badge>
-                        ))}</div>
-                    </section>
-
-                    {/* AI Optimization */}
-                    <Card className="border-primary/20 bg-secondary w-full">
-                        <CardHeader className="pb-2 flex items-center justify-between">
-                            <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                                <Sparkles className="h-5 w-5 text-primary" />Optimisation IA Goriya
-                            </CardTitle>
-                            <Switch checked={aiOptimization} onCheckedChange={setAiOptimization} />
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground mb-4">Activer l'optimisation Goriya</p>
-                            <p className="text-xs text-muted-foreground mb-2">Les modifications et suggestions IA sont modifiables et validables par vous-mêmes.</p>
-                            <p className="text-sm font-medium text-foreground mb-2">Suggestions automatiques:</p>
-                            <ul className="space-y-1 text-sm text-muted-foreground">{suggestedSkills.map((s, i) => <li key={i} className="flex items-center gap-2"><span className="text-primary">•</span>{s}</li>)}</ul>
-                        </CardContent>
-                    </Card>
-
-                    {/* Publication Options */}
-                    <section>
-                        <h2 className="text-lg font-semibold text-foreground mb-4">Options de publication</h2>
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <Field className="w-full"><FieldLabel>Date de publication</FieldLabel><Input className="w-full" type="date" value={formData.publishDate} onChange={e => setFormData({ ...formData, publishDate: e.target.value })} /></Field>
-                            <Field className="w-full"><FieldLabel>Date limite de candidature</FieldLabel><Input className="w-full" type="date" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} /></Field>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                placeholder="Ajouter une competence"
+                                value={newSkill}
+                                onChange={(e) => setNewSkill(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault()
+                                        addSkill()
+                                    }
+                                }}
+                            />
+                            <Button type="button" variant="outline" size="icon" onClick={addSkill}>
+                                <Plus className="h-4 w-4" />
+                            </Button>
                         </div>
 
-                        {/* <div className="mt-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Visibilité</p>
-                            <RadioGroup value={visibility} onValueChange={setVisibility} className="flex flex-col gap-2">
-                                <div className="flex items-center space-x-2"><RadioGroupItem value="public" id="public" /><Label htmlFor="public">Public - Visible par tous</Label></div>
-                                <div className="flex items-center space-x-2"><RadioGroupItem value="private" id="private" /><Label htmlFor="private">Privée - Visible uniquement</Label></div>
-                            </RadioGroup>
-                        </div> */}
-                    </section>
-
-                    {/* Validation message */}
-                    {!isFormValid && (
-                        <p className="text-xs text-destructive text-center">
-                            Veuillez remplir tous les champs requis pour prévisualiser ou publier
-                        </p>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                        <Button 
-                            className="w-full sm:w-auto" 
-                            variant="outline" 
-                            disabled={!isFormValid}
-                            onClick={() => setPreviewOpen(true)}>Prévisualiser l'offre</Button>
-                        <Button className="w-full sm:w-auto" onClick={handlePublish}>Publier l'offre</Button>
-                    </div>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="space-y-6 w-full">
-                    <Card className="w-full">
-                        <CardContent className="p-4 flex items-center justify-between"><span className="text-sm font-medium text-foreground">Affichez la photo de couverture</span><Switch checked={showCoverPhoto} onCheckedChange={setShowCoverPhoto} /></CardContent>
-                    </Card>
-                    <Card className="w-full">
-                        <CardContent className="p-4">
-                            <div className="mb-4">
-                                <p className="text-xs text-muted-foreground mb-1">Data Science engineer YGG et FHYZG (H/F)</p>
-                                <p className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" />Septembre/Oct/Nov</p>
-                                <p className="text-xs text-muted-foreground">1 j ou 2 jours</p>
-                            </div>
-                            <div className="relative h-32 w-full rounded-sm overflow-hidden bg-muted mb-4">
-                                <Image src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/poste%20une%20offre-hd6PLuEJ53F7UhjExb3UXD0QsTBQID.png" alt="Job preview" fill className="object-cover" />
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="h-3 w-3 rounded-full bg-primary" /><div className="h-3 w-3 rounded-full bg-muted" /><div className="h-3 w-3 rounded-full bg-muted" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-
-
-            <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-                <DialogContent className="max-w-2xl rounded-sm [&>button]:text-white [&>button]:hover:bg-white/20 [&>button]:top-4 [&>button]:right-4">
-                    <DialogHeader className="bg-primary text-white px-6 py-4 -mx-6 -mt-6 rounded-t-sm">
-                        <DialogTitle className="text-white">
-                            Prévisualisation de l'offre
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold">{formData.title}</h2>
-
-                        <div className="text-sm text-muted-foreground">
-                            {formData.location} • {formData.type} • {formData.experience}
-                        </div>
-
-                        {formData.salary && (
-                            <div className="text-sm">
-                                💰 Salaire : {formatAmount(formData.salary)}
+                        {skills.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {skills.map((skill) => (
+                                    <span
+                                        key={skill}
+                                        className="rounded-full border border-border bg-muted px-2 py-1 text-xs text-foreground"
+                                    >
+                                        {skill}
+                                    </span>
+                                ))}
                             </div>
                         )}
+                    </section>
 
-                        <div>
-                            <h3 className="font-semibold mb-1">Description</h3>
-                            <p className="text-sm text-muted-foreground whitespace-pre-line">
-                                {formData.description}
+                    <section className="rounded-xl border border-blue-500 bg-blue-50/40 p-4">
+                        <div className="mb-3 flex items-center justify-between">
+                            <h2 className="text-sm font-semibold text-foreground">Optimisation Goriya</h2>
+                            <Switch checked={aiOptimization} onCheckedChange={setAiOptimization} />
+                        </div>
+
+                        <div className="rounded-lg border border-blue-200 bg-white p-3">
+                            <p className="mb-1 text-xs font-semibold text-foreground">Activer l'optimisation Goriya</p>
+                            <p className="text-xs text-muted-foreground">
+                                L'IA analysera et optimisera votre post pour ameliorer sa visibilite et son attractivite
                             </p>
                         </div>
 
-                        {formData.benefits && (
-                            <div>
-                                <h3 className="font-semibold mb-1">Avantages</h3>
-                                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                                    {formData.benefits}
-                                </p>
-                            </div>
-                        )}
+                        <div className="mt-3 rounded-lg border border-border bg-white p-3">
+                            <p className="mb-2 text-xs font-semibold text-foreground">Suggestions automatiques :</p>
+                            <ul className="space-y-1 text-xs text-muted-foreground">
+                                <li>• Analyse SEO du titre et des mots-cles</li>
+                                <li>• Optimisation de la description pour le matching</li>
+                                <li>• Suggestion de competences complementaires</li>
+                                <li>• Analyse comparative avec le marche</li>
+                            </ul>
+                        </div>
+                    </section>
 
-                        <div>
-                            <h3 className="font-semibold mb-1">Compétences</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.map((skill) => (
-                                    <Badge key={skill}>{skill}</Badge>
-                                ))}
-                            </div>
+                    <section className="rounded-xl border border-border bg-white p-4">
+                        <h2 className="mb-3 text-sm font-semibold text-foreground">Options de publication</h2>
+
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <Field label="Date de publication">
+                                <div className="relative">
+                                    <Input
+                                        type="date"
+                                        value={formData.publishDate}
+                                        onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })}
+                                    />
+                                    <Calendar className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                </div>
+                            </Field>
+                            <Field label="Date limite de candidature">
+                                <div className="relative">
+                                    <Input
+                                        type="date"
+                                        value={formData.endDate}
+                                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                    />
+                                    <Calendar className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                </div>
+                            </Field>
                         </div>
 
-                        {(formData.publishDate || formData.endDate) && (
-                            <div className="text-sm text-muted-foreground">
-                                {formData.publishDate && `Publié le ${formatDate(formData.publishDate)}`}
-                                {formData.endDate && ` • Fin le ${formatDate(formData.endDate)}`}
+                        <div className="mt-4 space-y-1">
+                            <p className="text-xs font-semibold text-foreground">Visibilite</p>
+                            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    checked={formData.visibility === "PUBLIC"}
+                                    onChange={() => setFormData({ ...formData, visibility: "PUBLIC" })}
+                                />
+                                Public - Visible par tous les candidats
+                            </label>
+                            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    checked={formData.visibility === "PREMIUM"}
+                                    onChange={() => setFormData({ ...formData, visibility: "PREMIUM" })}
+                                />
+                                Premium - Mise en avant dans les resultats de recherche
+                            </label>
+                        </div>
+                    </section>
+
+                    <div className="flex flex-col items-stretch justify-end gap-3 pt-2 sm:flex-row sm:items-center">
+                        <Button variant="outline" className="rounded-full px-6">
+                            Enregistrer comme brouillon
+                        </Button>
+                        <Button onClick={handlePublish} className="rounded-full px-6">
+                            Publier l'offre
+                        </Button>
+                    </div>
+                </div>
+
+                <aside className="space-y-3 xl:sticky xl:top-4 xl:self-start">
+                    <p className="text-xs font-semibold text-foreground">Apercu</p>
+                    <div className="flex items-center justify-between">
+                        <p className="text-xs font-medium text-foreground">Afficher la photo de couverture</p>
+                        <Switch checked={showCover} onCheckedChange={setShowCover} />
+                    </div>
+
+                    <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+                        <div className="p-3">
+                            <p className="text-sm font-semibold text-foreground">Data base engineer SQL et PLSQL (H/F)</p>
+                            <p className="mt-1 text-[11px] text-muted-foreground">CDI • Ingenierie Flux RSS</p>
+                        </div>
+
+                        {showCover && (
+                            <div className="relative h-24 w-full border-t border-border">
+                                <Image
+                                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/poste%20une%20offre-hd6PLuEJ53F7UhjExb3UXD0QsTBQID.png"
+                                    alt="Apercu couverture"
+                                    fill
+                                    className="object-cover"
+                                />
                             </div>
                         )}
+
+                        <div className="flex items-center gap-3 p-3 text-muted-foreground">
+                            <span className="h-6 w-6 rounded-full bg-gray-400" />
+                            <Heart className="h-4 w-4" />
+                        </div>
                     </div>
-                </DialogContent>
-            </Dialog>
+
+                    <div className="rounded-xl border border-border bg-white p-3">
+                        <p className="text-xs text-muted-foreground">
+                            Le panneau d'apercu reprend la presentation visuelle de la capture.
+                        </p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    )
+}
+
+type FieldProps = {
+    label: string
+    children: React.ReactNode
+    className?: string
+}
+
+function Field({ label, children, className = "" }: FieldProps) {
+    return (
+        <div className={className}>
+            <p className="mb-1.5 text-xs font-medium text-foreground">{label}</p>
+            {children}
         </div>
     )
 }

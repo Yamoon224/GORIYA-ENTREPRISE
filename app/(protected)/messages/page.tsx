@@ -1,239 +1,78 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Send, Paperclip, MoreVertical } from "lucide-react"
+import { Search, Paperclip, Send, Star, Trash2, MoreHorizontal, User } from "lucide-react"
 
-interface Message {
-    id: number
-    sender: string
-    content: string
-    time: string
-    isMe: boolean
-}
-
-interface Conversation {
-    id: number
-    name: string
-    avatar: string
-    lastMessage: string
-    time: string
-    unread: number
-    status: "online" | "offline"
-}
+type Conversation = { id: number; name: string; role: string; time: string; unread: number; lastMessage: string }
+type Message = { id: number; content: string; time: string; isMe: boolean }
 
 const conversations: Conversation[] = [
-    {
-        id: 1,
-        name: "Marie Dubois",
-        avatar: "MD",
-        lastMessage: "Merci pour le retour, je suis très intéressée...",
-        time: "10:30",
-        unread: 2,
-        status: "online",
-    },
-    {
-        id: 2,
-        name: "Jean Martin",
-        avatar: "JM",
-        lastMessage: "Je peux vous envoyer mon portfolio?",
-        time: "09:15",
-        unread: 0,
-        status: "offline",
-    },
-    {
-        id: 3,
-        name: "Sophie Laurent",
-        avatar: "SL",
-        lastMessage: "L'entretien est confirmé pour demain",
-        time: "Hier",
-        unread: 0,
-        status: "online",
-    },
-    {
-        id: 4,
-        name: "Thomas Rousseau",
-        avatar: "TR",
-        lastMessage: "J'ai bien reçu votre proposition",
-        time: "Hier",
-        unread: 1,
-        status: "offline",
-    },
+  { id: 1, name: "Marie Dubois", role: "Developpeur Full-Stack Senior", time: "Il y a 5 min", unread: 2, lastMessage: "Merci pour votre retour, je suis tres interessee par cette opportunite." },
+  { id: 2, name: "Jean Martin", role: "UX/UI Designer", time: "Il y a 2h", unread: 1, lastMessage: "Quand pourrions-nous programmer l'entretien ?" },
+  { id: 3, name: "Sophie Laurent", role: "Chef de Projet Digital", time: "Hier", unread: 0, lastMessage: "Voici mon portfolio complet avec mes derniers projets." },
+  { id: 4, name: "Thomas Rousseau", role: "Data Scientist", time: "Il y a 2 jours", unread: 0, lastMessage: "Je vous remercie pour cette opportunite." },
 ]
 
-const messages: Message[] = [
-    {
-        id: 1,
-        sender: "Marie Dubois",
-        content: "Bonjour, j'ai bien reçu votre message concernant le poste de développeur Full Stack. Je suis très intéressée par cette opportunité.",
-        time: "10:15",
-        isMe: false,
-    },
-    {
-        id: 2,
-        sender: "Moi",
-        content: "Bonjour Marie, merci pour votre retour rapide. Votre profil correspond vraiment bien à ce que nous recherchons. Seriez-vous disponible pour un entretien cette semaine?",
-        time: "10:20",
-        isMe: true,
-    },
-    {
-        id: 3,
-        sender: "Marie Dubois",
-        content: "Oui, je suis disponible jeudi ou vendredi après-midi. Quelle heure vous conviendrait le mieux?",
-        time: "10:25",
-        isMe: false,
-    },
-    {
-        id: 4,
-        sender: "Marie Dubois",
-        content: "Merci pour le retour, je suis très intéressée par le poste et j'ai hâte de discuter avec vous!",
-        time: "10:30",
-        isMe: false,
-    },
+const initialMessages: Message[] = [
+  { id: 1, content: "Bonjour, je suis tres interessee par le poste de Developpeur Full-Stack Senior. J'ai 5 ans d'experience en React et Node.js.", time: "10:30", isMe: false },
+  { id: 2, content: "Bonjour Marie, merci pour votre candidature. Votre profil nous interesse beaucoup. Pouvez-vous me parler de votre experience avec PostgreSQL ?", time: "14:45", isMe: true },
+  { id: 3, content: "Bien sur ! J'ai utilise PostgreSQL dans plusieurs projets, notamment pour une application e-commerce avec plus de 100 000 utilisateurs.", time: "15:20", isMe: false },
+  { id: 4, content: "Parfait ! Nous aimerions vous rencontrer pour un entretien. Etes-vous disponible cette semaine ?", time: "18:10", isMe: true },
+  { id: 5, content: "Je suis disponible mercredi apres-midi ou vendredi matin. Quel creneau vous conviendrait le mieux ?", time: "16:55", isMe: false },
 ]
+
+function AvatarIcon({ small = false }: { small?: boolean }) {
+  const dim = small ? "h-9 w-9" : "h-11 w-11"
+  return <div className={`${dim} shrink-0 rounded-full bg-blue-500 flex items-center justify-center`}><User className="h-5 w-5 text-white" strokeWidth={1.8} /></div>
+}
 
 export default function MessagesPage() {
-    const [selectedConversation, setSelectedConversation] = useState(conversations[0])
-    const [newMessage, setNewMessage] = useState("")
-    const [searchQuery, setSearchQuery] = useState("")
+  const [selected, setSelected] = useState(conversations[0])
+  const [messages, setMessages] = useState(initialMessages)
+  const [newMessage, setNewMessage] = useState("")
+  const [search, setSearch] = useState("")
 
-    const filteredConversations = conversations.filter((conv) =>
-        conv.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  const filtered = conversations.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
 
-    return (
-        <div className="flex h-[calc(100vh-8rem)] gap-6">
-            {/* Conversations List */}
-            <div className="w-80 flex flex-col border rounded-lg bg-card">
-                <div className="p-4 border-b">
-                    <h2 className="text-lg font-semibold text-foreground mb-4">Messages</h2>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Rechercher..."
-                            className="pl-9"
-                        />
-                    </div>
-                </div>
-                <ScrollArea className="flex-1">
-                    <div className="p-2">
-                        {filteredConversations.map((conv) => (
-                            <button
-                                key={conv.id}
-                                onClick={() => setSelectedConversation(conv)}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${selectedConversation.id === conv.id
-                                        ? "bg-primary/10"
-                                        : "hover:bg-muted"
-                                    }`}
-                            >
-                                <div className="relative">
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={`/images/placeholder-${conv.id}.jpg`} />
-                                        <AvatarFallback className="bg-secondary text-secondary-foreground">
-                                            {conv.avatar}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    {conv.status === "online" && (
-                                        <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-card" />
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between">
-                                        <p className="font-medium text-foreground truncate">{conv.name}</p>
-                                        <span className="text-xs text-muted-foreground">{conv.time}</span>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground truncate">{conv.lastMessage}</p>
-                                </div>
-                                {conv.unread > 0 && (
-                                    <Badge className="bg-primary text-primary-foreground h-5 w-5 flex items-center justify-center p-0 text-xs">
-                                        {conv.unread}
-                                    </Badge>
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                </ScrollArea>
-            </div>
+  const handleSend = () => {
+    if (!newMessage.trim()) return
+    setMessages((prev) => [...prev, { id: prev.length + 1, content: newMessage.trim(), time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }), isMe: true }])
+    setNewMessage("")
+  }
 
-            {/* Chat Area */}
-            <div className="flex-1 flex flex-col border rounded-lg bg-card">
-                {/* Chat Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-secondary text-secondary-foreground">
-                                {selectedConversation.avatar}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-medium text-foreground">{selectedConversation.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                                {selectedConversation.status === "online" ? "En ligne" : "Hors ligne"}
-                            </p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-5 w-5" />
-                    </Button>
-                </div>
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">Communiquez directement avec vos candidats</p>
 
-                {/* Messages */}
-                <ScrollArea className="flex-1 p-4">
-                    <div className="space-y-4">
-                        {messages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={`flex ${message.isMe ? "justify-end" : "justify-start"}`}
-                            >
-                                <div
-                                    className={`max-w-[70%] rounded-2xl px-4 py-2 ${message.isMe
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted text-foreground"
-                                        }`}
-                                >
-                                    <p className="text-sm">{message.content}</p>
-                                    <p
-                                        className={`text-xs mt-1 ${message.isMe ? "text-primary-foreground/70" : "text-muted-foreground"
-                                            }`}
-                                    >
-                                        {message.time}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </ScrollArea>
-
-                {/* Message Input */}
-                <div className="p-4 border-t">
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon">
-                            <Paperclip className="h-5 w-5" />
-                        </Button>
-                        <Input
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Écrivez un message..."
-                            className="flex-1"
-                            onKeyPress={(e) => {
-                                if (e.key === "Enter" && newMessage.trim()) {
-                                    // Handle send message
-                                    setNewMessage("")
-                                }
-                            }}
-                        />
-                        <Button size="icon">
-                            <Send className="h-5 w-5" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
+      <div className="flex flex-col lg:flex-row overflow-hidden rounded-xl border border-border bg-white" style={{ minHeight: "70vh" }}>
+        <div className="flex w-full lg:w-[320px] shrink-0 flex-col border-b lg:border-b-0 lg:border-r border-border">
+          <div className="px-3 py-3">
+            <div className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher une conversation..." className="pl-9 h-9 text-sm bg-gray-50 border-gray-200" /></div>
+          </div>
+          <ScrollArea className="h-64 lg:h-[58vh]">
+            {filtered.map((conv) => (
+              <button key={conv.id} onClick={() => setSelected(conv)} className={`w-full px-3 py-3 text-left transition-colors hover:bg-blue-50/60 ${selected.id === conv.id ? "bg-blue-50" : ""}`}>
+                <div className="flex items-start gap-3"><AvatarIcon small /><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1"><span className="truncate text-[13px] font-semibold text-foreground">{conv.name}</span><div className="flex shrink-0 items-center gap-1.5">{conv.unread > 0 && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{conv.unread}</span>}<span className="whitespace-nowrap text-[11px] text-muted-foreground">{conv.time}</span></div></div><p className="truncate text-[11px] text-muted-foreground">{conv.role}</p><p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">{conv.lastMessage}</p></div></div>
+              </button>
+            ))}
+          </ScrollArea>
         </div>
-    )
+
+        <div className="flex flex-1 flex-col min-h-[45vh]">
+          <div className="flex items-center justify-between border-b border-border bg-blue-50/40 px-4 py-3">
+            <div className="flex items-center gap-3"><AvatarIcon /><div><p className="text-sm font-semibold text-foreground">{selected.name}</p><p className="text-xs text-muted-foreground">{selected.role}</p></div></div>
+            <div className="flex items-center gap-1 text-muted-foreground"><button className="rounded p-1.5 hover:bg-gray-100 transition-colors"><Star className="h-4 w-4" /></button><button className="rounded p-1.5 hover:bg-gray-100 transition-colors"><Trash2 className="h-4 w-4" /></button><button className="rounded p-1.5 hover:bg-gray-100 transition-colors"><MoreHorizontal className="h-4 w-4" /></button></div>
+          </div>
+
+          <ScrollArea className="flex-1 bg-gray-50/30 px-4 sm:px-6 py-4">
+            <div className="space-y-4">{messages.map((msg) => <div key={msg.id} className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}><div className={`max-w-[92%] sm:max-w-[75%] lg:max-w-[65%] rounded-2xl px-4 py-2.5 ${msg.isMe ? "bg-blue-500 text-white" : "bg-white shadow-sm border border-gray-100 text-foreground"}`}><p className="text-sm leading-relaxed">{msg.content}</p><p className={`mt-1 text-[11px] ${msg.isMe ? "text-blue-100" : "text-muted-foreground"}`}>{msg.time}</p></div></div>)}</div>
+          </ScrollArea>
+
+          <div className="flex items-center gap-2 border-t border-border bg-white px-3 sm:px-4 py-3"><button className="shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-gray-100 transition-colors"><Paperclip className="h-4 w-4" /></button><Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Tapez votre message..." className="flex-1 border-0 bg-transparent px-2 text-sm shadow-none focus-visible:ring-0" onKeyDown={(e) => { if (e.key === "Enter") handleSend() }} /><button onClick={handleSend} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors"><Send className="h-4 w-4" /></button></div>
+        </div>
+      </div>
+    </div>
+  )
 }

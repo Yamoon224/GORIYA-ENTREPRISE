@@ -1,446 +1,113 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import {
-    MessageSquare,
-    Check,
-    Target,
-    Crown,
-    Mail,
-    Phone,
-    Search,
-    ChevronDown,
-    ChevronRight,
-    Zap,
-    FileText,
-    Users,
-    CreditCard,
-    BookOpen,
-    Video,
-    FileCode,
-    Star,
-    ExternalLink,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { GoriyaLogo } from "@/components/goriya-logo"
+import { Button } from "@/components/ui/button"
+import { MessageSquare, Mail, Phone, Search, ChevronDown, ChevronRight, Star, ExternalLink, Zap, FileText, Users, CreditCard, BookOpen, Video, FileCode } from "lucide-react"
 
 const categories = [
-    { label: "IA", count: 8, icon: Zap, color: "bg-blue-500", textColor: "text-blue-500" },
-    { label: "Offres", count: 12, icon: FileText, color: "bg-green-500", textColor: "text-green-500" },
-    { label: "Candidatures", count: 6, icon: Users, color: "bg-orange-500", textColor: "text-orange-500" },
-    { label: "Facturation", count: 4, icon: CreditCard, color: "bg-red-500", textColor: "text-red-500" },
+    { label: "IA", count: 8, Icon: Zap, bg: "bg-blue-500" },
+    { label: "Offres", count: 12, Icon: FileText, bg: "bg-green-500" },
+    { label: "Candidatures", count: 6, Icon: Users, bg: "bg-orange-400" },
+    { label: "Facturation", count: 4, Icon: CreditCard, bg: "bg-red-500" },
 ]
 
 const faqs = [
-    {
-        question: "Comment optimiser mes offres d'emploi avec l'IA ?",
-        tag: "IA",
-        tagColor: "bg-blue-100 text-blue-600",
-        answer:
-            "L'IA de Goriya analyse automatiquement vos offres et suggère des améliorations pour attirer les meilleurs candidats. Activez l'option 'Optimisation IA' lors de la création d'une offre.",
-    },
-    {
-        question: "Comment interpréter le score IA des candidats ?",
-        tag: "IA",
-        tagColor: "bg-blue-100 text-blue-600",
-        answer:
-            "Le score IA (sur 100) représente la compatibilité entre le profil du candidat et votre offre. Un score supérieur à 80 indique un excellent match. Il prend en compte les compétences, l'expérience et les préférences salariales.",
-    },
-    {
-        question: "Puis-je modifier une offre après publication ?",
-        tag: "Offres",
-        tagColor: "bg-green-100 text-green-600",
-        answer:
-            "Oui, vous pouvez modifier vos offres publiées depuis la page Mes annonces. Cliquez sur le bouton Modifier de l'offre concernée.",
-    },
-    {
-        question: "Comment contacter un candidat ?",
-        tag: "Candidatures",
-        tagColor: "bg-orange-100 text-orange-600",
-        answer:
-            "Depuis la page Candidatures, cliquez sur le bouton Message à côté du profil du candidat pour ouvrir une conversation directe.",
-    },
-    {
-        question: "Combien coûte l'abonnement Premium ?",
-        tag: "Facturation",
-        tagColor: "bg-red-100 text-red-600",
-        answer:
-            "L'abonnement Premium est à 4 999 FCFA par mois. Il inclut un nombre illimité d'analyses CV, des suggestions IA avancées et un support prioritaire.",
-    },
-]
-
-const plans = [
-    // {
-    //     name: "Grouilleur",
-    //     description: "Pour les chercheurs d'emploi actifs",
-    //     price: "0",
-    //     currency: "FCFA",
-    //     period: "/ mois - Gratuit",
-    //     popular: false,
-    //     icon: Zap,
-    //     iconColor: "text-blue-500",
-    //     iconBg: "bg-blue-100",
-    //     buttonVariant: "outline" as const,
-    //     buttonText: "Commencer l'essai gratuit",
-    //     features: [
-    //         "20 analyses CV par mois",
-    //         "Suggestions avancées IA",
-    //         "Multi-formats export",
-    //         "Personnalisation sectorielle",
-    //         "Support prioritaire",
-    //     ],
-    // },
-    {
-        name: "Business",
-        description: "La solution complète",
-        price: "35 500",
-        currency: "FCFA",
-        period: "/ mois",
-        popular: true,
-        icon: Target,
-        iconColor: "text-orange-500",
-        iconBg: "bg-orange-100",
-        buttonVariant: "default" as const,
-        buttonText: "Opter pour ça",
-        features: [
-            "30 analyses CV par mois",
-            "Suggestions avancées IA",
-            "Multi-formats export",
-            "Personnalisation sectorielle",
-            "Support prioritaire",
-        ],
-    },
-    {
-        name: "Business +",
-        description: "Pour les professionnels exigeants",
-        price: "351 900",
-        currency: "FCFA",
-        period: "/ mois",
-        popular: false,
-        icon: Crown,
-        iconColor: "text-blue-600",
-        iconBg: "bg-blue-100",
-        buttonVariant: "outline" as const,
-        buttonText: "Opter pour ça",
-        features: [
-            "100 analyses CV par mois",
-            "Suggestions avancées IA",
-            "Multi-formats export",
-            "Personnalisation sectorielle",
-            "Support prioritaire",
-        ],
-    },
+    { question: "Comment optimiser mes offres d'emploi avec l'IA ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "L'IA de Goriya analyse automatiquement vos offres et suggere des ameliorations pour attirer les meilleurs candidats." },
+    { question: "Comment interpreter le score IA des candidats ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "Le score IA represente la compatibilite entre le profil du candidat et votre offre. Au-dessus de 80, le match est excellent." },
+    { question: "Puis-je modifier une offre apres publication ?", tag: "Offres", tagColor: "bg-green-100 text-green-600", answer: "Oui. Depuis Mes annonces, ouvrez l'offre et cliquez sur Modifier." },
+    { question: "Comment contacter un candidat ?", tag: "Candidatures", tagColor: "bg-orange-100 text-orange-600", answer: "Depuis Candidatures, cliquez sur Message dans la fiche du candidat." },
+    { question: "Combien coute l'abonnement Premium ?", tag: "Facturation", tagColor: "bg-red-100 text-red-600", answer: "Le plan Premium est a 4 999 FCFA/mois avec IA avancee et support prioritaire." },
 ]
 
 const resources = [
-    {
-        icon: BookOpen,
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
-        title: "Guide de démarrage rapide",
-        description: "Apprenez les bases de Goriya en 5 minutes",
-        tag: "guide",
-        duration: "5 min",
-    },
-    {
-        icon: Video,
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
-        title: "Maximiser l'efficacité de l'IA",
-        description: "Tutoriel vidéo sur l'optimisation IA",
-        tag: "vidéo",
-        duration: "12 min",
-    },
-    {
-        icon: BookOpen,
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
-        title: "Meilleures pratiques de recrutement",
-        description: "Guide complet pour recruter efficacement",
-        tag: "guide",
-        duration: "20 min",
-    },
-    {
-        icon: FileCode,
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
-        title: "API et intégrations",
-        description: "Documentation technique pour les développeurs",
-        tag: "docs",
-        duration: "Variable",
-    },
+    { Icon: BookOpen, title: "Guide de demarrage rapide", description: "Apprenez les bases de Goriya en 5 minutes", tag: "guide", duration: "5 min" },
+    { Icon: Video, title: "Maximiser l'efficacite de l'IA", description: "Tutoriel video sur l'optimisation IA", tag: "video", duration: "12 min" },
+    { Icon: BookOpen, title: "Meilleures pratiques de recrutement", description: "Guide complet pour recruter efficacement", tag: "guide", duration: "20 min" },
+    { Icon: FileCode, title: "API et integrations", description: "Documentation technique pour les developpeurs", tag: "docs", duration: "Variable" },
 ]
 
-export default function Page() {
+export default function AssistancePage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null)
 
     return (
-        <div className="min-h-screen bg-background">
-            {/* Navigation */}
-            <header className="border-b border-border bg-card">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-                    <GoriyaLogo />
-                    <nav className="hidden md:flex items-center gap-6">
-                        <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                            Dashboard
-                        </Link>
-                        <Link href="/assistance" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                            Tarifs
-                        </Link>
-                        <Button variant="outline" asChild>
-                            <Link href="/auth/signin">Se connecter</Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href="/auth/signup">Commencer</Link>
-                        </Button>
-                    </nav>
+        <div className="space-y-5 pb-10">
+            <div>
+                <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Centre d'assistance</h1>
+                <p className="text-sm text-muted-foreground">Trouvez rapidement les reponses a vos questions</p>
+            </div>
+
+            <div className="overflow-hidden rounded-xl bg-blue-600 px-4 py-8 text-center text-white sm:px-8 sm:py-10">
+                <h2 className="mb-1.5 text-xl font-bold">Comment pouvons-nous vous aider ?</h2>
+                <p className="mb-5 text-sm text-blue-200">Trouvez une reponse rapidement ou contactez notre equipe support</p>
+                <div className="relative mx-auto max-w-md"><Input placeholder="Rechercher..." className="h-9 bg-white pl-4 pr-10 text-sm text-foreground" /><Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /></div>
+            </div>
+
+            <div className="grid grid-cols-1 overflow-hidden rounded-xl border border-border bg-white sm:grid-cols-2 lg:grid-cols-3">
+                <Channel icon={<MessageSquare className="h-5 w-5 text-blue-500" />} title="Chat en direct" subtitle="Discutez avec notre equipe support"><Button size="sm" className="rounded-full text-xs">Demarrer une conversation</Button></Channel>
+                <Channel icon={<Mail className="h-5 w-5 text-green-500" />} title="Email support" subtitle="Contactez-nous par email">support@goriya.com</Channel>
+                <Channel icon={<Phone className="h-5 w-5 text-orange-400" />} title="Telephone" subtitle="Appelez notre support">+33 1 23 45 67 89</Channel>
+            </div>
+
+            <div className="rounded-xl border border-border bg-white p-4 sm:p-5">
+                <h3 className="mb-4 text-sm font-semibold text-foreground">Parcourir par categorie</h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    {categories.map(({ label, count, Icon, bg }) => (
+                        <button key={label} className="flex items-center gap-3 rounded-lg bg-muted/40 px-4 py-3 text-left hover:bg-muted/70 transition-colors">
+                            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${bg}`}><Icon className="h-4 w-4 text-white" /></div>
+                            <div><p className="text-sm font-medium text-foreground">{label}</p><p className="text-xs text-muted-foreground">{count} articles</p></div>
+                        </button>
+                    ))}
                 </div>
-            </header>
-            <div className="space-y-0 px-8 py-4">
-                <div className="mb-4">
-                    <h1 className="text-xl font-semibold text-foreground">Centre d&apos;assistance</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Trouvez rapidement les réponses à vos questions</p>
-                </div>
+            </div>
 
-                {/* Hero Banner */}
-                <div className="rounded-sm bg-primary px-8 py-10 text-center text-white mb-6">
-                    <h2 className="text-2xl font-bold mb-2">Comment pouvons-nous vous aider ?</h2>
-                    <p className="text-blue-100 text-sm mb-6">
-                        Trouvez rapidement les réponses à vos questions ou contactez notre équipe support
-                    </p>
-                    <div className="relative max-w-md mx-auto">
-                        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Rechercher..."
-                            className="pl-10 bg-white text-foreground rounded-lg w-full"
-                        />
-                    </div>
-                </div>
-
-                {/* Support Channels */}
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                    <Card className="border border-border">
-                        <CardContent className="p-5 text-center">
-                            <div className="flex justify-center mb-3">
-                                <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                                    <MessageSquare className="h-5 w-5 text-blue-600" />
-                                </div>
-                            </div>
-                            <h3 className="font-semibold text-foreground text-sm mb-1">Chat en direct</h3>
-                            <p className="text-xs text-muted-foreground mb-4">Discutez avec notre équipe support</p>
-                            <Button size="sm" className="w-full text-xs rounded-lg">
-                                Démarrer une conversation
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border border-border">
-                        <CardContent className="p-5 text-center">
-                            <div className="flex justify-center mb-3">
-                                <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
-                                    <Mail className="h-5 w-5 text-green-600" />
-                                </div>
-                            </div>
-                            <h3 className="font-semibold text-foreground text-sm mb-1">Email support</h3>
-                            <p className="text-xs text-muted-foreground mb-4">Contactez-nous par email</p>
-                            <p className="text-sm font-medium text-foreground">support@goriya.com</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border border-border">
-                        <CardContent className="p-5 text-center">
-                            <div className="flex justify-center mb-3">
-                                <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                    <Phone className="h-5 w-5 text-orange-600" />
-                                </div>
-                            </div>
-                            <h3 className="font-semibold text-foreground text-sm mb-1">Téléphone</h3>
-                            <p className="text-xs text-muted-foreground mb-4">Appelez notre support</p>
-                            <p className="text-sm font-medium text-foreground">+33 1 23 45 67 89</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Browse by category */}
-                <Card className="border border-border mb-6">
-                    <CardContent className="p-5">
-                        <h3 className="font-semibold text-foreground mb-4">Parcourir par catégorie</h3>
-                        <div className="grid grid-cols-4 gap-3">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat.label}
-                                    className="flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3 text-sm font-medium hover:bg-muted transition-colors text-left"
-                                >
-                                    <div className={`h-8 w-8 rounded-lg ${cat.color} flex items-center justify-center shrink-0`}>
-                                        <cat.icon className="h-4 w-4 text-white" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium text-foreground text-sm">{cat.label}</p>
-                                        <p className="text-xs text-muted-foreground">{cat.count} articles</p>
-                                    </div>
-                                </button>
-                            ))}
+            <div className="rounded-xl border border-border bg-white p-4 sm:p-5">
+                <h3 className="mb-2 text-sm font-semibold text-foreground">Questions frequentes</h3>
+                <div className="divide-y divide-border">
+                    {faqs.map((faq, i) => (
+                        <div key={faq.question}>
+                            <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="flex w-full items-center justify-between py-3.5 text-left">
+                                <div className="flex items-center gap-3 pr-4 flex-wrap"><span className="text-sm text-foreground">{faq.question}</span><span className={`rounded px-2 py-0.5 text-[11px] font-medium ${faq.tagColor}`}>{faq.tag}</span></div>
+                                <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${openFaq === i ? "rotate-180" : ""}`} />
+                            </button>
+                            {openFaq === i && <p className="pb-3.5 text-sm text-muted-foreground">{faq.answer}</p>}
                         </div>
-                    </CardContent>
-                </Card>
-
-                <div className="mb-10">
-                    {/* Pricing Section */}
-                    <div className="text-center mb-6">
-                        <h2 className="text-3xl font-bold text-foreground mb-4">
-                            Choisissez votre forfait
-                        </h2>
-                        <p className="text-muted-foreground max-w-xl mx-auto">
-                            Choisissez le plan qui correspond à vos ambitions professionnelles.
-                            <br />
-                            Commencez gratuitement et évoluez selon vos besoins.
-                        </p>
-                    </div>
-
-                    {/* Pricing Cards */}
-                    <div className="grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
-                        {plans.map((plan) => (
-                            <Card
-                                key={plan.name}
-                                className={`relative bg-card ${plan.popular ? "ring-2 ring-primary shadow-xl scale-105 z-10" : ""
-                                    }`}
-                            >
-                                {plan.popular && (
-                                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-muted text-muted-foreground">
-                                        Plan populaire
-                                    </Badge>
-                                )}
-
-                                <CardHeader className="pb-4 pt-6">
-                                    <div
-                                        className={`h-12 w-12 rounded-lg ${plan.iconBg} flex items-center justify-center mb-4`}
-                                    >
-                                        <plan.icon className={`h-6 w-6 ${plan.iconColor}`} />
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-foreground">{plan.name}</h3>
-                                    <p className="text-sm text-muted-foreground">{plan.description}</p>
-                                </CardHeader>
-
-                                <CardContent className="space-y-6">
-                                    <div className="flex items-center gap-3">
-                                        <Button
-                                            variant={plan.buttonVariant}
-                                            className={`flex-1 ${plan.buttonVariant === "outline"
-                                                    ? "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                                                    : ""
-                                                }`}
-                                        >
-                                            {plan.buttonText}
-                                        </Button>
-                                        <div className="text-right">
-                                            <span className="text-2xl font-bold text-foreground">{plan.price}</span>
-                                            <span className="text-sm text-muted-foreground ml-1">{plan.currency}</span>
-                                            <p className="text-xs text-muted-foreground">{plan.period}</p>
-                                        </div>
-                                    </div>
-
-                                    <ul className="space-y-3">
-                                        {plan.features.map((feature, index) => (
-                                            <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                                                {feature}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                    ))}
                 </div>
+            </div>
 
-                {/* FAQ */}
-                <Card className="border border-border mb-6">
-                    <CardContent className="p-5">
-                        <h3 className="font-semibold text-foreground mb-4">Questions fréquentes</h3>
-                        <div className="space-y-0 divide-y divide-border">
-                            {faqs.map((faq, i) => (
-                                <div key={i}>
-                                    <button
-                                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                                        className="flex w-full items-center justify-between py-4 text-left"
-                                    >
-                                        <div className="flex items-center gap-3 pr-4">
-                                            <span className="text-sm text-foreground">{faq.question}</span>
-                                            <span className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${faq.tagColor}`}>
-                                                {faq.tag}
-                                            </span>
-                                        </div>
-                                        <ChevronDown
-                                            className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${openFaq === i ? "rotate-180" : ""
-                                                }`}
-                                        />
-                                    </button>
-                                    {openFaq === i && (
-                                        <p className="pb-4 text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
-                                    )}
-                                </div>
-                            ))}
+            <div className="rounded-xl border border-border bg-white p-4 sm:p-5">
+                <h3 className="mb-2 text-sm font-semibold text-foreground">Ressources utiles</h3>
+                <div className="divide-y divide-border">
+                    {resources.map(({ Icon, title, description, tag, duration }) => (
+                        <div key={title} className="flex items-center justify-between py-4 hover:bg-muted/20 transition-colors">
+                            <div className="flex items-center gap-3 sm:gap-4"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50"><Icon className="h-4 w-4 text-blue-500" /></div><div><p className="text-sm font-medium text-foreground">{title}</p><p className="text-xs text-muted-foreground">{description}</p><div className="mt-1 flex items-center gap-2"><span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">{tag}</span><span className="text-[10px] text-muted-foreground">{duration}</span></div></div></div>
+                            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                         </div>
-                    </CardContent>
-                </Card>
+                    ))}
+                </div>
+            </div>
 
-                {/* Useful Resources */}
-                <Card className="border border-border mb-6">
-                    <CardContent className="p-5">
-                        <h3 className="font-semibold text-foreground mb-4">Ressources utiles</h3>
-                        <div className="space-y-0 divide-y divide-border">
-                            {resources.map((res, i) => (
-                                <div
-                                    key={i}
-                                    className="flex items-center justify-between py-4 cursor-pointer hover:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`h-10 w-10 rounded-lg ${res.iconBg} flex items-center justify-center shrink-0`}>
-                                            <res.icon className={`h-5 w-5 ${res.iconColor}`} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-foreground">{res.title}</p>
-                                            <p className="text-xs text-muted-foreground">{res.description}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">{res.tag}</span>
-                                                <span className="text-xs text-muted-foreground">{res.duration}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Personalized Help */}
-                <Card className="border border-border">
-                    <CardContent className="p-8 text-center">
-                        <Star className="h-8 w-8 text-yellow-400 mx-auto mb-3" fill="currentColor" />
-                        <h3 className="font-semibold text-foreground mb-2">Besoin d&apos;aide personnalisée ?</h3>
-                        <p className="text-sm text-muted-foreground mb-6">
-                            Notre équipe d&apos;experts est là pour vous accompagner dans l&apos;utilisation de Goriya
-                        </p>
-                        <div className="flex items-center justify-center gap-4">
-                            <Button size="sm" className="gap-2">
-                                <MessageSquare className="h-4 w-4" />
-                                Contacter le support
-                            </Button>
-                            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground">
-                                <ExternalLink className="h-4 w-4" />
-                                Documentation complète
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
+            <div className="rounded-xl border border-border bg-white py-8 text-center">
+                <Star className="mx-auto mb-3 h-7 w-7 text-yellow-400" fill="currentColor" />
+                <p className="mb-1 text-sm font-semibold text-foreground">Besoin d'aide personnalisee ?</p>
+                <p className="mb-5 text-xs text-muted-foreground">Notre equipe est la pour vous accompagner dans l'utilisation de Goriya</p>
+                <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <Button size="sm" className="gap-1.5 rounded-full text-xs"><MessageSquare className="h-3.5 w-3.5" />Contacter le support</Button>
+                    <Button size="sm" variant="ghost" className="gap-1.5 rounded-full text-xs text-muted-foreground"><ExternalLink className="h-3.5 w-3.5" />Documentation complete</Button>
+                </div>
             </div>
         </div>
     )
 }
 
+function Channel({ icon, title, subtitle, children }: { icon: React.ReactNode; title: string; subtitle: string; children: React.ReactNode }) {
+    return (
+        <div className="flex flex-col items-center px-6 py-6 text-center border-b border-border sm:[&:nth-child(2)]:border-l sm:[&:nth-child(2)]:border-r lg:border-b-0 lg:[&:nth-child(2)]:border-l lg:[&:nth-child(2)]:border-r">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-muted">{icon}</div>
+            <p className="mb-1 text-sm font-semibold text-foreground">{title}</p>
+            <p className="mb-4 text-xs text-muted-foreground">{subtitle}</p>
+            <div className="text-sm text-muted-foreground">{children}</div>
+        </div>
+    )
+}

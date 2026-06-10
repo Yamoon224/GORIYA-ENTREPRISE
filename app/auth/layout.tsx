@@ -26,7 +26,7 @@ export default function AuthLayout({
                 <Button variant="outline" size="sm" asChild>
                     <Link href="/" className="gap-2">
                         <ChevronLeft className="h-4 w-4" />
-                        return
+                        Retour
                     </Link>
                 </Button>
                 <GoriyaLogo />
