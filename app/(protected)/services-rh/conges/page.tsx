@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Check, Calendar, AlertCircle, X, CheckCircle2 } from "lucide-react"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
 const stats = [
     { value: 5,   label: "En attente",    Icon: Clock,         color: "text-yellow-500" },
@@ -50,7 +51,7 @@ const leaveRequests = [
 type Tab = "Demandes" | "Calendrier" | "Soldes"
 const TABS: Tab[] = ["Demandes", "Calendrier", "Soldes"]
 
-export default function CongesPage() {
+function CongesContent() {
     const [activeTab, setActiveTab] = useState<Tab>("Demandes")
     const [requests, setRequests] = useState(leaveRequests)
 
@@ -174,5 +175,13 @@ export default function CongesPage() {
                 </div>
             )}
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <SubscriptionGate featureLabel="la gestion des congés">
+      <CongesContent />
+    </SubscriptionGate>
   )
 }

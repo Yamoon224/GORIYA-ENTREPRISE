@@ -1,16 +1,83 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertTriangle, Save, Smartphone } from "lucide-react"
+import { apiRequest } from "@/lib/api-client-http"
+
+function getAuth(): { token: string; user: { id: string } } | null {
+    if (typeof window === "undefined") return null
+    const match = document.cookie.split("; ").find((r) => r.startsWith("auth="))
+    if (!match) return null
+    try {
+        return JSON.parse(decodeURIComponent(match.split("=")[1]))
+    } catch { return null }
+}
 
 export default function ParametresPage() {
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState("")
+    const [phone, setPhone] = useState("")
+    const [role, setRole] = useState("")
     const [notifEmail, setNotifEmail] = useState(true)
     const [notifPush, setNotifPush] = useState(true)
     const [notifWeekly, setNotifWeekly] = useState(false)
+
+    useEffect(() => {
+        const load = async () => {
+            const auth = getAuth()
+            if (!auth) { setLoading(false); return }
+            try {
+                const res = await apiRequest<any>({ endpoint: `/users/${auth.user.id}`, method: "GET", token: auth.token })
+                const user = (res as any)?.data ?? res
+                if (user) {
+                    const parts = (user.name ?? "").split(" ")
+                    setFirstName(parts[0] ?? "")
+                    setLastName(parts.slice(1).join(" ") ?? "")
+                    setEmail(user.email ?? "")
+                    setPhone(user.phone ?? "")
+                    setRole(user.role ?? "")
+                }
+            } catch (err) {
+                console.error("[parametres] load error:", err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        load()
+    }, [])
+
+    const handleSave = async () => {
+        const auth = getAuth()
+        if (!auth) return
+        setSaving(true)
+        try {
+            await apiRequest({
+                endpoint: `/users/${auth.user.id}`,
+                method: "PATCH",
+                data: { name: `${firstName} ${lastName}`.trim(), email, phone },
+                token: auth.token,
+            })
+        } catch (err) {
+            console.error("[parametres] save error:", err)
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center p-16">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-5 pb-12">
@@ -21,11 +88,11 @@ export default function ParametresPage() {
 
             <Section title="Informations du compte">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field label="Prenom"><Input defaultValue="Jean" /></Field>
-                    <Field label="Nom"><Input defaultValue="KONAN" /></Field>
-                    <Field label="Adresse email"><Input defaultValue="jean.konan@goriya-lab.com" /></Field>
-                    <Field label="Telephone"><Input defaultValue="+33 1 23 45 67 89" /></Field>
-                    <Field label="Fonction" className="md:col-span-2"><Input defaultValue="Responsable RH" /></Field>
+                    <Field label="Prenom"><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} /></Field>
+                    <Field label="Nom"><Input value={lastName} onChange={(e) => setLastName(e.target.value)} /></Field>
+                    <Field label="Adresse email"><Input value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+                    <Field label="Telephone"><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></Field>
+                    <Field label="Fonction" className="md:col-span-2"><Input value={role} readOnly className="bg-muted/30" /></Field>
                 </div>
             </Section>
 
@@ -61,13 +128,13 @@ export default function ParametresPage() {
                     <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-medium text-foreground">Authentification a deux facteurs</p>
-                            <p className="text-xs text-muted-foreground">Securisez votre compte avec la tablette Samsung Tab 8</p>
+                            <p className="text-xs text-muted-foreground">Securisez votre compte</p>
                         </div>
                         <span className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-0.5 text-xs text-orange-500 w-fit">Non configure</span>
                     </div>
                     <button className="inline-flex items-center gap-2 rounded border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-gray-50 transition-colors">
                         <Smartphone className="h-3.5 w-3.5" />
-                        Configurer l'appareil Tab 8
+                        Configurer 2FA
                     </button>
                 </div>
             </Section>
@@ -82,12 +149,6 @@ export default function ParametresPage() {
                         <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-medium text-white">Actif</span>
                     </div>
                 </div>
-
-                <div className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-                    <div><p className="text-xs text-muted-foreground">Prochaine facturation</p><p className="text-foreground">15 Fevrier 2024</p></div>
-                    <div><p className="text-xs text-muted-foreground">Montant</p><p className="text-foreground">5000 F/mois</p></div>
-                </div>
-
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                     <Button variant="outline" size="sm">Gerer l'abonnement</Button>
                     <Button variant="outline" size="sm">Historique des factures</Button>
@@ -115,7 +176,10 @@ export default function ParametresPage() {
             </div>
 
             <div className="flex justify-center pt-1">
-                <Button className="gap-2 rounded-full bg-primary px-6 text-white hover:bg-primary/90"><Save className="h-4 w-4" />Enregistrer les modifications</Button>
+                <Button className="gap-2 rounded-full bg-primary px-6 text-white hover:bg-primary/90" onClick={handleSave} disabled={saving}>
+                    <Save className="h-4 w-4" />
+                    {saving ? "Enregistrement…" : "Enregistrer les modifications"}
+                </Button>
             </div>
         </div>
     )

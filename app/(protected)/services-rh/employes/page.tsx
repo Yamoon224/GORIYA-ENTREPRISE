@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
 const employees = [
   {
@@ -82,7 +83,7 @@ const initialsColors = [
   "bg-pink-100 text-pink-700",
 ]
 
-export default function EmployesPage() {
+function EmployesContent() {
   const [search, setSearch] = useState("")
   const [department, setDepartment] = useState("Tous les départements")
 
@@ -206,5 +207,13 @@ export default function EmployesPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <SubscriptionGate featureLabel="la gestion des employés">
+      <EmployesContent />
+    </SubscriptionGate>
   )
 }

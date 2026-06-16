@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
-import { getSession, signIn, useSession } from "next-auth/react"
+import { getSession, signIn, signOut } from "next-auth/react"
 import { getAuth } from "@/lib/utils"
 
 export default function Page() {
@@ -51,29 +51,32 @@ export default function Page() {
             // 🔥 Récupérer la session
             const session = await getSession()
 
-            if (session?.user) {
-                const authData = {
-                    token: session.user.access_token,
-                    user: session.user,
-                }
-
-                // 🔹 Stocker dans localStorage (optionnel)
-                localStorage.setItem("auth", JSON.stringify(authData))
-
-                // 🔹 Stocker côté cookie pour server component
-                setCookie("auth", JSON.stringify(authData), {
-                    maxAge: 60 * 60, // 7 jours
-                    path: "/", // accessible sur tout le site
-                    sameSite: "lax",
-                })
-            }
-
             if (res?.error) {
                 throw new Error("Email ou mot de passe incorrect")
             }
 
-            toast.success("Connexion réussie")
+            if (session?.user) {
+                const role = (session.user as any).role
+                if (role !== "ENTREPRISE") {
+                    await signOut({ redirect: false })
+                    toast.error("Votre compte n'est pas autorisé ici. Cette interface est réservée aux entreprises.")
+                    return
+                }
 
+                const authData = {
+                    token: (session.user as any).access_token,
+                    user: session.user,
+                }
+
+                localStorage.setItem("auth", JSON.stringify(authData))
+                setCookie("auth", JSON.stringify(authData), {
+                    maxAge: 60 * 60,
+                    path: "/",
+                    sameSite: "lax",
+                })
+            }
+
+            toast.success("Connexion réussie")
             router.push("/dashboard")
 
         } catch (err: any) {

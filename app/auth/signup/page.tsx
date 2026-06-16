@@ -116,8 +116,11 @@ export default function Page() {
             const res = await createCompany(body)
             setCookie("token", res.accessToken, { path: "/" })
             localStorage.setItem("user", JSON.stringify(res.user))
+            if (res.user?.id) {
+                sessionStorage.setItem("entreprise_signup_userId", res.user.id)
+            }
             toast.success("Entreprise créée avec succès !")
-            router.push("/signup/success")
+            router.push("/auth/signup/plan")
         } catch (error: any) {
             toast.error(error?.message || "Une erreur est survenue")
         } finally {

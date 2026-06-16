@@ -1,7 +1,10 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { FileSignature } from "lucide-react"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
-export default function ContratsPage() {
+function ContratsContent() {
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold text-foreground">Contrats</h1>
@@ -12,5 +15,13 @@ export default function ContratsPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <SubscriptionGate featureLabel="la gestion des contrats">
+      <ContratsContent />
+    </SubscriptionGate>
   )
 }

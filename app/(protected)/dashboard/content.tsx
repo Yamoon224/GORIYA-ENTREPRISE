@@ -3,18 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Bell, Camera, ChevronRight, Circle, Clock3, Eye, FileText, MessageSquare, Sparkles, Users, Video, X } from "lucide-react"
+import { Bell, Calendar, Camera, ChevronRight, Circle, Clock3, Eye, FileText, MessageSquare, Sparkles, Users, Video, X } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { DashboardContentProps } from "@/@types/props"
 
-const kpis = [
-  { title: "Annonces actives", value: "15", Icon: FileText },
-  { title: "Candidatures recues", value: "125", Icon: MessageSquare },
-  { title: "Vues cette semaine", value: "18", Icon: Eye },
-  { title: "Entretiens planifies", value: "01", Icon: Video },
-]
-
-const bars = [
+const FALLBACK_BARS = [
   { month: "Jan", value: 60 },
   { month: "Fev", value: 78 },
   { month: "Mar", value: 90 },
@@ -23,7 +16,7 @@ const bars = [
   { month: "Jun", value: 135 },
 ]
 
-const lines = [
+const FALLBACK_LINES = [
   { month: "Jan", value: 280 },
   { month: "Fev", value: 330 },
   { month: "Mar", value: 410 },
@@ -32,27 +25,73 @@ const lines = [
   { month: "Jun", value: 580 },
 ]
 
-const candidates = [
-  { name: "Marie Dubois", role: "Developpeur Full-Stack", when: "Il y a 2h", score: 92, tag: "En attente", tagClass: "bg-amber-100 text-amber-600" },
-  { name: "Jean Martin", role: "UX Designer", when: "Il y a 4h", score: 88, tag: "Entretien programme", tagClass: "bg-blue-100 text-blue-600" },
-  { name: "Sophie Laurent", role: "Chef de Projet", when: "Il y a 1 jour", score: 85, tag: "CV analyse", tagClass: "bg-green-100 text-green-600" },
-]
+const KPI_ICONS = [FileText, MessageSquare, Eye, Video]
+const KPI_TITLES = ["Annonces actives", "Candidatures recues", "Vues cette semaine", "Entretiens planifies"]
 
-const bestOffers = [
-  { title: "Developpeur React Senior", applications: 45, views: 892, match: 78 },
-  { title: "UX/UI Designer", applications: 32, views: 654, match: 72 },
-  { title: "Chef de Projet Digital", applications: 28, views: 543, match: 69 },
-]
+const CANDIDATE_STATUS: Record<string, { tag: string; tagClass: string }> = {
+  EN_ATTENTE: { tag: "En attente", tagClass: "bg-amber-100 text-amber-600" },
+  APPROUVEE: { tag: "Accepté", tagClass: "bg-green-100 text-green-600" },
+  REJETEE: { tag: "Refusé", tagClass: "bg-red-100 text-red-500" },
+  EN_COURS: { tag: "Entretien programmé", tagClass: "bg-blue-100 text-blue-600" },
+}
 
-const recents = [
-  { title: "Developpeur Frontend React", status: "Active", statusClass: "bg-green-100 text-green-600", meta: "Abidjan • CDI • Publie il y a 3 jours", apps: "88 candidatures", buttons: ["Modifier", "Promouvoir", "Marquer expiree", "Effacer"] },
-  { title: "UX/UI Designer Senior", status: "Active", statusClass: "bg-green-100 text-green-600", meta: "Abidjan • CDI • Publie il y a 1 semaine", apps: "28 candidatures", buttons: ["Modifier", "Promouvoir", "Marquer expiree", "Effacer"] },
-  { title: "Developpeur Backend Node.js", status: "Expire", statusClass: "bg-red-100 text-red-500", meta: "Abidjan • CDD • Publie il y a 1 semaine", apps: "", buttons: ["Rapport final", "Effacer"] },
-  { title: "Data Scientist", status: "Brouillon", statusClass: "bg-amber-100 text-amber-600", meta: "Abidjan • CDI • Brouillon", apps: "", buttons: ["Modifier", "Publier", "Effacer"] },
-]
+const OFFER_STATUS: Record<string, { label: string; cls: string }> = {
+  ACTIVE: { label: "Active", cls: "bg-green-100 text-green-600" },
+  CLOSED: { label: "Expiré", cls: "bg-red-100 text-red-500" },
+  DRAFT: { label: "Brouillon", cls: "bg-amber-100 text-amber-600" },
+}
+
+function offerButtons(status: string): string[] {
+  if (status === "ACTIVE") return ["Modifier", "Promouvoir", "Marquer expirée", "Effacer"]
+  if (status === "DRAFT") return ["Modifier", "Publier", "Effacer"]
+  return ["Rapport final", "Effacer"]
+}
 
 export default function Content(props: DashboardContentProps) {
-  void props
+  const kpis = KPI_TITLES.map((title, i) => ({
+    title,
+    value: props.statsData?.[i]?.value ?? "—",
+    Icon: KPI_ICONS[i],
+  }))
+
+  const bars = props.chartData?.length > 0
+    ? props.chartData.map(d => ({ month: d.name, value: d.value }))
+    : FALLBACK_BARS
+
+  const lines = props.lineChartData?.length > 0
+    ? props.lineChartData.map(d => ({ month: d.name, value: d.value }))
+    : FALLBACK_LINES
+
+  const candidates = props.recentCandidates?.length > 0
+    ? props.recentCandidates.map(c => ({
+        name: c.name,
+        role: c.email,
+        when: new Date(c.appliedDate).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+        score: c.score,
+        tag: CANDIDATE_STATUS[c.status]?.tag ?? c.status,
+        tagClass: CANDIDATE_STATUS[c.status]?.tagClass ?? "bg-gray-100 text-gray-600",
+      }))
+    : [
+        { name: "—", role: "—", when: "—", score: 0, tag: "En attente", tagClass: "bg-amber-100 text-amber-600" },
+      ]
+
+  const bestOffers = props.topOffers?.length > 0
+    ? props.topOffers.map(o => ({ title: o.title, company: o.companyName }))
+    : []
+
+  const recents = props.recentOffers?.length > 0
+    ? props.recentOffers.map(o => {
+        const s = OFFER_STATUS[o.status] ?? { label: o.status, cls: "bg-gray-100 text-gray-600" }
+        return {
+          title: o.title,
+          status: s.label,
+          statusClass: s.cls,
+          meta: `${o.location} • ${o.type} • Publié le ${new Date(o.publishDate).toLocaleDateString("fr-FR")}`,
+          apps: o.applicants > 0 ? `${o.applicants} candidatures` : "",
+          buttons: offerButtons(o.status),
+        }
+      })
+    : []
 
   return (
     <div className="space-y-4">
@@ -110,8 +149,8 @@ export default function Content(props: DashboardContentProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm">Candidatures recentes (Goriya Score)</CardTitle><button className="inline-flex items-center gap-1 text-xs text-muted-foreground">Voir tout <ChevronRight className="h-3.5 w-3.5" /></button></CardHeader>
           <CardContent className="space-y-3">
-            {candidates.map((c) => (
-              <div key={c.name} className="rounded-md bg-muted/30 p-3"><div className="mb-0.5 flex items-center justify-between gap-2"><p className="text-sm font-medium">{c.name}</p><p className="inline-flex items-center gap-1 text-sm font-semibold"><Circle className="h-2 w-2 fill-amber-400 text-amber-400" /> {c.score}/100</p></div><p className="text-xs text-muted-foreground">{c.role}</p><div className="mt-1 flex items-center justify-between gap-2"><p className="text-xs text-muted-foreground">{c.when}</p><span className={`rounded-full px-2 py-0.5 text-[10px] ${c.tagClass}`}>{c.tag}</span></div></div>
+            {candidates.map((c, i) => (
+              <div key={`${c.name}-${i}`} className="rounded-md bg-muted/30 p-3"><div className="mb-0.5 flex items-center justify-between gap-2"><p className="text-sm font-medium">{c.name}</p><p className="inline-flex items-center gap-1 text-sm font-semibold"><Circle className="h-2 w-2 fill-amber-400 text-amber-400" /> {c.score}/100</p></div><p className="text-xs text-muted-foreground">{c.role}</p><div className="mt-1 flex items-center justify-between gap-2"><p className="text-xs text-muted-foreground">{c.when}</p><span className={`rounded-full px-2 py-0.5 text-[10px] ${c.tagClass}`}>{c.tag}</span></div></div>
             ))}
           </CardContent>
         </Card>
@@ -119,8 +158,15 @@ export default function Content(props: DashboardContentProps) {
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm">Offres les plus performantes</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            {bestOffers.map((o) => (
-              <div key={o.title}><div className="mb-1.5 flex items-center justify-between gap-2"><p className="text-sm font-medium">{o.title}</p><span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] text-green-600">{o.match}% match</span></div><div className="mb-1.5 h-1.5 rounded-full bg-muted"><div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${o.match}%` }} /></div><div className="flex items-center justify-between text-xs text-muted-foreground"><span>{o.applications} candidatures</span><span>{o.views} vues</span></div></div>
+            {bestOffers.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Aucune offre disponible.</p>
+            ) : bestOffers.map((o, i) => (
+              <div key={`${o.title}-${i}`}>
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium">{o.title}</p>
+                  <span className="text-xs text-muted-foreground">{o.company}</span>
+                </div>
+              </div>
             ))}
           </CardContent>
         </Card>
@@ -129,11 +175,15 @@ export default function Content(props: DashboardContentProps) {
       <div>
         <h2 className="text-lg font-semibold">Offres recentes</h2>
         <p className="mb-3 text-xs text-muted-foreground">Apercu de vos dernieres publications</p>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-          {recents.map((o, i) => (
-            <Card key={`${o.title}-${i}`}><CardContent className="p-3"><div className="mb-1 flex items-center justify-between gap-2"><p className="text-sm font-semibold">{o.title}</p><Badge className={`text-[10px] ${o.statusClass}`}>{o.status}</Badge></div><p className="text-[11px] text-muted-foreground">{o.meta}</p><p className="mt-2 text-xs text-muted-foreground">Poste pourvu - description courte de l'offre...</p><div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"><p className="text-xs text-muted-foreground">{o.apps}</p><div className="flex flex-wrap gap-1">{o.buttons.map((b) => <Button key={b} variant="outline" size="sm" className="h-6 px-2 text-[10px]">{b}</Button>)}</div></div></CardContent></Card>
-          ))}
-        </div>
+        {recents.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Aucune offre récente.</p>
+        ) : (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+            {recents.map((o, i) => (
+              <Card key={`${o.title}-${i}`}><CardContent className="p-3"><div className="mb-1 flex items-center justify-between gap-2"><p className="text-sm font-semibold">{o.title}</p><Badge className={`text-[10px] ${o.statusClass}`}>{o.status}</Badge></div><p className="text-[11px] text-muted-foreground">{o.meta}</p><div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"><p className="text-xs text-muted-foreground">{o.apps}</p><div className="flex flex-wrap gap-1">{o.buttons.map((b) => <Button key={b} variant="outline" size="sm" className="h-6 px-2 text-[10px]">{b}</Button>)}</div></div></CardContent></Card>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="hidden"><Clock3 /><Users /><Bell /><Calendar /><Camera /></div>

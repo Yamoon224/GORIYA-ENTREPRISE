@@ -11,23 +11,22 @@ import { getAuth } from "@/lib/utils"
 import { toast } from "sonner"
 import { Camera, MapPin, Globe, Users, Calendar, Save, Plus, X } from "lucide-react"
 
-const defaultBenefits = ["Télétravail flexible", "Mutuelle premium", "Tickets restaurant"]
-
 export default function Content({ company }: ProfilContentProps) {
     const [loading, setLoading] = useState(false)
     const [logo, setLogo] = useState<File | null>(null)
     const [companyData, setCompanyData] = useState<ICompany>(company)
-    const [benefits, setBenefits] = useState<string[]>(defaultBenefits)
+    const [benefits, setBenefits] = useState<string[]>([])
     const [newBenefit, setNewBenefit] = useState("")
-    const [mission, setMission] = useState(
-        "Notre mission est de rendre la technologie accessible à tous, en développant des solutions intuitives et performantes. Nos valeurs : Innovation, excellence, collaboration et respect de l'environnement."
-    )
+    const [mission, setMission] = useState(company.about ?? "")
+
+    const activeOffers = (company.jobOffers as any[])?.filter((j: any) => j.status === "ACTIVE").length ?? null
+    const totalApplicants = (company.jobOffers as any[])?.reduce((sum: number, j: any) => sum + (j.applicants ?? 0), 0) ?? null
 
     const stats = [
-        { value: "156", label: "Employés",       color: "text-blue-500" },
-        { value: "45",  label: "Offres actives",  color: "text-orange-400" },
-        { value: "4.8", label: "Note moyenne",    color: "text-yellow-400" },
-        { value: "892", label: "Candidatures",    color: "text-green-500" },
+        { value: company.companySize ?? "—", label: "Employés",       color: "text-blue-500" },
+        { value: activeOffers != null ? String(activeOffers) : "—",  label: "Offres actives",  color: "text-orange-400" },
+        { value: "—", label: "Note moyenne",    color: "text-yellow-400" },
+        { value: totalApplicants != null ? String(totalApplicants) : "—", label: "Candidatures",    color: "text-green-500" },
     ]
 
     const addBenefit = () => {
@@ -244,7 +243,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <div>
                         <p className="mb-1 text-xs text-muted-foreground">Responsable RH</p>
                         <Input
-                            defaultValue="Marie Dupont"
+                            defaultValue={(company.users as any[])?.[0]?.name ?? ""}
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>
@@ -267,7 +266,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <div>
                         <p className="mb-1 text-xs text-muted-foreground">Linkedin entreprise</p>
                         <Input
-                            defaultValue="https://linkedin.com/company/techcorp-solutions"
+                            defaultValue={(company.socialLinks as string[])?.[0] ?? ""}
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>

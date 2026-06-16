@@ -2,6 +2,7 @@ import { Content } from "./content"
 import { cookies } from "next/headers"
 import { getJobOffers } from "@/actions/offers"
 import { IPaginatedResponse, IOffer } from "@/@types/interface"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
 
 export default async function Page() {
@@ -15,5 +16,9 @@ export default async function Page() {
 
     const init: IPaginatedResponse<IOffer> = await getJobOffers(filters, auth.token)
 
-    return <Content init={init} token={auth.token} />
+    return (
+        <SubscriptionGate featureLabel="la gestion des annonces">
+            <Content init={init} token={auth.token} />
+        </SubscriptionGate>
+    )
 }

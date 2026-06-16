@@ -1,7 +1,10 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { DollarSign } from "lucide-react"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
-export default function PaiePage() {
+function PaieContent() {
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold text-foreground">Gestion de Paie</h1>
@@ -12,5 +15,13 @@ export default function PaiePage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <SubscriptionGate featureLabel="la gestion de la paie">
+      <PaieContent />
+    </SubscriptionGate>
   )
 }

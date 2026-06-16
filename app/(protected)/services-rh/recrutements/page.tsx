@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye, MapPin } from "lucide-react"
+import { SubscriptionGate } from "@/components/subscription-gate"
 
 const stats = [
     { value: 3, label: "Offres actives", color: "text-purple-600" },
@@ -59,7 +60,7 @@ function StatusBadge({ status }: { status: string }) {
     )
 }
 
-export default function RecrutementsPage() {
+function RecrutementsContent() {
     const [activeTab, setActiveTab] = useState("Offres d'emploi")
 
     return (
@@ -145,5 +146,13 @@ export default function RecrutementsPage() {
                 </div>
             )}
         </div>
+    )
+}
+
+export default function Page() {
+    return (
+        <SubscriptionGate featureLabel="la gestion des recrutements">
+            <RecrutementsContent />
+        </SubscriptionGate>
     )
 }
