@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { CheckCircle, Loader2, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,7 @@ import { subscriptionService } from "@/lib/api/subscription.service"
 
 type State = "loading" | "success" | "error"
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
     const router = useRouter()
     const params = useSearchParams()
     const [state, setState] = useState<State>("loading")
@@ -46,57 +46,72 @@ export default function PaymentSuccessPage() {
     }, [state, router])
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
-            <div className="w-full max-w-md text-center space-y-6">
-                {state === "loading" && (
-                    <>
-                        <Loader2 className="mx-auto h-16 w-16 animate-spin text-blue-600" />
-                        <div>
-                            <h1 className="text-2xl font-bold text-foreground">Vérification du paiement…</h1>
-                            <p className="text-muted-foreground text-sm mt-1">Merci de patienter quelques instants.</p>
-                        </div>
-                    </>
-                )}
+        <div className="w-full max-w-md text-center space-y-6">
+            {state === "loading" && (
+                <>
+                    <Loader2 className="mx-auto h-16 w-16 animate-spin text-blue-600" />
+                    <div>
+                        <h1 className="text-2xl font-bold text-foreground">Vérification du paiement…</h1>
+                        <p className="text-muted-foreground text-sm mt-1">Merci de patienter quelques instants.</p>
+                    </div>
+                </>
+            )}
 
-                {state === "success" && (
-                    <>
-                        <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
-                        <div>
-                            <h1 className="text-2xl font-bold text-foreground">Paiement réussi !</h1>
-                            <p className="text-muted-foreground text-sm mt-1">
-                                Votre abonnement est actif. Finalisation de l'inscription…
-                            </p>
-                        </div>
+            {state === "success" && (
+                <>
+                    <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+                    <div>
+                        <h1 className="text-2xl font-bold text-foreground">Paiement réussi !</h1>
+                        <p className="text-muted-foreground text-sm mt-1">
+                            Votre abonnement est actif. Finalisation de l'inscription…
+                        </p>
+                    </div>
+                    <Button
+                        onClick={() => router.push("/auth/signup/success")}
+                        className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-8"
+                    >
+                        Continuer
+                    </Button>
+                </>
+            )}
+
+            {state === "error" && (
+                <>
+                    <XCircle className="mx-auto h-16 w-16 text-red-500" />
+                    <div>
+                        <h1 className="text-2xl font-bold text-foreground">Activation échouée</h1>
+                        <p className="text-muted-foreground text-sm mt-1">{errorMsg}</p>
+                    </div>
+                    <div className="flex gap-3 justify-center">
+                        <Button variant="outline" onClick={() => router.push("/auth/signup/plan")}>
+                            Réessayer
+                        </Button>
                         <Button
                             onClick={() => router.push("/auth/signup/success")}
-                            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-8"
+                            className="bg-blue-600 text-white"
                         >
-                            Continuer
+                            Continuer sans abonnement
                         </Button>
-                    </>
-                )}
+                    </div>
+                </>
+            )}
+        </div>
+    )
+}
 
-                {state === "error" && (
-                    <>
-                        <XCircle className="mx-auto h-16 w-16 text-red-500" />
-                        <div>
-                            <h1 className="text-2xl font-bold text-foreground">Activation échouée</h1>
-                            <p className="text-muted-foreground text-sm mt-1">{errorMsg}</p>
-                        </div>
-                        <div className="flex gap-3 justify-center">
-                            <Button variant="outline" onClick={() => router.push("/auth/signup/plan")}>
-                                Réessayer
-                            </Button>
-                            <Button
-                                onClick={() => router.push("/auth/signup/success")}
-                                className="bg-blue-600 text-white"
-                            >
-                                Continuer sans abonnement
-                            </Button>
-                        </div>
-                    </>
-                )}
-            </div>
+export default function PaymentSuccessPage() {
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
+            <Suspense
+                fallback={
+                    <div className="w-full max-w-md text-center space-y-6">
+                        <Loader2 className="mx-auto h-16 w-16 animate-spin text-blue-600" />
+                        <h1 className="text-2xl font-bold text-foreground">Chargement…</h1>
+                    </div>
+                }
+            >
+                <PaymentSuccessContent />
+            </Suspense>
         </div>
     )
 }
