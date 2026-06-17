@@ -109,6 +109,7 @@ export default function Content({ company }: ProfilContentProps) {
                             <Input
                                 value={companyData.name}
                                 onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
+                                placeholder="Nom de l'entreprise"
                                 className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                             />
                         </div>
@@ -117,6 +118,7 @@ export default function Content({ company }: ProfilContentProps) {
                             <Input
                                 value={companyData.sector}
                                 onChange={(e) => setCompanyData({ ...companyData, sector: e.target.value })}
+                                placeholder="Secteur d'activité"
                                 className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                             />
                         </div>
@@ -127,6 +129,7 @@ export default function Content({ company }: ProfilContentProps) {
                                 <Input
                                     value={companyData.location}
                                     onChange={(e) => setCompanyData({ ...companyData, location: e.target.value })}
+                                    placeholder="Ville, Pays"
                                     className="h-7 border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                                 />
                             </div>
@@ -138,6 +141,7 @@ export default function Content({ company }: ProfilContentProps) {
                                 <Input
                                     value={companyData.website}
                                     onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
+                                    placeholder="https://exemple.com"
                                     className="h-7 border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                                 />
                             </div>
@@ -158,6 +162,7 @@ export default function Content({ company }: ProfilContentProps) {
                             <Input
                                 value={companyData.companySize}
                                 onChange={(e) => setCompanyData({ ...companyData, companySize: e.target.value })}
+                                placeholder="ex: 50-200 employés"
                                 className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                             />
                         </div>
@@ -169,6 +174,7 @@ export default function Content({ company }: ProfilContentProps) {
                             <Input
                                 value={companyData.creationDate ?? ""}
                                 onChange={(e) => setCompanyData({ ...companyData, creationDate: e.target.value })}
+                                placeholder="2010"
                                 className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                             />
                         </div>
@@ -180,6 +186,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <Textarea
                         value={companyData.about}
                         onChange={(e) => setCompanyData({ ...companyData, about: e.target.value })}
+                        placeholder="Décrivez votre entreprise..."
                         rows={3}
                         className="text-sm resize-none"
                     />
@@ -190,6 +197,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <Textarea
                         value={mission}
                         onChange={(e) => setMission(e.target.value)}
+                        placeholder="Décrivez votre mission et vos valeurs..."
                         rows={3}
                         className="text-sm resize-none"
                     />
@@ -244,6 +252,7 @@ export default function Content({ company }: ProfilContentProps) {
                         <p className="mb-1 text-xs text-muted-foreground">Responsable RH</p>
                         <Input
                             defaultValue={(company.users as any[])?.[0]?.name ?? ""}
+                            placeholder="Nom du responsable RH"
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>
@@ -252,6 +261,7 @@ export default function Content({ company }: ProfilContentProps) {
                         <Input
                             value={companyData.email}
                             onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
+                            placeholder="contact@entreprise.com"
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>
@@ -260,6 +270,7 @@ export default function Content({ company }: ProfilContentProps) {
                         <Input
                             value={companyData.phone}
                             onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
+                            placeholder="+33 6 00 00 00 00"
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>
@@ -267,6 +278,7 @@ export default function Content({ company }: ProfilContentProps) {
                         <p className="mb-1 text-xs text-muted-foreground">Linkedin entreprise</p>
                         <Input
                             defaultValue={(company.socialLinks as string[])?.[0] ?? ""}
+                            placeholder="https://linkedin.com/company/..."
                             className="h-8 border-0 border-b border-border rounded-none px-0 text-sm shadow-none focus-visible:ring-0"
                         />
                     </div>

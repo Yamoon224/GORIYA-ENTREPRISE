@@ -88,10 +88,10 @@ export default function ParametresPage() {
 
             <Section title="Informations du compte">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field label="Prenom"><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} /></Field>
-                    <Field label="Nom"><Input value={lastName} onChange={(e) => setLastName(e.target.value)} /></Field>
-                    <Field label="Adresse email"><Input value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-                    <Field label="Telephone"><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></Field>
+                    <Field label="Prenom"><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Votre prénom" /></Field>
+                    <Field label="Nom"><Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Votre nom" /></Field>
+                    <Field label="Adresse email"><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Adresse e-mail" /></Field>
+                    <Field label="Telephone"><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+33 6 00 00 00 00" /></Field>
                     <Field label="Fonction" className="md:col-span-2"><Input value={role} readOnly className="bg-muted/30" /></Field>
                 </div>
             </Section>

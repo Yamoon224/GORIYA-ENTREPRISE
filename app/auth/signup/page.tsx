@@ -305,14 +305,14 @@ export default function Page() {
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Pays <span className="text-destructive">*</span></FieldLabel>
-                                <Input value={formData.country} onChange={(e) => updateFormData("country", e.target.value)} />
+                                <Input value={formData.country} onChange={(e) => updateFormData("country", e.target.value)} placeholder="France" />
                             </Field>
                         </div>
 
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Siège <span className="text-destructive">*</span></FieldLabel>
-                                <Input value={formData.headquarters} onChange={(e) => updateFormData("headquarters", e.target.value)} />
+                                <Input value={formData.headquarters} onChange={(e) => updateFormData("headquarters", e.target.value)} placeholder="Paris" />
                             </Field>
                         </div>
                     </div>
@@ -321,14 +321,14 @@ export default function Page() {
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Localisation <span className="text-destructive">*</span></FieldLabel>
-                                <Input value={formData.location} onChange={(e) => updateFormData("location", e.target.value)} />
+                                <Input value={formData.location} onChange={(e) => updateFormData("location", e.target.value)} placeholder="Ville, Pays" />
                             </Field>
                         </div>
 
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Téléphone <span className="text-destructive">*</span></FieldLabel>
-                                <Input type="tel" value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)} />
+                                <Input type="tel" value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)} placeholder="+33 6 00 00 00 00" />
                             </Field>
                         </div>
                     </div>
@@ -337,7 +337,7 @@ export default function Page() {
                         <div className="col-span-12 md:col-span-6">
                             <Field>
                                 <FieldLabel>Email professionnel <span className="text-destructive">*</span></FieldLabel>
-                                <Input type="email" value={formData.email} onChange={(e) => updateFormData("email", e.target.value)} />
+                                <Input type="email" value={formData.email} onChange={(e) => updateFormData("email", e.target.value)} placeholder="contact@entreprise.com" />
                             </Field>
                         </div>
 
