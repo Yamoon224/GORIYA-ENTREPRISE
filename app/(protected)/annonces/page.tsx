@@ -1,24 +1,30 @@
 import { Content } from "./content"
-import { cookies } from "next/headers"
 import { getJobOffers } from "@/actions/offers"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { IPaginatedResponse, IOffer } from "@/@types/interface"
 import { SubscriptionGate } from "@/components/subscription-gate"
 
 
 export default async function Page() {
-    const cookieStore = await cookies()
-    const authCookie = cookieStore.get("auth")?.value
+    const session = await getServerSession(authOptions)
 
-    if (!authCookie) return <p>Vous devez être connecté</p>
+    if (!session?.user?.access_token) return <p>Vous devez être connecté</p>
 
-    const auth = JSON.parse(authCookie)
+    const token = session.user.access_token
     const filters = { page: 1, limit: 10 }
 
-    const init: IPaginatedResponse<IOffer> = await getJobOffers(filters, auth.token)
+    let init: IPaginatedResponse<IOffer> = { data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } }
+    try {
+        init = await getJobOffers(filters, token)
+    } catch (err) {
+        console.error("Erreur fetch job offers:", err)
+        return <p>Impossible de récupérer les annonces pour le moment. Veuillez réessayer plus tard.</p>
+    }
 
     return (
         <SubscriptionGate featureLabel="la gestion des annonces">
-            <Content init={init} token={auth.token} />
+            <Content init={init} />
         </SubscriptionGate>
     )
 }

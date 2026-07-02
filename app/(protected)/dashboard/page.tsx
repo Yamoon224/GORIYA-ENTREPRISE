@@ -1,20 +1,18 @@
 import Content from "./content"
 import { stats } from "@/actions/dashboard"
-import { cookies } from "next/headers"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function Page() {
-    const cookieStore = await cookies()
-    const authCookie = cookieStore.get("auth")?.value
+    const session = await getServerSession(authOptions)
 
-    if (!authCookie) {
+    if (!session?.user?.access_token) {
         return <p>Vous devez être connecté</p>
     }
 
-    const auth = JSON.parse(authCookie) // { token, user, companyId }
-
     let dashboardStats = null
     try {
-        dashboardStats = await stats(auth.token)
+        dashboardStats = await stats(session.user.access_token)
     } catch (err) {
         console.error("Erreur fetch dashboard stats:", err)
     }

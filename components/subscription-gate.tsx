@@ -12,12 +12,24 @@ interface SubscriptionGateProps {
 }
 
 export function SubscriptionGate({ children, featureLabel = "cette fonctionnalité" }: SubscriptionGateProps) {
-    const { hasSubscription, loading } = useSubscription()
+    // ⚠️ Ce contrôle est purement côté client (UX) : il évite d'afficher une fonctionnalité
+    // non accessible, mais ne remplace pas une vérification côté backend. Le vrai contrôle
+    // d'accès à la ressource doit être appliqué par l'API appelée (retour 401/403 si
+    // l'abonnement n'est pas actif) ; aucune nouvelle logique serveur n'a été ajoutée ici.
+    const { hasSubscription, loading, error } = useSubscription()
 
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[300px]">
                 <Loader2 className="h-8 w-8 animate-spin text-[#2f6de6]" />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[300px] px-4 text-center">
+                <p className="text-sm text-destructive">{error}</p>
             </div>
         )
     }

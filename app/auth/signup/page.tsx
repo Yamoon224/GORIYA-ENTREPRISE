@@ -2,7 +2,7 @@
 
 import { toast } from "sonner"
 import { useState } from "react"
-import { setCookie } from "cookies-next"
+import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -114,11 +114,22 @@ export default function Page() {
             body.append("status", "ACTIVE")
     
             const res = await createCompany(body)
-            setCookie("token", res.accessToken, { path: "/" })
-            localStorage.setItem("user", JSON.stringify(res.user))
             if (res.user?.id) {
                 sessionStorage.setItem("entreprise_signup_userId", res.user.id)
             }
+
+            // ✅ Établit la vraie session NextAuth (cookie httpOnly) au lieu de
+            // dupliquer le token dans un cookie/localStorage non protégé.
+            const signInResult = await signIn("credentials", {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            })
+
+            if (signInResult?.error) {
+                console.error("[signup] auto sign-in error:", signInResult.error)
+            }
+
             toast.success("Entreprise créée avec succès !")
             router.push("/auth/signup/plan")
         } catch (error: any) {

@@ -1,13 +1,16 @@
 import { apiRequest } from "@/lib/api-client-http"
 
-export const getConversations = (token: string) =>
-    apiRequest<any>({ endpoint: "/messages/conversations", method: "GET", token })
+// Ces fonctions sont utilisées côté client (Client Components) : le Bearer token
+// n'est plus lu manuellement, il est attaché par la route /api/proxy à partir de
+// la session NextAuth (cookie httpOnly) côté serveur.
+export const getConversations = () =>
+    apiRequest<any>({ endpoint: "/messages/conversations", method: "GET" })
 
-export const getMessages = (convId: string, token: string) =>
-    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/messages`, method: "GET", token })
+export const getMessages = (convId: string) =>
+    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/messages`, method: "GET" })
 
-export const sendMessage = (convId: string, content: string, token: string) =>
-    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/messages`, method: "POST", data: { content }, token })
+export const sendMessage = (convId: string, content: string) =>
+    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/messages`, method: "POST", data: { content } })
 
-export const markRead = (convId: string, token: string) =>
-    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/read`, method: "PUT", token })
+export const markRead = (convId: string) =>
+    apiRequest<any>({ endpoint: `/messages/conversations/${convId}/read`, method: "PUT" })

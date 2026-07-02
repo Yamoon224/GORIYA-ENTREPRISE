@@ -37,17 +37,6 @@ const TAB_LABELS = [
     { key: "rejected" as const, label: "Refusees" },
 ]
 
-function getToken(): string | null {
-    if (typeof window === "undefined") return null
-    const match = document.cookie.split("; ").find((r) => r.startsWith("auth="))
-    if (!match) return null
-    try {
-        return JSON.parse(decodeURIComponent(match.split("=")[1]))?.token ?? null
-    } catch {
-        return null
-    }
-}
-
 function CandidaturesContent() {
     const [candidates, setCandidates] = useState<ICandidate[]>([])
     const [loading, setLoading] = useState(true)
@@ -57,10 +46,8 @@ function CandidaturesContent() {
 
     useEffect(() => {
         const load = async () => {
-            const token = getToken()
-            if (!token) { setLoading(false); return }
             try {
-                const res = await apiRequest<any>({ endpoint: "/candidatures/paginate", method: "GET", params: { page: 1, limit: 50 }, token })
+                const res = await apiRequest<any>({ endpoint: "/candidatures/paginate", method: "GET", params: { page: 1, limit: 50 } })
                 const items = res?.data ?? res ?? []
                 setCandidates(Array.isArray(items) ? items : [])
             } catch (err) {
@@ -73,10 +60,8 @@ function CandidaturesContent() {
     }, [])
 
     const handleAccept = async (id: string) => {
-        const token = getToken()
-        if (!token) return
         try {
-            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "APPROUVEE" }, token })
+            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "APPROUVEE" } })
             setCandidates((prev) => prev.map((c) => c.id === id ? { ...c, status: "ACCEPTEE" as any } : c))
         } catch (err) {
             console.error("[candidatures] accept error:", err)
@@ -84,10 +69,8 @@ function CandidaturesContent() {
     }
 
     const handleReject = async (id: string) => {
-        const token = getToken()
-        if (!token) return
         try {
-            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "REJETEE" }, token })
+            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "REJETEE" } })
             setCandidates((prev) => prev.map((c) => c.id === id ? { ...c, status: "REFUSEE" as any } : c))
         } catch (err) {
             console.error("[candidatures] reject error:", err)

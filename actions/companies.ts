@@ -1,7 +1,9 @@
 import { ICompany } from "@/@types/interface"
 import { apiRequest } from "@/lib/api-client-http"
 
-export const updateCompany = (id: string, data: FormData, token: string) => {
+// `token` n'est requis que pour les appels serveur explicites ; côté navigateur, l'appel
+// est relayé via /api/proxy qui attache l'Authorization à partir de la session NextAuth.
+export const updateCompany = (id: string, data: FormData, token?: string) => {
     return apiRequest({
         endpoint: `/companies/${id}`,
         method: "PATCH",

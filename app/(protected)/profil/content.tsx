@@ -1,17 +1,18 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { updateCompany } from "@/actions/companies"
 import { ProfilContentProps } from "@/@types/props"
 import { ICompany } from "@/@types/interface"
-import { getAuth } from "@/lib/utils"
 import { toast } from "sonner"
 import { Camera, MapPin, Globe, Users, Calendar, Save, Plus, X } from "lucide-react"
 
 export default function Content({ company }: ProfilContentProps) {
+    const { data: session } = useSession()
     const [loading, setLoading] = useState(false)
     const [logo, setLogo] = useState<File | null>(null)
     const [companyData, setCompanyData] = useState<ICompany>(company)
@@ -41,9 +42,8 @@ export default function Content({ company }: ProfilContentProps) {
     const handleSubmit = async () => {
         try {
             setLoading(true)
-            const auth = getAuth()
-            if (!auth) throw new Error("Non authentifié")
-            const { token, user } = auth
+            const companyId = session?.user?.companyId
+            if (!companyId) throw new Error("Non authentifié")
             const formData = new FormData()
             formData.append("companyName", companyData.name)
             formData.append("about", companyData.about)
@@ -57,7 +57,9 @@ export default function Content({ company }: ProfilContentProps) {
                 formData.append("creationDate", new Date(companyData.creationDate).toISOString())
             }
             if (logo) formData.append("logo", logo)
-            await updateCompany(user.companyId, formData, token)
+            // ✅ Appel relayé via /api/proxy : le Bearer token est attaché côté serveur
+            // à partir de la session NextAuth, sans jamais transiter par le client.
+            await updateCompany(companyId, formData)
             toast.success("Profil Entreprise mis à jour")
         } catch (error: any) {
             toast.error(error.message)

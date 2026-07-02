@@ -1,21 +1,22 @@
 import Content from "./content"
-import { cookies } from "next/headers"
 import { findCompany } from "@/actions/companies"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function Page() {
-    const cookieStore = await cookies()
-    const authCookie = cookieStore.get("auth")?.value
+    const session = await getServerSession(authOptions)
 
-    if (!authCookie) return <p>Vous devez être connecté</p>
+    if (!session?.user?.access_token) return <p>Vous devez être connecté</p>
 
-    const auth = JSON.parse(authCookie)
-
-    if (!auth.user.companyId) {
+    if (!session.user.companyId) {
         return <p>Impossible de récupérer l'entreprise : companyId manquant</p>
     }
 
-    // Ici on est sûr que company est ICompany
-    const company = await findCompany(auth.user.companyId, auth.token)
-
-    return <Content company={company} />
+    try {
+        const company = await findCompany(session.user.companyId, session.user.access_token)
+        return <Content company={company} />
+    } catch (err) {
+        console.error("Erreur fetch company:", err)
+        return <p>Impossible de récupérer les informations de l'entreprise pour le moment.</p>
+    }
 }

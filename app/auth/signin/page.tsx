@@ -3,7 +3,6 @@
 
 import Link from "next/link"
 import { toast } from "sonner"
-import { setCookie } from "cookies-next"
 import { Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -11,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { getSession, signIn, signOut } from "next-auth/react"
-import { getAuth } from "@/lib/utils"
 
 export default function Page() {
     const router = useRouter()
@@ -21,19 +19,14 @@ export default function Page() {
     const [error, setError] = useState("")
     const [showPassword, setShowPassword] = useState(false)
 
-    // const { data: session } = useSession()
-
-    // useEffect(() => {
-    //     if (session?.user) {
-    //         router.replace("/dashboard")
-    //     }
-    // }, [session, router])
-
+    // ✅ La session NextAuth (cookie httpOnly) est l'unique source de vérité.
+    // Si une session valide existe déjà, on redirige directement vers le dashboard.
     useEffect(() => {
-        const auth = getAuth()
-        if (auth?.token) {
-            router.replace("/dashboard")
-        }
+        getSession().then((session) => {
+            if (session?.user) {
+                router.replace("/dashboard")
+            }
+        })
     }, [router])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -62,20 +55,10 @@ export default function Page() {
                     toast.error("Votre compte n'est pas autorisé ici. Cette interface est réservée aux entreprises.")
                     return
                 }
-
-                const authData = {
-                    token: (session.user as any).access_token,
-                    user: session.user,
-                }
-
-                localStorage.setItem("auth", JSON.stringify(authData))
-                setCookie("auth", JSON.stringify(authData), {
-                    maxAge: 60 * 60,
-                    path: "/",
-                    sameSite: "lax",
-                })
             }
 
+            // ✅ signIn() a déjà posé le cookie de session NextAuth (httpOnly).
+            // On ne duplique plus le token en localStorage/cookie non protégé.
             toast.success("Connexion réussie")
             router.push("/dashboard")
 

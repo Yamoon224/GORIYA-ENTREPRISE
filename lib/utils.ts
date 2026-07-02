@@ -1,5 +1,4 @@
 import { clsx, type ClassValue } from 'clsx'
-import { NextRequest, NextResponse } from 'next/server';
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -39,22 +38,6 @@ export function isPublicRoute(pathname: string) {
         pathname.startsWith(prefix + '/')
     );
 }
-
-export function redirectToLogin(request: NextRequest) {
-    const response = NextResponse.redirect(new URL('/auth/signin', request.url))
-
-    // ❌ Supprime le cookie invalide
-    response.cookies.delete('access_token')
-
-    return response
-}
-
-export const getAuth = () => {
-    const stored = localStorage.getItem("auth")
-    if (!stored) return null
-    return JSON.parse(stored)
-}
-
 
 export function formatDate(
     value: string | Date,

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -8,16 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertTriangle, Save, Smartphone } from "lucide-react"
 import { apiRequest } from "@/lib/api-client-http"
 
-function getAuth(): { token: string; user: { id: string } } | null {
-    if (typeof window === "undefined") return null
-    const match = document.cookie.split("; ").find((r) => r.startsWith("auth="))
-    if (!match) return null
-    try {
-        return JSON.parse(decodeURIComponent(match.split("=")[1]))
-    } catch { return null }
-}
-
 export default function ParametresPage() {
+    // ✅ La session NextAuth (cookie httpOnly) est l'unique source de vérité côté client.
+    // Les appels API du navigateur passent par /api/proxy, qui attache le Bearer token
+    // à partir de cette même session côté serveur : plus besoin de lire un token ici.
+    const { data: session } = useSession()
+    const userId = session?.user?.id
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [firstName, setFirstName] = useState("")
@@ -30,11 +27,10 @@ export default function ParametresPage() {
     const [notifWeekly, setNotifWeekly] = useState(false)
 
     useEffect(() => {
+        if (!userId) { setLoading(false); return }
         const load = async () => {
-            const auth = getAuth()
-            if (!auth) { setLoading(false); return }
             try {
-                const res = await apiRequest<any>({ endpoint: `/users/${auth.user.id}`, method: "GET", token: auth.token })
+                const res = await apiRequest<any>({ endpoint: `/users/${userId}`, method: "GET" })
                 const user = (res as any)?.data ?? res
                 if (user) {
                     const parts = (user.name ?? "").split(" ")
@@ -51,18 +47,16 @@ export default function ParametresPage() {
             }
         }
         load()
-    }, [])
+    }, [userId])
 
     const handleSave = async () => {
-        const auth = getAuth()
-        if (!auth) return
+        if (!userId) return
         setSaving(true)
         try {
             await apiRequest({
-                endpoint: `/users/${auth.user.id}`,
+                endpoint: `/users/${userId}`,
                 method: "PATCH",
                 data: { name: `${firstName} ${lastName}`.trim(), email, phone },
-                token: auth.token,
             })
         } catch (err) {
             console.error("[parametres] save error:", err)

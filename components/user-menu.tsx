@@ -31,6 +31,15 @@ export default function UserMenu({ triggerOnly = false }: UserMenuProps) {
 
     const handleLogout = async () => {
         try {
+            // 🧹 Nettoyage défensif d'éventuels résidus d'anciennes sessions
+            // (localStorage/cookie "auth" non httpOnly utilisés par le passé).
+            if (typeof window !== "undefined") {
+                localStorage.removeItem("auth");
+                localStorage.removeItem("user");
+                document.cookie = "auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+
             await signOut({ redirect: false });
             router.push("/auth/signin");
         } catch (err) {

@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,6 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createJobOffer } from "@/actions/offers"
 import { IOffer } from "@/@types/interface"
-import { getAuth } from "@/lib/utils"
 import { Calendar, Heart, MapPin, Plus, Sparkles } from "lucide-react"
 
 const departments = ["Technologie", "Design", "Data", "Marketing", "Management"]
@@ -19,6 +19,7 @@ const experienceOptions = ["0-2 ans d'exp.", "3-5 ans d'exp.", "5+ ans d'exp."]
 
 export default function Content() {
     const router = useRouter()
+    const { data: session } = useSession()
 
     const [aiOptimization, setAiOptimization] = useState(true)
     const [showCover, setShowCover] = useState(true)
@@ -50,8 +51,8 @@ export default function Content() {
 
     const handlePublish = async () => {
         try {
-            const auth = getAuth()
-            if (!auth) throw new Error("Not authenticated")
+            const companyId = session?.user?.companyId
+            if (!companyId) throw new Error("Not authenticated")
 
             const payload = {
                 title: formData.title,
@@ -63,11 +64,13 @@ export default function Content() {
                 benefits: formData.benefits,
                 publishDate: formData.publishDate,
                 endDate: formData.endDate,
-                companyId: auth.user.companyId,
+                companyId,
                 requirements: skills,
             }
 
-            await createJobOffer(payload, auth.token)
+            // ✅ Appel relayé via /api/proxy : le Bearer token est attaché côté serveur
+            // à partir de la session NextAuth, sans jamais transiter par le client.
+            await createJobOffer(payload)
             router.push("/annonces")
         } catch (error) {
             console.error("Erreur lors de la creation de l'offre:", error)

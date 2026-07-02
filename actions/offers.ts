@@ -1,7 +1,11 @@
 import { apiRequest } from "@/lib/api-client-http"
 import { IOffer, IPaginatedResponse } from "@/@types/interface"
 
-export const createJobOffer = (payload: any, token: string) => {
+// `token` n'est nécessaire que pour les appels effectués côté serveur (Server Components,
+// avec le token issu de getServerSession). Côté navigateur, ces fonctions sont relayées
+// via /api/proxy qui attache l'Authorization à partir de la session NextAuth : `token`
+// peut alors être omis.
+export const createJobOffer = (payload: any, token?: string) => {
     return apiRequest<IOffer>({
         endpoint: `/job-offers`,
         method: "POST",
@@ -19,7 +23,7 @@ export const getJobOffers = (filters: any = {}, token?: string) => {
     })
 }
 
-export const updateJobOffer = (id: string, payload: Partial<IOffer>, token: string) => {
+export const updateJobOffer = (id: string, payload: Partial<IOffer>, token?: string) => {
     return apiRequest<IOffer>({
         endpoint: `/job-offers/${id}`,
         method: "PATCH",
@@ -28,7 +32,7 @@ export const updateJobOffer = (id: string, payload: Partial<IOffer>, token: stri
     })
 }
 
-export const updateJobStatus = (id: string, status: string, token: string) => {
+export const updateJobStatus = (id: string, status: string, token?: string) => {
     return apiRequest<IOffer>({
         endpoint: `/job-offers/${id}/status`,
         method: "PATCH",
@@ -37,7 +41,7 @@ export const updateJobStatus = (id: string, status: string, token: string) => {
     })
 }
 
-export const deleteJobOffer = (id: string, token: string) => {
+export const deleteJobOffer = (id: string, token?: string) => {
     return apiRequest<null>({
         endpoint: `/job-offers/${id}`,
         method: "DELETE",

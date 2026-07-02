@@ -20,6 +20,7 @@ export default function ChoosePlanPage() {
     const [plans, setPlans] = useState<Plan[]>([])
     const [loading, setLoading] = useState(true)
     const [subscribing, setSubscribing] = useState<string | null>(null)
+    const [loadError, setLoadError] = useState(false)
 
     useEffect(() => {
         subscriptionService.getPlans("ENTREPRISE")
@@ -27,7 +28,11 @@ export default function ChoosePlanPage() {
                 const data = (res as any)?.data ?? res ?? []
                 setPlans(Array.isArray(data) ? data : [])
             })
-            .catch(() => {})
+            .catch((err) => {
+                console.error("[signup/plan] getPlans error:", err)
+                setLoadError(true)
+                toast.error("Impossible de charger les forfaits disponibles.")
+            })
             .finally(() => setLoading(false))
     }, [])
 
@@ -67,6 +72,19 @@ export default function ChoosePlanPage() {
         return (
             <div className="flex justify-center py-16">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+            </div>
+        )
+    }
+
+    if (loadError && plans.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+                <p className="mb-4 text-sm text-destructive">
+                    Impossible de charger les forfaits disponibles pour le moment.
+                </p>
+                <button onClick={handleSkip} className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">
+                    Passer cette étape
+                </button>
             </div>
         )
     }

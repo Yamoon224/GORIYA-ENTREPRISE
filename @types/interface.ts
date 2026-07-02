@@ -23,13 +23,6 @@ export interface RequestOptions {
     params?: any;    // query params pour GET
 }
 
-export interface SessionUser {
-    id: string;
-    email: string;
-    role: string;
-    access_token: string;
-}
-
 // PARAMETERS
 export interface DashboardStatsParams {
     start?: string; // format ISO date

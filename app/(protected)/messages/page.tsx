@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Paperclip, Send, Star, Trash2, MoreHorizontal, User } from "lucide-react"
@@ -8,15 +9,6 @@ import { getConversations, getMessages, sendMessage, markRead } from "@/actions/
 
 type Conversation = { id: string; name: string; role: string; time: string; unread: number; lastMessage: string }
 type Message = { id: string; content: string; time: string; isMe: boolean }
-
-function getToken(): string | null {
-    if (typeof window === "undefined") return null
-    const match = document.cookie.split("; ").find((r) => r.startsWith("auth="))
-    if (!match) return null
-    try {
-        return JSON.parse(decodeURIComponent(match.split("=")[1]))?.token ?? null
-    } catch { return null }
-}
 
 function mapConversation(raw: any): Conversation {
     return {
@@ -44,45 +36,37 @@ function AvatarIcon({ small = false }: { small?: boolean }) {
 }
 
 export default function MessagesPage() {
+    const { data: session, status } = useSession()
     const [conversations, setConversations] = useState<Conversation[]>([])
     const [selected, setSelected] = useState<Conversation | null>(null)
     const [messages, setMessages] = useState<Message[]>([])
     const [newMessage, setNewMessage] = useState("")
     const [search, setSearch] = useState("")
     const [loading, setLoading] = useState(true)
-    const [userId, setUserId] = useState("")
+    const userId = session?.user?.id ?? ""
 
     useEffect(() => {
-        const token = getToken()
-        if (!token) { setLoading(false); return }
-        try {
-            const raw = document.cookie.split("; ").find((r) => r.startsWith("auth="))
-            if (raw) {
-                const auth = JSON.parse(decodeURIComponent(raw.split("=")[1]))
-                setUserId(auth?.user?.id ?? "")
-            }
-        } catch { /* ignore */ }
+        if (status === "loading") return
+        if (!session?.user) { setLoading(false); return }
 
-        getConversations(token)
+        getConversations()
             .then((res) => {
                 const items = (res as any)?.data ?? res ?? []
                 const convs = Array.isArray(items) ? items.map(mapConversation) : []
                 setConversations(convs)
                 if (convs.length > 0) {
                     setSelected(convs[0])
-                    loadMessages(convs[0].id, token)
+                    loadMessages(convs[0].id)
                 }
             })
             .catch((err) => console.error("[messages] conversations error:", err))
             .finally(() => setLoading(false))
-    }, [])
+    }, [status, session])
 
-    const loadMessages = async (convId: string, token?: string | null) => {
-        const t = token ?? getToken()
-        if (!t) return
+    const loadMessages = async (convId: string) => {
         try {
-            await markRead(convId, t)
-            const res = await getMessages(convId, t)
+            await markRead(convId)
+            const res = await getMessages(convId)
             const items = (res as any)?.data ?? res ?? []
             setMessages(Array.isArray(items) ? items.map((m: any) => mapMessage(m, userId)) : [])
         } catch (err) {
@@ -98,7 +82,6 @@ export default function MessagesPage() {
 
     const handleSend = async () => {
         if (!newMessage.trim() || !selected) return
-        const token = getToken()
         const optimistic: Message = {
             id: `opt-${Date.now()}`,
             content: newMessage.trim(),
@@ -107,12 +90,10 @@ export default function MessagesPage() {
         }
         setMessages((prev) => [...prev, optimistic])
         setNewMessage("")
-        if (token) {
-            try {
-                await sendMessage(selected.id, optimistic.content, token)
-            } catch (err) {
-                console.error("[messages] send error:", err)
-            }
+        try {
+            await sendMessage(selected.id, optimistic.content)
+        } catch (err) {
+            console.error("[messages] send error:", err)
         }
     }
 

@@ -24,5 +24,4 @@ export interface DashboardContentProps {
 
 export type AnnonceContentProps = {
     init: IPaginatedResponse<IOffer>
-    token: string
 }

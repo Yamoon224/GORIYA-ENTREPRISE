@@ -19,7 +19,7 @@ const statusMap: Record<string, { label: string; className: string }> = {
     PAUSED: { label: "En pause", className: "bg-gray-200 text-gray-700" },
 }
 
-export function Content({ init, token }: AnnonceContentProps) {
+export function Content({ init }: AnnonceContentProps) {
     const [jobs, setJobs] = useState<IOffer[]>(init?.data ?? [])
     const [query, setQuery] = useState("")
     const [status, setStatus] = useState<string>("all")
@@ -35,7 +35,9 @@ export function Content({ init, token }: AnnonceContentProps) {
 
     const handleDelete = async (id: string) => {
         try {
-            await deleteJobOffer(id, token)
+            // ✅ Appel relayé côté navigateur via /api/proxy : le Bearer token est
+            // attaché à partir de la session NextAuth côté serveur, jamais exposé au client.
+            await deleteJobOffer(id)
             setJobs((prev) => prev.filter((j) => j.id !== id))
         } catch (err) {
             console.error("[annonces] delete error:", err)
@@ -45,7 +47,7 @@ export function Content({ init, token }: AnnonceContentProps) {
     const handleStatusToggle = async (job: IOffer) => {
         const nextStatus: JobStatus = job.status === "ACTIVE" ? "CLOSED" : "ACTIVE"
         try {
-            await updateJobStatus(job.id, nextStatus, token)
+            await updateJobStatus(job.id, nextStatus)
             setJobs((prev) => prev.map((j) => j.id === job.id ? { ...j, status: nextStatus } : j))
         } catch (err) {
             console.error("[annonces] status update error:", err)
