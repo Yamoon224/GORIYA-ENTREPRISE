@@ -12,6 +12,7 @@ export function isPublicRoute(pathname: string) {
     const exactPublicRoutes = [
         '/',
         '/assistance',
+        '/tarification',
         '/manifest.json',
         '/service-worker.js',
         '/favicon.ico',

@@ -14,10 +14,10 @@ const categories = [
 ]
 
 const faqs = [
-    { question: "Comment optimiser mes offres d'emploi avec l'IA ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "L'IA de Goriya analyse automatiquement vos offres et suggere des ameliorations pour attirer les meilleurs candidats." },
-    { question: "Comment interpreter le score IA des candidats ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "Le score IA represente la compatibilite entre le profil du candidat et votre offre. Au-dessus de 80, le match est excellent." },
-    { question: "Puis-je modifier une offre apres publication ?", tag: "Offres", tagColor: "bg-green-100 text-green-600", answer: "Oui. Depuis Mes annonces, ouvrez l'offre et cliquez sur Modifier." },
-    { question: "Comment contacter un candidat ?", tag: "Candidatures", tagColor: "bg-orange-100 text-orange-600", answer: "Depuis Candidatures, cliquez sur Message dans la fiche du candidat." },
+    { question: "Comment optimiser mes offres d'emploi avec l'IA ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "L'IA de Goriya analyse automatiquement tes offres et suggere des ameliorations pour attirer les meilleurs candidats." },
+    { question: "Comment interpreter le score IA des candidats ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "Le score IA represente la compatibilite entre le profil du candidat et ton offre. Au-dessus de 80, le match est excellent." },
+    { question: "Puis-je modifier une offre apres publication ?", tag: "Offres", tagColor: "bg-green-100 text-green-600", answer: "Oui. Depuis Mes annonces, ouvre l'offre et clique sur Modifier." },
+    { question: "Comment contacter un candidat ?", tag: "Candidatures", tagColor: "bg-orange-100 text-orange-600", answer: "Depuis Candidatures, clique sur Message dans la fiche du candidat." },
     { question: "Combien coute l'abonnement Premium ?", tag: "Facturation", tagColor: "bg-red-100 text-red-600", answer: "Le plan Premium est a 4 999 FCFA/mois avec IA avancee et support prioritaire." },
 ]
 
@@ -61,12 +61,12 @@ export default function AssistancePage() {
             <main className="mx-auto max-w-[900px] px-4 py-10 space-y-5">
                 <div>
                     <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Centre d'assistance</h1>
-                    <p className="text-sm text-muted-foreground">Trouvez rapidement les reponses a vos questions</p>
+                    <p className="text-sm text-muted-foreground">Trouve rapidement les reponses a tes questions</p>
                 </div>
 
                 <div className="overflow-hidden rounded-xl bg-blue-600 px-4 py-8 text-center text-white sm:px-8 sm:py-10">
-                    <h2 className="mb-1.5 text-xl font-bold">Comment pouvons-nous vous aider ?</h2>
-                    <p className="mb-5 text-sm text-blue-200">Trouvez une reponse rapidement ou contactez notre equipe support</p>
+                    <h2 className="mb-1.5 text-xl font-bold">Comment pouvons-nous t'aider ?</h2>
+                    <p className="mb-5 text-sm text-blue-200">Trouve une reponse rapidement ou contacte notre equipe support</p>
                     <div className="relative mx-auto max-w-md">
                         <Input placeholder="Rechercher..." className="h-9 bg-white pl-4 pr-10 text-sm text-foreground" />
                         <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -77,7 +77,7 @@ export default function AssistancePage() {
                     <Channel icon={<MessageSquare className="h-5 w-5 text-blue-500" />} title="Chat en direct" subtitle="Discutez avec notre equipe support">
                         <Button size="sm" className="rounded-full text-xs">Demarrer une conversation</Button>
                     </Channel>
-                    <Channel icon={<Mail className="h-5 w-5 text-green-500" />} title="Email support" subtitle="Contactez-nous par email">support@goriya.com</Channel>
+                    <Channel icon={<Mail className="h-5 w-5 text-green-500" />} title="Email support" subtitle="Contacte-nous par email">support@goriya.com</Channel>
                     <Channel icon={<Phone className="h-5 w-5 text-orange-400" />} title="Telephone" subtitle="Appelez notre support">+33 1 23 45 67 89</Channel>
                 </div>
 
@@ -136,7 +136,7 @@ export default function AssistancePage() {
                 <div className="rounded-xl border border-border bg-white py-8 text-center">
                     <Star className="mx-auto mb-3 h-7 w-7 text-yellow-400" fill="currentColor" />
                     <p className="mb-1 text-sm font-semibold text-foreground">Besoin d'aide personnalisee ?</p>
-                    <p className="mb-5 text-xs text-muted-foreground">Notre equipe est la pour vous accompagner dans l'utilisation de Goriya</p>
+                    <p className="mb-5 text-xs text-muted-foreground">Notre equipe est la pour t'accompagner dans l'utilisation de Goriya</p>
                     <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
                         <Button size="sm" className="gap-1.5 rounded-full text-xs"><MessageSquare className="h-3.5 w-3.5" />Contacter le support</Button>
                         <Button size="sm" variant="ghost" className="gap-1.5 rounded-full text-xs text-muted-foreground"><ExternalLink className="h-3.5 w-3.5" />Documentation complete</Button>

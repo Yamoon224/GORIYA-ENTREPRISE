@@ -7,7 +7,7 @@ export default async function Page() {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.access_token) {
-        return <p>Vous devez être connecté</p>
+        return <p>Tu dois être connecté</p>
     }
 
     let dashboardStats = null

@@ -102,7 +102,7 @@ function CongesContent() {
                     <div className="px-6 py-5">
                         <h2 className="text-lg font-bold text-foreground">Demandes de congés</h2>
                         <p className="text-sm text-muted-foreground">
-                            Gérez les demandes en attente et consultez l&apos;historique
+                            Gère les demandes en attente et consulte l&apos;historique
                         </p>
                     </div>
 

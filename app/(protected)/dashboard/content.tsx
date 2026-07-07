@@ -96,7 +96,7 @@ export default function Content(props: DashboardContentProps) {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Tableau de bord</h1>
-      <p className="text-sm text-muted-foreground">Bienvenue dans votre espace employeur</p>
+      <p className="text-sm text-muted-foreground">Bienvenue dans ton espace employeur</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -127,7 +127,7 @@ export default function Content(props: DashboardContentProps) {
         </Card>
 
         <Card>
-          <CardHeader className="pb-1"><CardTitle className="text-sm">Vues des offres</CardTitle><p className="text-xs text-muted-foreground">Nombre de vues de vos offres d'emploi</p></CardHeader>
+          <CardHeader className="pb-1"><CardTitle className="text-sm">Vues des offres</CardTitle><p className="text-xs text-muted-foreground">Nombre de vues de tes offres d'emploi</p></CardHeader>
           <CardContent className="pt-2"><div className="h-56"><ResponsiveContainer width="100%" height="100%"><LineChart data={lines}><CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} /><XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} /><Line type="monotone" dataKey="value" stroke="#2f7dea" strokeWidth={2} dot={{ r: 2, fill: "#2f7dea" }} /></LineChart></ResponsiveContainer></div></CardContent>
         </Card>
       </div>
@@ -137,9 +137,9 @@ export default function Content(props: DashboardContentProps) {
           <button className="absolute right-2 top-2 text-blue-100"><X className="h-4 w-4" /></button>
           <div className="mb-2 flex items-center gap-2"><Sparkles className="h-4 w-4" /><p className="text-lg sm:text-xl font-semibold">Recommandations IA du jour</p></div>
           <div className="space-y-1 text-xs sm:text-sm text-blue-100">
-            <p>• Optimisation d'offres : vos offres ont attire 35% plus de candidats qualifies.</p>
-            <p>• Moment ideal : mardi 10h est votre meilleur creneau de publication.</p>
-            <p>• Candidat potentiel : 13 profils correspondent a vos criteres de recrutement.</p>
+            <p>• Optimisation d'offres : tes offres ont attire 35% plus de candidats qualifies.</p>
+            <p>• Moment ideal : mardi 10h est ton meilleur creneau de publication.</p>
+            <p>• Candidat potentiel : 13 profils correspondent a tes criteres de recrutement.</p>
           </div>
           <div className="pointer-events-none absolute -bottom-8 right-2 h-24 w-24 rounded-full border-[18px] border-blue-300/40" />
         </CardContent>
@@ -174,7 +174,7 @@ export default function Content(props: DashboardContentProps) {
 
       <div>
         <h2 className="text-lg font-semibold">Offres recentes</h2>
-        <p className="mb-3 text-xs text-muted-foreground">Apercu de vos dernieres publications</p>
+        <p className="mb-3 text-xs text-muted-foreground">Apercu de tes dernieres publications</p>
         {recents.length === 0 ? (
           <p className="text-xs text-muted-foreground">Aucune offre récente.</p>
         ) : (

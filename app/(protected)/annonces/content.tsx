@@ -58,7 +58,7 @@ export function Content({ init }: AnnonceContentProps) {
         <div className="space-y-4">
             <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Mes annonces</h1>
-                <p className="mt-2 text-sm sm:text-base font-medium text-foreground">Gerez et analysez toutes les candidatures recues</p>
+                <p className="mt-2 text-sm sm:text-base font-medium text-foreground">Gere et analyse toutes les candidatures recues</p>
             </div>
 
             <div className="rounded-xl border border-border bg-white p-3">

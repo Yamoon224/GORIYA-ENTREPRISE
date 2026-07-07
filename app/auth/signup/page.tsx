@@ -82,7 +82,7 @@ export default function Page() {
         })
     
         if (missingFields.length > 0) {
-            toast.error("Veuillez remplir tous les champs obligatoires avant de continuer")
+            toast.error("Remplis tous les champs obligatoires avant de continuer")
             return
         }
     
@@ -174,7 +174,7 @@ export default function Page() {
                                 ) : (
                                     <>
                                         <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                        <p className="text-sm font-medium text-foreground">Importer votre logo</p>
+                                        <p className="text-sm font-medium text-foreground">Importer ton logo</p>
                                         <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
                                     </>
                                 )}
@@ -199,7 +199,7 @@ export default function Page() {
                                 ) : (
                                     <>
                                         <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                        <p className="text-sm font-medium text-foreground">Importer votre image de couverture</p>
+                                        <p className="text-sm font-medium text-foreground">Importer ton image de couverture</p>
                                         <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
                                     </>
                                 )}
@@ -225,7 +225,7 @@ export default function Page() {
                                 <Input
                                     value={formData.companyName}
                                     onChange={(e) => updateFormData("companyName", e.target.value)}
-                                    placeholder="Entrez le nom"
+                                    placeholder="Entre le nom"
                                 />
                             </Field>
                         </div>
@@ -237,7 +237,7 @@ export default function Page() {
                                 </FieldLabel>
                                 <Select value={formData.sector} onValueChange={(value) => updateFormData("sector", value)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionnez un secteur" />
+                                        <SelectValue placeholder="Sélectionne un secteur" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {sectors.map((sector) => (
@@ -256,7 +256,7 @@ export default function Page() {
                         <Textarea
                             value={formData.about}
                             onChange={(e) => updateFormData("about", e.target.value)}
-                            placeholder="Décrivez votre entreprise..."
+                            placeholder="Décris ton entreprise..."
                             rows={4}
                         />
                     </Field>
@@ -360,7 +360,7 @@ export default function Page() {
                                         type={showPassword ? "text" : "password"}
                                         value={formData.password}
                                         onChange={(e) => updateFormData("password", e.target.value)}
-                                        placeholder="Votre mot de passe"
+                                        placeholder="Ton mot de passe"
                                         required
                                         className="pr-10"
                                     />

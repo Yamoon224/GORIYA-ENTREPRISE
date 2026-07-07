@@ -77,13 +77,13 @@ export default function ParametresPage() {
         <div className="space-y-5 pb-12">
             <div>
                 <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Parametres</h1>
-                <p className="text-sm text-muted-foreground">Gerez vos preferences et parametres de compte</p>
+                <p className="text-sm text-muted-foreground">Gere tes preferences et parametres de compte</p>
             </div>
 
             <Section title="Informations du compte">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field label="Prenom"><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Votre prénom" /></Field>
-                    <Field label="Nom"><Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Votre nom" /></Field>
+                    <Field label="Prenom"><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Ton prénom" /></Field>
+                    <Field label="Nom"><Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Ton nom" /></Field>
                     <Field label="Adresse email"><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Adresse e-mail" /></Field>
                     <Field label="Telephone"><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+33 6 00 00 00 00" /></Field>
                     <Field label="Fonction" className="md:col-span-2"><Input value={role} readOnly className="bg-muted/30" /></Field>
@@ -93,8 +93,8 @@ export default function ParametresPage() {
             <Section title="Notifications">
                 <div className="divide-y divide-border">
                     <NotifRow label="Notifications par email" description="Recevoir des notifications sur les nouvelles candidatures" checked={notifEmail} onChange={setNotifEmail} />
-                    <NotifRow label="Notifications push" description="Recevoir des notifications push sur votre navigation" checked={notifPush} onChange={setNotifPush} />
-                    <NotifRow label="Rapports hebdomadaires" description="Recevoir un resume hebdomadaire de vos recrutements" checked={notifWeekly} onChange={setNotifWeekly} />
+                    <NotifRow label="Notifications push" description="Recevoir des notifications push sur ta navigation" checked={notifPush} onChange={setNotifPush} />
+                    <NotifRow label="Rapports hebdomadaires" description="Recevoir un resume hebdomadaire de tes recrutements" checked={notifWeekly} onChange={setNotifWeekly} />
                 </div>
                 <div className="mt-4">
                     <p className="mb-1.5 text-sm text-muted-foreground">Frequence des notifications</p>
@@ -122,7 +122,7 @@ export default function ParametresPage() {
                     <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-medium text-foreground">Authentification a deux facteurs</p>
-                            <p className="text-xs text-muted-foreground">Securisez votre compte</p>
+                            <p className="text-xs text-muted-foreground">Securise ton compte</p>
                         </div>
                         <span className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-0.5 text-xs text-orange-500 w-fit">Non configure</span>
                     </div>
@@ -165,7 +165,7 @@ export default function ParametresPage() {
             <div className="rounded-xl border border-red-200 bg-red-50/40 p-5">
                 <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-semibold text-red-600">Zone dangereuse</h2><AlertTriangle className="h-4 w-4 text-red-400" /></div>
                 <p className="mb-1 text-sm font-medium text-foreground">Supprimer le compte</p>
-                <p className="mb-4 text-xs text-muted-foreground">Une fois supprime, votre compte ne peut pas etre recupere. Toutes vos donnees seront perdues.</p>
+                <p className="mb-4 text-xs text-muted-foreground">Une fois supprime, ton compte ne peut pas etre recupere. Toutes tes donnees seront perdues.</p>
                 <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">Supprimer le compte</Button>
             </div>
 

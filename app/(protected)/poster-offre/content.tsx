@@ -81,7 +81,7 @@ export default function Content() {
         <div className="space-y-4 pb-8">
             <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Publier une offre d'emploi</h1>
             <p className="text-sm font-medium text-muted-foreground">
-                Creez une offre optimisee par Goriya pour attirer les meilleurs talents
+                Cree une offre optimisee par Goriya pour attirer les meilleurs talents
             </p>
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
@@ -184,7 +184,7 @@ export default function Content() {
                         <Field label="Description complete">
                             <Textarea
                                 rows={3}
-                                placeholder="Decrivez le poste, les responsabilites, et l'environnement de travail..."
+                                placeholder="Decris le poste, les responsabilites, et l'environnement de travail..."
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             />
@@ -193,7 +193,7 @@ export default function Content() {
                         <Field label="Exigences et qualifications" className="mt-3">
                             <Textarea
                                 rows={3}
-                                placeholder="Listez les competences, formations et experiences requises..."
+                                placeholder="Liste les competences, formations et experiences requises..."
                                 value={formData.requirements}
                                 onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
                             />
@@ -252,7 +252,7 @@ export default function Content() {
                         <div className="rounded-lg border border-blue-200 bg-white p-3">
                             <p className="mb-1 text-xs font-semibold text-foreground">Activer l'optimisation Goriya</p>
                             <p className="text-xs text-muted-foreground">
-                                L'IA analysera et optimisera votre post pour ameliorer sa visibilite et son attractivite
+                                L'IA analysera et optimisera ton post pour ameliorer sa visibilite et son attractivite
                             </p>
                         </div>
 

@@ -63,7 +63,7 @@ function PaymentSuccessContent() {
                     <div>
                         <h1 className="text-2xl font-bold text-foreground">Paiement réussi !</h1>
                         <p className="text-muted-foreground text-sm mt-1">
-                            Votre abonnement est actif. Finalisation de l'inscription…
+                            Ton abonnement est actif. Finalisation de l'inscription…
                         </p>
                     </div>
                     <Button

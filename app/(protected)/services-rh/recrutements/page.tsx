@@ -102,7 +102,7 @@ function RecrutementsContent() {
                 <div className="overflow-hidden rounded-xl border border-border bg-white">
                     <div className="px-6 py-5">
                         <h2 className="text-lg font-bold text-foreground">Offres d&apos;emploi actives</h2>
-                        <p className="text-sm text-muted-foreground">Gérez vos offres d&apos;emploi et suivez les candidatures</p>
+                        <p className="text-sm text-muted-foreground">Gère tes offres d&apos;emploi et suis les candidatures</p>
                     </div>
                     <div className="divide-y divide-border">
                         {offers.map((offer) => (

@@ -12,7 +12,7 @@ import UserMenu from "./user-menu"
 const navItems = [
     { label: "Accueil", href: "/" },
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Tarifs d'abonnement", href: "/assistance" },
+    { label: "Tarifs d'abonnement", href: "/tarification" },
 ]
 
 export function AppHeader() {

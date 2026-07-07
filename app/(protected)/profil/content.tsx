@@ -72,7 +72,7 @@ export default function Content({ company }: ProfilContentProps) {
         <div className="space-y-6 pb-10">
             <div>
                 <h1 className="text-xl font-semibold text-foreground">Profil Entreprise</h1>
-                <p className="text-sm text-muted-foreground">Gérez les informations publiques de votre entreprise</p>
+                <p className="text-sm text-muted-foreground">Gère les informations publiques de ton entreprise</p>
             </div>
 
             {/* ── Section identité ── */}
@@ -188,7 +188,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <Textarea
                         value={companyData.about}
                         onChange={(e) => setCompanyData({ ...companyData, about: e.target.value })}
-                        placeholder="Décrivez votre entreprise..."
+                        placeholder="Décris ton entreprise..."
                         rows={3}
                         className="text-sm resize-none"
                     />
@@ -199,7 +199,7 @@ export default function Content({ company }: ProfilContentProps) {
                     <Textarea
                         value={mission}
                         onChange={(e) => setMission(e.target.value)}
-                        placeholder="Décrivez votre mission et vos valeurs..."
+                        placeholder="Décris ta mission et tes valeurs..."
                         rows={3}
                         className="text-sm resize-none"
                     />
@@ -241,7 +241,7 @@ export default function Content({ company }: ProfilContentProps) {
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                    Ces avantages seront affichés sur vos offres d&apos;emploi pour attirer les meilleurs candidats.
+                    Ces avantages seront affichés sur tes offres d&apos;emploi pour attirer les meilleurs candidats.
                 </p>
             </div>
 

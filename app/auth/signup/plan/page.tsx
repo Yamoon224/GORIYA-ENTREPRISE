@@ -56,7 +56,7 @@ export default function ChoosePlanPage() {
             // Keep entreprise_signup_userId for the success page
             window.location.href = data.waveUrl
         } catch {
-            toast.error("Erreur lors de l'initialisation du paiement. Vous pourrez vous abonner depuis vos paramètres.")
+            toast.error("Erreur lors de l'initialisation du paiement. Tu pourras t'abonner depuis tes paramètres.")
             sessionStorage.removeItem("entreprise_signup_userId")
             router.push("/auth/signup/success")
             setSubscribing(null)
@@ -95,7 +95,7 @@ export default function ChoosePlanPage() {
     return (
         <div className="py-4 sm:py-6">
             <h1 className="mb-2 text-center text-2xl font-black text-foreground sm:text-4xl">
-                Choisissez votre forfait
+                Choisis ton forfait
             </h1>
 
             <p className="mb-8 text-center text-base tracking-[0.4em] text-muted-foreground sm:mb-10">

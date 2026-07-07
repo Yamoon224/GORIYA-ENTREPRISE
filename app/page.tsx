@@ -16,17 +16,17 @@ const features = [
     {
         icon: Sparkles,
         title: "Optimisation IA",
-        description: "Nos algorithmes IA analysent et optimisent vos offres d'emploi pour attirer les meilleurs talents.",
+        description: "Nos algorithmes IA analysent et optimisent tes offres d'emploi pour attirer les meilleurs talents.",
     },
     {
         icon: Users,
         title: "Gestion des candidatures",
-        description: "Suivez et gérez toutes vos candidatures en un seul endroit avec des scores de compatibilité.",
+        description: "Suis et gère toutes tes candidatures en un seul endroit avec des scores de compatibilité.",
     },
     {
         icon: Briefcase,
         title: "Publication facile",
-        description: "Publiez vos offres en quelques clics avec notre interface intuitive et moderne.",
+        description: "Publie tes offres en quelques clics avec notre interface intuitive et moderne.",
     },
 ]
 
@@ -35,7 +35,7 @@ const benefits = [
     "Suggestions de candidats pertinents",
     "Tableau de bord analytique complet",
     "Support prioritaire 24/7",
-    "Intégration avec vos outils RH",
+    "Intégration avec tes outils RH",
     "Rapports détaillés en temps réel",
 ]
 
@@ -50,7 +50,7 @@ export default function HomePage() {
                         <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">
                             Dashboard
                         </Link>
-                        <Link href="/assistance" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                        <Link href="/tarification" className="text-sm font-medium text-muted-foreground hover:text-foreground">
                             Tarifs
                         </Link>
                         <Button variant="outline" asChild>
@@ -80,8 +80,8 @@ export default function HomePage() {
                         <span className="block text-primary">avec l&apos;intelligence artificielle</span>
                     </h1>
                     <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
-                        Goriya révolutionne le recrutement en Afrique. Publiez vos offres,
-                        analysez les candidatures et trouvez les talents parfaits grâce à notre IA avancée.
+                        Goriya révolutionne le recrutement en Afrique. Publie tes offres,
+                        analyse les candidatures et trouve les talents parfaits grâce à notre IA avancée.
                     </p>
                     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button size="lg" asChild>
@@ -102,10 +102,10 @@ export default function HomePage() {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold text-foreground mb-4">
-                            Une plateforme complète pour vos recrutements
+                            Une plateforme complète pour tes recrutements
                         </h2>
                         <p className="text-muted-foreground max-w-2xl mx-auto">
-                            Découvrez comment Goriya peut transformer votre processus de recrutement
+                            Découvre comment Goriya peut transformer ton processus de recrutement
                         </p>
                     </div>
 
@@ -135,7 +135,7 @@ export default function HomePage() {
                             </h2>
                             <p className="text-muted-foreground mb-8">
                                 Notre plateforme combine technologie de pointe et expertise locale pour
-                                vous offrir la meilleure expérience de recrutement en Afrique.
+                                t'offrir la meilleure expérience de recrutement en Afrique.
                             </p>
                             <ul className="space-y-4">
                                 {benefits.map((benefit) => (
@@ -193,10 +193,10 @@ export default function HomePage() {
             <section className="py-10 bg-primary text-primary-foreground">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-3xl font-bold mb-4">
-                        Prêt à transformer votre recrutement ?
+                        Prêt à transformer ton recrutement ?
                     </h2>
                     <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-                        Rejoignez des milliers d&apos;entreprises qui font confiance à Goriya
+                        Rejoins des milliers d&apos;entreprises qui font confiance à Goriya
                         pour trouver les meilleurs talents.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -204,7 +204,7 @@ export default function HomePage() {
                             <Link href="/auth/signup">Commencer gratuitement</Link>
                         </Button>
                         <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground bg-primary hover:bg-primary-foreground hover:text-primary" asChild>
-                            <Link href="/dashboard/assistance">Voir les tarifs</Link>
+                            <Link href="/tarification">Voir les tarifs</Link>
                         </Button>
                     </div>
                 </div>
