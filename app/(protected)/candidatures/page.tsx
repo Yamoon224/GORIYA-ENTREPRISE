@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Search, User, MapPin, Calendar, Star, FileText, MessageSquare, Plus, Check, X } from "lucide-react"
 import { apiRequest } from "@/lib/api-client-http"
+import { createConversation } from "@/actions/messages"
 import type { ICandidate } from "@/@types/interface"
 import { SubscriptionGate } from "@/components/subscription-gate"
 
@@ -38,11 +40,13 @@ const TAB_LABELS = [
 ]
 
 function CandidaturesContent() {
+    const router = useRouter()
     const [candidates, setCandidates] = useState<ICandidate[]>([])
     const [loading, setLoading] = useState(true)
     const [query, setQuery] = useState("")
     const [jobFilter, setJobFilter] = useState("all")
     const [tab, setTab] = useState<(typeof TAB_LABELS)[number]["key"]>("all")
+    const [messaging, setMessaging] = useState<string | null>(null)
 
     useEffect(() => {
         const load = async () => {
@@ -59,9 +63,12 @@ function CandidaturesContent() {
         load()
     }, [])
 
+    // Pas de route dédiée /candidatures/{id}/status côté backend — PATCH
+    // /candidatures/{id} accepte déjà `status` et vérifie que l'appelant est
+    // bien le candidat ou l'entreprise propriétaire de l'offre concernée.
     const handleAccept = async (id: string) => {
         try {
-            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "APPROUVEE" } })
+            await apiRequest({ endpoint: `/candidatures/${id}`, method: "PATCH", data: { status: "APPROUVEE" } })
             setCandidates((prev) => prev.map((c) => c.id === id ? { ...c, status: "ACCEPTEE" as any } : c))
         } catch (err) {
             console.error("[candidatures] accept error:", err)
@@ -70,10 +77,23 @@ function CandidaturesContent() {
 
     const handleReject = async (id: string) => {
         try {
-            await apiRequest({ endpoint: `/candidatures/${id}/status`, method: "PATCH", data: { status: "REJETEE" } })
+            await apiRequest({ endpoint: `/candidatures/${id}`, method: "PATCH", data: { status: "REJETEE" } })
             setCandidates((prev) => prev.map((c) => c.id === id ? { ...c, status: "REFUSEE" as any } : c))
         } catch (err) {
             console.error("[candidatures] reject error:", err)
+        }
+    }
+
+    const handleMessage = async (candidatureId: string) => {
+        setMessaging(candidatureId)
+        try {
+            const res = await createConversation(candidatureId)
+            const conversation = (res as any)?.data ?? res
+            router.push(`/messages?conversation=${conversation.id}`)
+        } catch (err) {
+            console.error("[candidatures] createConversation error:", err)
+        } finally {
+            setMessaging(null)
         }
     }
 
@@ -180,7 +200,15 @@ function CandidaturesContent() {
                                         <p className="-mt-1 mb-2 lg:text-right text-[10px] text-muted-foreground">Score IA</p>
                                         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2">
                                             <Button size="sm" className="h-8 w-full justify-center gap-1 rounded-md bg-blue-500 text-xs hover:bg-blue-600"><FileText className="h-3.5 w-3.5" />Voir CV</Button>
-                                            <Button variant="outline" size="sm" className="h-8 w-full justify-center gap-1 rounded-md text-xs"><MessageSquare className="h-3.5 w-3.5" />Message</Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 w-full justify-center gap-1 rounded-md text-xs"
+                                                disabled={messaging === candidate.id}
+                                                onClick={() => handleMessage(candidate.id)}
+                                            >
+                                                <MessageSquare className="h-3.5 w-3.5" />Message
+                                            </Button>
                                             <Button variant="outline" size="sm" className="h-8 w-full justify-center gap-1 rounded-md text-xs"><Plus className="h-3.5 w-3.5" />Voir plus</Button>
                                         </div>
                                         {us === "pending" && (

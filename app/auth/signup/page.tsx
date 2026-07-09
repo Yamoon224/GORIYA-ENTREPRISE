@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { createCompany } from "@/actions/companies"
+import { requestOtp, verifyOtp } from "@/actions/auth"
 import { CompanyCreateDto } from "@/@types/interface"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { SignupStepper } from "@/components/signup-stepper"
+import { OTPVerificationModal } from "@/components/otp-verification-modal"
 import { Upload, Plus, ArrowRight, ArrowLeft, EyeOff, Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -40,6 +42,7 @@ export default function Page() {
     const [loading, setLoading] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
     const [showPassword, setShowPassword] = useState(false);
+    const [showOTPModal, setShowOTPModal] = useState(false)
 
     const [formData, setFormData] = useState<CompanyCreateDto>({
         logo: null,
@@ -118,6 +121,19 @@ export default function Page() {
                 sessionStorage.setItem("entreprise_signup_userId", res.user.id)
             }
 
+            toast.success("Vérifie ta boîte mail pour le code de vérification")
+            setShowOTPModal(true)
+        } catch (error: any) {
+            toast.error(error?.message || "Une erreur est survenue")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleOTPVerification = async (code: string) => {
+        try {
+            await verifyOtp(formData.email, code)
+
             // ✅ Établit la vraie session NextAuth (cookie httpOnly) au lieu de
             // dupliquer le token dans un cookie/localStorage non protégé.
             const signInResult = await signIn("credentials", {
@@ -126,16 +142,22 @@ export default function Page() {
                 redirect: false,
             })
 
-            if (signInResult?.error) {
-                console.error("[signup] auto sign-in error:", signInResult.error)
-            }
+            if (signInResult?.error) throw new Error("Erreur lors de la connexion")
 
+            setShowOTPModal(false)
             toast.success("Entreprise créée avec succès !")
             router.push("/auth/signup/plan")
         } catch (error: any) {
-            toast.error(error?.message || "Une erreur est survenue")
-        } finally {
-            setLoading(false)
+            toast.error(error?.message || "Code de vérification invalide. Réessaie.")
+        }
+    }
+
+    const handleResendOTP = async () => {
+        try {
+            await requestOtp(formData.email)
+            toast.success("Un nouveau code a été envoyé")
+        } catch (error: any) {
+            toast.error(error?.message || "Impossible d'envoyer le code pour le moment")
         }
     }
 
@@ -388,6 +410,13 @@ export default function Page() {
                     {currentStep === steps.length - 1 ? "Terminer" : (<ArrowRight />)}
                 </Button>
             </div>
+
+            <OTPVerificationModal
+                isOpen={showOTPModal}
+                onClose={() => setShowOTPModal(false)}
+                onVerify={handleOTPVerification}
+                onResend={handleResendOTP}
+            />
         </div>
     )
 }

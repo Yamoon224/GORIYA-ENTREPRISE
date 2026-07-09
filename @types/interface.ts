@@ -45,7 +45,7 @@ export interface ChartDataItem {
 export interface TopOffer {
     id: string
     title: string
-    companyName: string
+    company: { id: string; name: string } | null
 }
 
 export interface DashboardData {

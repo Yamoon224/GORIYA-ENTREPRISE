@@ -33,8 +33,11 @@ export const updateJobOffer = (id: string, payload: Partial<IOffer>, token?: str
 }
 
 export const updateJobStatus = (id: string, status: string, token?: string) => {
+    // Pas de route dédiée /job-offers/{id}/status côté backend — PATCH
+    // /job-offers/{id} accepte déjà `status` (voir UpdateJobOfferRequest) et
+    // vérifie que l'entreprise appelante est bien propriétaire de l'offre.
     return apiRequest<IOffer>({
-        endpoint: `/job-offers/${id}/status`,
+        endpoint: `/job-offers/${id}`,
         method: "PATCH",
         data: { status },
         token,

@@ -1,4 +1,4 @@
-import { ICompany, TopOffer, IOffer, ICandidate, IPaginatedResponse } from "./interface"
+import { ICompany, TopOffer, IOffer, IPaginatedResponse } from "./interface"
 
 export interface SignupStepperProps {
     currentStep: number
@@ -13,11 +13,20 @@ export interface PosterOffreContentProps {
     companyId: string
 }
 
+export interface DashboardRecentCandidate {
+    id: string
+    candidateName: string
+    candidateEmail: string
+    appliedDate: string
+    score: number
+    status: string
+}
+
 export interface DashboardContentProps {
-    statsData: { label: string; value: string; icon: any; color: string }[]
-    chartData: { name: string; value: number }[]
-    lineChartData: { name: string; value: number }[]
-    recentCandidates: ICandidate[]
+    statsData: { key: string; label: string; value: number }[]
+    chartData: { month: string; value: number; label?: string }[]
+    lineChartData: { month: string; value: number; label?: string }[]
+    recentCandidates: DashboardRecentCandidate[]
     topOffers: TopOffer[]
     recentOffers: IOffer[]
 }

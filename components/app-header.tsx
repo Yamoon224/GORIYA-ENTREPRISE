@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "./sidebar-context"
 import { Button } from "@/components/ui/button"
-import { Search, Bell, RefreshCw, Menu } from "lucide-react"
+import { Search, Menu } from "lucide-react"
 import UserMenu from "./user-menu"
+import { NotificationBell } from "./notification-bell"
 
 const navItems = [
     { label: "Accueil", href: "/" },
@@ -71,9 +72,7 @@ export function AppHeader() {
                 </div>
 
                 {/* Icons */}
-                <Button variant="ghost" size="icon">
-                    <Bell className="h-5 w-5" />
-                </Button>
+                <NotificationBell />
 
                 {/* User Menu Dropdown */}
                 <UserMenu />

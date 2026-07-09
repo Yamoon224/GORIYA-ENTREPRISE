@@ -1,10 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import Script from "next/script"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import { subscriptionService } from "@/lib/api/subscription.service"
+import { KKIAPAY_WIDGET_SRC, openKkiapayWidget } from "@/lib/kkiapay"
 import { toast } from "sonner"
 
 interface Plan {
@@ -21,6 +23,7 @@ export default function ChoosePlanPage() {
     const [loading, setLoading] = useState(true)
     const [subscribing, setSubscribing] = useState<string | null>(null)
     const [loadError, setLoadError] = useState(false)
+    const pendingCheckoutRef = useRef<{ userId: string; planId: string } | null>(null)
 
     useEffect(() => {
         subscriptionService.getPlans("ENTREPRISE")
@@ -44,23 +47,30 @@ export default function ChoosePlanPage() {
         }
         setSubscribing(planId)
         try {
-            const origin = window.location.origin
-            const res = await subscriptionService.createCheckout({
-                userId,
-                planId,
-                successUrl: `${origin}/auth/payment-success`,
-                errorUrl: `${origin}/auth/payment-error`,
-            })
+            const res = await subscriptionService.createCheckout({ userId, planId })
             const data = (res as any)?.data ?? res
-            sessionStorage.setItem("wave_session_id", data.sessionId)
-            // Keep entreprise_signup_userId for the success page
-            window.location.href = data.waveUrl
+            pendingCheckoutRef.current = { userId, planId }
+            openKkiapayWidget({ amount: data.amount, clientReference: data.clientReference })
         } catch {
             toast.error("Erreur lors de l'initialisation du paiement. Tu pourras t'abonner depuis tes paramètres.")
             sessionStorage.removeItem("entreprise_signup_userId")
             router.push("/auth/signup/success")
             setSubscribing(null)
         }
+    }
+
+    // Callbacks du widget Kkiapay, branchés une seule fois via Script.onLoad —
+    // pendingCheckoutRef reste à jour même si ce closure n'est pas recréé.
+    const handleKkiapaySuccess = (response: { transactionId: string }) => {
+        const pending = pendingCheckoutRef.current
+        if (!pending) return
+        sessionStorage.setItem("kkiapay_transaction_id", response.transactionId)
+        router.push(`/auth/payment-success?userId=${pending.userId}&planId=${pending.planId}`)
+    }
+
+    const handleKkiapayFailed = () => {
+        toast.error("Le paiement a été annulé ou a échoué.")
+        setSubscribing(null)
     }
 
     const handleSkip = () => {
@@ -94,6 +104,14 @@ export default function ChoosePlanPage() {
 
     return (
         <div className="py-4 sm:py-6">
+            <Script
+                src={KKIAPAY_WIDGET_SRC}
+                strategy="afterInteractive"
+                onLoad={() => {
+                    window.addSuccessListener?.(handleKkiapaySuccess)
+                    window.addFailedListener?.(handleKkiapayFailed)
+                }}
+            />
             <h1 className="mb-2 text-center text-2xl font-black text-foreground sm:text-4xl">
                 Choisis ton forfait
             </h1>

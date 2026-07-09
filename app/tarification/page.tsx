@@ -30,7 +30,7 @@ const faqs = [
     },
     {
         question: "Le paiement est-il sécurisé ?",
-        answer: "Oui, tous les paiements sont traités via Wave, notre partenaire de paiement sécurisé.",
+        answer: "Oui, tous les paiements sont traités via Kkiapay, notre partenaire de paiement sécurisé.",
     },
 ]
 

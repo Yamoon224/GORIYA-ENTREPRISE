@@ -17,17 +17,17 @@ function PaymentSuccessContent() {
     useEffect(() => {
         const userId = params.get("userId") || sessionStorage.getItem("entreprise_signup_userId")
         const planId = params.get("planId")
-        const sessionId = sessionStorage.getItem("wave_session_id")
+        const transactionId = sessionStorage.getItem("kkiapay_transaction_id")
 
-        if (!userId || !planId || !sessionId) {
+        if (!userId || !planId || !transactionId) {
             setErrorMsg("Paramètres de paiement introuvables.")
             setState("error")
             return
         }
 
-        subscriptionService.verifyCheckout(sessionId, userId, planId)
+        subscriptionService.verifyCheckout(transactionId, userId, planId)
             .then(() => {
-                sessionStorage.removeItem("wave_session_id")
+                sessionStorage.removeItem("kkiapay_transaction_id")
                 sessionStorage.removeItem("entreprise_signup_userId")
                 setState("success")
             })

@@ -14,3 +14,6 @@ export const sendMessage = (convId: string, content: string) =>
 
 export const markRead = (convId: string) =>
     apiRequest<any>({ endpoint: `/messages/conversations/${convId}/read`, method: "PUT" })
+
+export const createConversation = (candidatureId: string) =>
+    apiRequest<any>({ endpoint: "/messages/conversations", method: "POST", data: { candidatureId } })

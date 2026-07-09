@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Paperclip, Send, Star, Trash2, MoreHorizontal, User } from "lucide-react"
@@ -35,8 +36,10 @@ function AvatarIcon({ small = false }: { small?: boolean }) {
     return <div className={`${dim} shrink-0 rounded-full bg-blue-500 flex items-center justify-center`}><User className="h-5 w-5 text-white" strokeWidth={1.8} /></div>
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
     const { data: session, status } = useSession()
+    const searchParams = useSearchParams()
+    const conversationParam = searchParams.get("conversation")
     const [conversations, setConversations] = useState<Conversation[]>([])
     const [selected, setSelected] = useState<Conversation | null>(null)
     const [messages, setMessages] = useState<Message[]>([])
@@ -54,14 +57,15 @@ export default function MessagesPage() {
                 const items = (res as any)?.data ?? res ?? []
                 const convs = Array.isArray(items) ? items.map(mapConversation) : []
                 setConversations(convs)
-                if (convs.length > 0) {
-                    setSelected(convs[0])
-                    loadMessages(convs[0].id)
+                const toSelect = (conversationParam && convs.find((c) => c.id === conversationParam)) || convs[0]
+                if (toSelect) {
+                    setSelected(toSelect)
+                    loadMessages(toSelect.id)
                 }
             })
             .catch((err) => console.error("[messages] conversations error:", err))
             .finally(() => setLoading(false))
-    }, [status, session])
+    }, [status, session, conversationParam])
 
     const loadMessages = async (convId: string) => {
         try {
@@ -190,5 +194,17 @@ export default function MessagesPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function MessagesPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center p-16">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+            </div>
+        }>
+            <MessagesContent />
+        </Suspense>
     )
 }

@@ -55,17 +55,17 @@ export default function Content(props: DashboardContentProps) {
   }))
 
   const bars = props.chartData?.length > 0
-    ? props.chartData.map(d => ({ month: d.name, value: d.value }))
+    ? props.chartData.map(d => ({ month: d.month, value: d.value }))
     : FALLBACK_BARS
 
   const lines = props.lineChartData?.length > 0
-    ? props.lineChartData.map(d => ({ month: d.name, value: d.value }))
+    ? props.lineChartData.map(d => ({ month: d.month, value: d.value }))
     : FALLBACK_LINES
 
   const candidates = props.recentCandidates?.length > 0
     ? props.recentCandidates.map(c => ({
-        name: c.name,
-        role: c.email,
+        name: c.candidateName,
+        role: c.candidateEmail,
         when: new Date(c.appliedDate).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
         score: c.score,
         tag: CANDIDATE_STATUS[c.status]?.tag ?? c.status,
@@ -76,7 +76,7 @@ export default function Content(props: DashboardContentProps) {
       ]
 
   const bestOffers = props.topOffers?.length > 0
-    ? props.topOffers.map(o => ({ title: o.title, company: o.companyName }))
+    ? props.topOffers.map(o => ({ title: o.title, company: o.company?.name ?? "—" }))
     : []
 
   const recents = props.recentOffers?.length > 0
