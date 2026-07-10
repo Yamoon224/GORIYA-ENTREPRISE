@@ -64,33 +64,32 @@ export default function HomePage() {
             </header>
 
             {/* Hero Section */}
-            <section className="relative overflow-hidden py-10">
+            <section className="relative overflow-hidden bg-[#1e7df2] text-white py-10 sm:py-14 md:py-16">
                 {/* Background Decoration */}
-                <div className="absolute left-0 top-0 h-full w-32 pointer-events-none opacity-20">
-                    <svg viewBox="0 0 100 400" className="h-full w-full" fill="none">
-                        <circle cx="-30" cy="150" r="80" stroke="#1e3a8a" strokeWidth="20" fill="none" />
-                        <circle cx="20" cy="300" r="60" stroke="#1e3a8a" strokeWidth="15" fill="none" />
-                        <circle cx="10" cy="50" r="10" fill="#1e3a8a" opacity="0.5" />
-                    </svg>
+                <div className="absolute -right-8 top-0 h-full w-[220px] sm:w-[320px] md:w-[380px] hidden md:block">
+                    <div className="absolute top-8 right-16 w-36 h-36 border-[18px] border-[#7ab2ff] rounded-full opacity-60" />
+                    <div className="absolute top-52 right-4 w-24 h-24 border-[14px] border-[#7ab2ff] rounded-full opacity-60" />
+                    <div className="absolute top-40 right-40 w-12 h-12 bg-[#7ab2ff] rounded-full opacity-70" />
+                    <div className="absolute top-20 right-28 w-14 h-14 border-[10px] border-[#7ab2ff] rounded-full opacity-40" />
                 </div>
 
-                <div className="container mx-auto px-6 text-center">
-                    <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl text-balance">
+                <div className="container mx-auto px-6 text-center relative z-10">
+                    <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl text-balance">
                         Recrutez les meilleurs talents
-                        <span className="block text-primary">avec l&apos;intelligence artificielle</span>
+                        <span className="block">avec l&apos;intelligence artificielle</span>
                     </h1>
-                    <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
+                    <p className="mx-auto mt-6 max-w-2xl text-lg text-[#b9d8ff] text-pretty">
                         Goriya révolutionne le recrutement en Afrique. Publie tes offres,
                         analyse les candidatures et trouve les talents parfaits grâce à notre IA avancée.
                     </p>
                     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Button size="lg" asChild>
+                        <Button size="lg" className="rounded-full bg-white text-[#20429b] hover:bg-[#f4f7ff] font-semibold" asChild>
                             <Link href="/auth/signup" className="gap-2">
                                 Commencer gratuitement
                                 <ArrowRight className="h-4 w-4" />
                             </Link>
                         </Button>
-                        <Button variant="outline" size="lg" asChild>
+                        <Button variant="outline" size="lg" className="rounded-full border-white text-white bg-transparent hover:bg-white/10" asChild>
                             <Link href="/dashboard">Voir la démo</Link>
                         </Button>
                     </div>
