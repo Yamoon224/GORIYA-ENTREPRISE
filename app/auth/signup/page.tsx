@@ -85,7 +85,7 @@ export default function Page() {
         })
     
         if (missingFields.length > 0) {
-            toast.error("Remplis tous les champs obligatoires avant de continuer")
+            toast.error("Remplissez tous les champs obligatoires avant de continuer")
             return
         }
     
@@ -148,7 +148,7 @@ export default function Page() {
             toast.success("Entreprise créée avec succès !")
             router.push("/auth/signup/plan")
         } catch (error: any) {
-            toast.error(error?.message || "Code de vérification invalide. Réessaie.")
+            toast.error(error?.message || "Code de vérification invalide. Réessayez.")
         }
     }
 
@@ -247,7 +247,7 @@ export default function Page() {
                                 <Input
                                     value={formData.companyName}
                                     onChange={(e) => updateFormData("companyName", e.target.value)}
-                                    placeholder="Entre le nom"
+                                    placeholder="Entrez le nom"
                                 />
                             </Field>
                         </div>
@@ -259,7 +259,7 @@ export default function Page() {
                                 </FieldLabel>
                                 <Select value={formData.sector} onValueChange={(value) => updateFormData("sector", value)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionne un secteur" />
+                                        <SelectValue placeholder="Sélectionnez un secteur" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {sectors.map((sector) => (
