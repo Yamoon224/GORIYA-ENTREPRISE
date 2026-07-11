@@ -30,7 +30,7 @@ export default function SignupSuccessPage() {
                 </div>
 
                 <h2 className="text-xl font-semibold leading-tight text-primary sm:text-3xl">
-                    Félicitations, ton profil est 100% complet !
+                    Félicitations, votre profil est 100% complet !
                 </h2>
 
                 <div className="mt-8 flex w-full max-w-[580px] flex-col items-stretch justify-center gap-3 sm:mt-16 sm:flex-row sm:items-center sm:gap-4">

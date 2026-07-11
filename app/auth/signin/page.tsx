@@ -52,7 +52,7 @@ export default function Page() {
                 const role = (session.user as any).role
                 if (role !== "ENTREPRISE") {
                     await signOut({ redirect: false })
-                    toast.error("Ton compte n'est pas autorisé ici. Cette interface est réservée aux entreprises.")
+                    toast.error("Votre compte n'est pas autorisé ici. Cette interface est réservée aux entreprises.")
                     return
                 }
             }
@@ -83,7 +83,7 @@ export default function Page() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Ton email"
+                            placeholder="Votre email"
                             required
                         />
                     </Field>
@@ -95,7 +95,7 @@ export default function Page() {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Ton mot de passe"
+                                placeholder="Votre mot de passe"
                                 required
                                 className="pr-10"
                             />
@@ -116,7 +116,7 @@ export default function Page() {
             </form>
 
             <div className="mt-4 text-center text-sm text-muted-foreground">
-                Tu n'as pas de compte entreprise ?{" "}
+                Vous n'avez pas de compte entreprise ?{" "}
                 <Link
                     href="/auth/signup"
                     className="text-primary font-medium hover:underline">

@@ -113,7 +113,7 @@ function MessagesContent() {
 
     return (
         <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Communique directement avec tes candidats</p>
+            <p className="text-sm text-muted-foreground">Communiquez directement avec vos candidats</p>
 
             <div className="flex flex-col lg:flex-row overflow-hidden rounded-xl border border-border bg-white" style={{ minHeight: "70vh" }}>
                 <div className="flex w-full lg:w-[320px] shrink-0 flex-col border-b lg:border-b-0 lg:border-r border-border">
@@ -182,7 +182,7 @@ function MessagesContent() {
 
                             <div className="flex items-center gap-2 border-t border-border bg-white px-3 sm:px-4 py-3">
                                 <button className="shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-gray-100 transition-colors"><Paperclip className="h-4 w-4" /></button>
-                                <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Tape ton message..." className="flex-1 border-0 bg-transparent px-2 text-sm shadow-none focus-visible:ring-0" onKeyDown={(e) => { if (e.key === "Enter") handleSend() }} />
+                                <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Tapez votre message..." className="flex-1 border-0 bg-transparent px-2 text-sm shadow-none focus-visible:ring-0" onKeyDown={(e) => { if (e.key === "Enter") handleSend() }} />
                                 <button onClick={handleSend} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors"><Send className="h-4 w-4" /></button>
                             </div>
                         </>

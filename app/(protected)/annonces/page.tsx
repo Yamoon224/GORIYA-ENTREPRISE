@@ -9,7 +9,7 @@ import { SubscriptionGate } from "@/components/subscription-gate"
 export default async function Page() {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.access_token) return <p>Tu dois être connecté</p>
+    if (!session?.user?.access_token) return <p>Vous devez être connecté</p>
 
     const token = session.user.access_token
     const filters = { page: 1, limit: 10 }

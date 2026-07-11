@@ -46,7 +46,7 @@ export function OTPVerificationModal({ isOpen, onClose, onVerify, onResend }: OT
 
         <div className="space-y-6 py-2">
           <p className="text-sm text-muted-foreground text-center">
-            Entre le code à 6 chiffres reçu par email pour activer ton compte entreprise.
+            Entrez le code à 6 chiffres reçu par email pour activer votre compte entreprise.
           </p>
 
           <div className="flex justify-center">

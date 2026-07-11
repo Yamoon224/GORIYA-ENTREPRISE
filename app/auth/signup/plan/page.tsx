@@ -52,7 +52,7 @@ export default function ChoosePlanPage() {
             pendingCheckoutRef.current = { userId, planId }
             openKkiapayWidget({ amount: data.amount, clientReference: data.clientReference })
         } catch {
-            toast.error("Erreur lors de l'initialisation du paiement. Tu pourras t'abonner depuis tes paramètres.")
+            toast.error("Erreur lors de l'initialisation du paiement. Vous pourrez vous abonner depuis vos paramètres.")
             sessionStorage.removeItem("entreprise_signup_userId")
             router.push("/auth/signup/success")
             setSubscribing(null)
@@ -113,7 +113,7 @@ export default function ChoosePlanPage() {
                 }}
             />
             <h1 className="mb-2 text-center text-2xl font-black text-foreground sm:text-4xl">
-                Choisis ton forfait
+                Choisissez votre forfait
             </h1>
 
             <p className="mb-8 text-center text-base tracking-[0.4em] text-muted-foreground sm:mb-10">

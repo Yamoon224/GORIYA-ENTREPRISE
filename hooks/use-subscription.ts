@@ -29,7 +29,7 @@ export function useSubscription() {
             .then((res: any) => setInfo(res?.data ?? res))
             .catch((err) => {
                 console.error("[use-subscription] checkSubscription error:", err)
-                setError("Impossible de vérifier ton abonnement pour le moment.")
+                setError("Impossible de vérifier votre abonnement pour le moment.")
             })
             .finally(() => setLoading(false))
     }, [session, sessionStatus])

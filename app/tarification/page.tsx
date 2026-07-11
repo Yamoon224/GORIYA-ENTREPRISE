@@ -18,15 +18,15 @@ interface Plan {
 const faqs = [
     {
         question: "Puis-je changer de forfait à tout moment ?",
-        answer: "Oui, tu peux upgrader ou downgrader ton forfait à tout moment depuis tes paramètres. Les changements prennent effet immédiatement.",
+        answer: "Oui, vous pouvez upgrader ou downgrader votre forfait à tout moment depuis vos paramètres. Les changements prennent effet immédiatement.",
     },
     {
         question: "Comment fonctionne la facturation ?",
-        answer: "La facturation est automatique selon la périodicité choisie (mensuelle ou annuelle). Tu recevras une facture par email à chaque échéance.",
+        answer: "La facturation est automatique selon la périodicité choisie (mensuelle ou annuelle). Vous recevrez une facture par email à chaque échéance.",
     },
     {
         question: "Puis-je annuler mon abonnement ?",
-        answer: "Tu peux annuler ton abonnement à tout moment depuis tes paramètres. L'accès reste actif jusqu'à la fin de la période payée.",
+        answer: "Vous pouvez annuler votre abonnement à tout moment depuis vos paramètres. L'accès reste actif jusqu'à la fin de la période payée.",
     },
     {
         question: "Le paiement est-il sécurisé ?",
@@ -81,7 +81,7 @@ export default function TarificationPage() {
                         La tarification pour les entreprises
                     </h1>
                     <p className="text-lg sm:text-xl max-w-2xl mx-auto text-pretty">
-                        Trouve le forfait qui accompagne ton recrutement, du premier poste publié à la croissance de ton équipe
+                        Trouvez le forfait qui accompagne votre recrutement, du premier poste publié à la croissance de votre équipe
                     </p>
                 </div>
             </section>
@@ -205,7 +205,7 @@ export default function TarificationPage() {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                         <GoriyaLogo showTagline={false} />
                         <p className="text-sm text-muted-foreground">
-                            © {new Date().getFullYear()} Goriya. Tous droits réservés. Boost ta carrière.
+                            © {new Date().getFullYear()} Goriya. Tous droits réservés. Boost votre carrière.
                         </p>
                     </div>
                 </div>

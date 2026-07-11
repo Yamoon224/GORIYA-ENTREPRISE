@@ -252,7 +252,7 @@ export default function Content() {
                         <div className="rounded-lg border border-blue-200 bg-white p-3">
                             <p className="mb-1 text-xs font-semibold text-foreground">Activer l'optimisation Goriya</p>
                             <p className="text-xs text-muted-foreground">
-                                L'IA analysera et optimisera ton post pour ameliorer sa visibilite et son attractivite
+                                L'IA analysera et optimisera votre post pour ameliorer sa visibilite et son attractivite
                             </p>
                         </div>
 

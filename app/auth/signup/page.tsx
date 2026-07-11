@@ -121,7 +121,7 @@ export default function Page() {
                 sessionStorage.setItem("entreprise_signup_userId", res.user.id)
             }
 
-            toast.success("Vérifie ta boîte mail pour le code de vérification")
+            toast.success("Vérifiez votre boîte mail pour le code de vérification")
             setShowOTPModal(true)
         } catch (error: any) {
             toast.error(error?.message || "Une erreur est survenue")
@@ -196,7 +196,7 @@ export default function Page() {
                                 ) : (
                                     <>
                                         <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                        <p className="text-sm font-medium text-foreground">Importer ton logo</p>
+                                        <p className="text-sm font-medium text-foreground">Importer votre logo</p>
                                         <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
                                     </>
                                 )}
@@ -221,7 +221,7 @@ export default function Page() {
                                 ) : (
                                     <>
                                         <Upload className="h-8 w-8 text-primary/60 mb-2" />
-                                        <p className="text-sm font-medium text-foreground">Importer ton image de couverture</p>
+                                        <p className="text-sm font-medium text-foreground">Importer votre image de couverture</p>
                                         <p className="text-xs text-muted-foreground mt-1">PNG, JPEG, JPG, WEBP - max 2Mo</p>
                                     </>
                                 )}
@@ -278,7 +278,7 @@ export default function Page() {
                         <Textarea
                             value={formData.about}
                             onChange={(e) => updateFormData("about", e.target.value)}
-                            placeholder="Décris ton entreprise..."
+                            placeholder="Décrivez votre entreprise..."
                             rows={4}
                         />
                     </Field>
@@ -382,7 +382,7 @@ export default function Page() {
                                         type={showPassword ? "text" : "password"}
                                         value={formData.password}
                                         onChange={(e) => updateFormData("password", e.target.value)}
-                                        placeholder="Ton mot de passe"
+                                        placeholder="Votre mot de passe"
                                         required
                                         className="pr-10"
                                     />
