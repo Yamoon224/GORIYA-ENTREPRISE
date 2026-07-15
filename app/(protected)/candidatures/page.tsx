@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { Search, User, MapPin, Calendar, Star, FileText, MessageSquare, Plus, Check, X } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Progress } from "@/components/ui/progress"
+import { Textarea } from "@/components/ui/textarea"
+import { Search, User, MapPin, Calendar, Star, FileText, MessageSquare, Plus, Check, X, Sparkles, Download } from "lucide-react"
 import { apiRequest } from "@/lib/api-client-http"
 import { createConversation } from "@/actions/messages"
 import type { ICandidate } from "@/@types/interface"
 import { SubscriptionGate } from "@/components/subscription-gate"
+import { candidateAssessmentService, type ICandidateAssessment } from "@/lib/api/candidate-assessment.service"
 
 type UIStatus = "pending" | "interview" | "accepted" | "rejected" | "analyzed"
 
@@ -94,6 +98,40 @@ function CandidaturesContent() {
             console.error("[candidatures] createConversation error:", err)
         } finally {
             setMessaging(null)
+        }
+    }
+
+    const [assessmentFor, setAssessmentFor] = useState<ICandidate | null>(null)
+    const [assessment, setAssessment] = useState<ICandidateAssessment | null>(null)
+    const [assessmentLoading, setAssessmentLoading] = useState(false)
+    const [exchangeNotes, setExchangeNotes] = useState("")
+
+    const openAssessment = async (candidate: ICandidate) => {
+        setAssessmentFor(candidate)
+        setAssessment(null)
+        setExchangeNotes("")
+        setAssessmentLoading(true)
+        try {
+            const res = await candidateAssessmentService.get(candidate.id)
+            setAssessment((res as any)?.data ?? res)
+        } catch {
+            // Pas encore d'évaluation générée pour cette candidature — normal, l'utilisateur peut en lancer une.
+            setAssessment(null)
+        } finally {
+            setAssessmentLoading(false)
+        }
+    }
+
+    const generateAssessment = async () => {
+        if (!assessmentFor) return
+        setAssessmentLoading(true)
+        try {
+            const res = await candidateAssessmentService.generate(assessmentFor.id, exchangeNotes || undefined)
+            setAssessment((res as any)?.data ?? res)
+        } catch (err) {
+            console.error("[candidatures] assessment generate error:", err)
+        } finally {
+            setAssessmentLoading(false)
         }
     }
 
@@ -209,7 +247,14 @@ function CandidaturesContent() {
                                             >
                                                 <MessageSquare className="h-3.5 w-3.5" />Message
                                             </Button>
-                                            <Button variant="outline" size="sm" className="h-8 w-full justify-center gap-1 rounded-md text-xs"><Plus className="h-3.5 w-3.5" />Voir plus</Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 w-full justify-center gap-1 rounded-md text-xs"
+                                                onClick={() => openAssessment(candidate)}
+                                            >
+                                                <Sparkles className="h-3.5 w-3.5" />Évaluation IA
+                                            </Button>
                                         </div>
                                         {us === "pending" && (
                                             <div className="mt-2 overflow-hidden rounded-md border border-border bg-white shadow-sm">
@@ -228,6 +273,84 @@ function CandidaturesContent() {
                     })}
                 </div>
             )}
+
+            <Dialog open={!!assessmentFor} onOpenChange={(open) => !open && setAssessmentFor(null)}>
+                <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Évaluation IA — {assessmentFor?.name}</DialogTitle>
+                    </DialogHeader>
+
+                    {assessmentLoading ? (
+                        <div className="flex items-center justify-center py-10">
+                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                        </div>
+                    ) : assessment ? (
+                        <div className="space-y-4">
+                            {assessment.status === "PENDING" ? (
+                                <p className="text-sm text-muted-foreground">Évaluation en cours de génération...</p>
+                            ) : (
+                                <>
+                                    <div className="space-y-3">
+                                        <ScoreRow label="Score global" value={assessment.overallScore} />
+                                        <ScoreRow label="Compétences techniques" value={assessment.technicalScore} />
+                                        <ScoreRow label="Soft skills" value={assessment.softSkillsScore} />
+                                        <ScoreRow label="Adéquation culturelle" value={assessment.culturalFitScore} />
+                                    </div>
+                                    {assessment.softSkillsFeedback && (
+                                        <div>
+                                            <p className="mb-1 text-xs font-medium text-foreground">Feedback</p>
+                                            <p className="text-sm text-muted-foreground">{assessment.softSkillsFeedback}</p>
+                                        </div>
+                                    )}
+                                    {assessment.skillsTest && assessment.skillsTest.length > 0 && (
+                                        <div>
+                                            <p className="mb-1 text-xs font-medium text-foreground">Questions suggérées pour l'entretien</p>
+                                            <ul className="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+                                                {assessment.skillsTest.map((q, i) => (
+                                                    <li key={i}>{q.question} <span className="text-[10px] uppercase text-muted-foreground/70">({q.type})</span></li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    <div className="flex gap-2">
+                                        <a href={candidateAssessmentService.reportUrl(assessmentFor!.id)} target="_blank" rel="noreferrer" className="flex-1">
+                                            <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs"><Download className="h-3.5 w-3.5" />Télécharger le rapport (.docx)</Button>
+                                        </a>
+                                        <Button variant="outline" size="sm" className="gap-1.5 text-xs" disabled={assessmentLoading} onClick={generateAssessment}>
+                                            <Sparkles className="h-3.5 w-3.5" />Régénérer
+                                        </Button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            <p className="text-sm text-muted-foreground">Aucune évaluation générée pour cette candidature.</p>
+                            <Textarea
+                                value={exchangeNotes}
+                                onChange={(e) => setExchangeNotes(e.target.value)}
+                                placeholder="Notes d'échange avec le candidat (optionnel, améliore la précision de l'évaluation)..."
+                                className="min-h-[80px] text-sm"
+                            />
+                            <Button size="sm" className="w-full gap-1.5 bg-blue-500 text-xs hover:bg-blue-600" onClick={generateAssessment}>
+                                <Sparkles className="h-3.5 w-3.5" />Générer l'évaluation IA
+                            </Button>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </div>
+    )
+}
+
+function ScoreRow({ label, value }: { label: string; value: number | null }) {
+    return (
+        <div>
+            <div className="mb-1 flex items-center justify-between text-xs">
+                <span className="text-foreground">{label}</span>
+                <span className="font-semibold text-foreground">{value ?? "—"}{value !== null ? "/100" : ""}</span>
+            </div>
+            <Progress value={value ?? 0} className="h-1.5" />
         </div>
     )
 }

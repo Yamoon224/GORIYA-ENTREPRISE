@@ -1,10 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, Mail, Phone, Search, ChevronDown, ChevronRight, Star, ExternalLink, Zap, FileText, Users, CreditCard, BookOpen, Video, FileCode } from "lucide-react"
+import { MessageSquare, Mail, Phone, Search, ChevronDown, ChevronRight, Star, ExternalLink, Zap, FileText, Users, CreditCard, BookOpen, Video, FileCode, Check } from "lucide-react"
+import { subscriptionService } from "@/lib/api/subscription.service"
+
+interface Plan {
+    id: string
+    name: string
+    price: number
+    billingPeriod: string
+    features: string[]
+}
 
 const categories = [
     { label: "IA", count: 8, Icon: Zap, bg: "bg-blue-500" },
@@ -18,7 +27,7 @@ const faqs = [
     { question: "Comment interpreter le score IA des candidats ?", tag: "IA", tagColor: "bg-blue-100 text-blue-600", answer: "Le score IA represente la compatibilite entre le profil du candidat et votre offre. Au-dessus de 80, le match est excellent." },
     { question: "Puis-je modifier une offre apres publication ?", tag: "Offres", tagColor: "bg-green-100 text-green-600", answer: "Oui. Depuis Mes annonces, ouvrez l'offre et cliquez sur Modifier." },
     { question: "Comment contacter un candidat ?", tag: "Candidatures", tagColor: "bg-orange-100 text-orange-600", answer: "Depuis Candidatures, cliquez sur Message dans la fiche du candidat." },
-    { question: "Combien coute l'abonnement Premium ?", tag: "Facturation", tagColor: "bg-red-100 text-red-600", answer: "Le plan Premium est a 4 999 FCFA/mois avec IA avancee et support prioritaire." },
+    { question: "Combien coutent les abonnements Goriya ?", tag: "Facturation", tagColor: "bg-red-100 text-red-600", answer: "Consultez la section \"Plans d'abonnement\" ci-dessus pour les tarifs a jour, ou la page Tarification pour le detail complet des forfaits." },
 ]
 
 const resources = [
@@ -30,10 +39,22 @@ const resources = [
 
 export default function AssistancePage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null)
+    const [plans, setPlans] = useState<Plan[]>([])
+    const [plansLoading, setPlansLoading] = useState(true)
+
+    useEffect(() => {
+        subscriptionService.getPlans("ENTREPRISE")
+            .then((res) => {
+                const data = (res as any)?.data ?? res ?? []
+                setPlans(Array.isArray(data) ? data : [])
+            })
+            .catch(() => setPlans([]))
+            .finally(() => setPlansLoading(false))
+    }, [])
 
     return (
         <div className="min-h-screen bg-[#f4f5f7] font-sans">
-            <header className="bg-white border-b border-[#e8edf6]">
+            <header className="sticky top-0 z-50 bg-white border-b border-[#e8edf6]">
                 <div className="mx-auto max-w-[1180px] px-4 h-[64px] flex items-center justify-between">
                     <Link href="/">
                         <img src="/images/logo.png" alt="Goriya" className="h-8 w-auto" />
@@ -91,6 +112,39 @@ export default function AssistancePage() {
                             </button>
                         ))}
                     </div>
+                </div>
+
+                <div className="rounded-xl border border-border bg-white p-4 sm:p-5">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-foreground">Plans d'abonnement</h3>
+                        <Link href="/tarification" className="text-xs font-medium text-blue-600 hover:underline">Voir tous les détails</Link>
+                    </div>
+                    {plansLoading ? (
+                        <div className="flex justify-center py-6">
+                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                        </div>
+                    ) : plans.length === 0 ? (
+                        <p className="py-2 text-sm text-muted-foreground">Les forfaits ne sont pas disponibles pour le moment.</p>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {plans.map((plan) => (
+                                <div key={plan.id} className="rounded-lg border border-border bg-muted/20 p-4">
+                                    <p className="text-sm font-semibold text-foreground">{plan.name}</p>
+                                    <p className="mt-1 mb-3">
+                                        <span className="text-xl font-bold text-foreground">{Number(plan.price).toLocaleString("fr-FR")}</span>
+                                        <span className="ml-1 text-xs text-muted-foreground">FCFA / {plan.billingPeriod === "ANNUAL" ? "an" : "mois"}</span>
+                                    </p>
+                                    <ul className="space-y-1.5">
+                                        {plan.features.slice(0, 3).map((f, i) => (
+                                            <li key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                                                <Check className="mt-0.5 h-3 w-3 shrink-0 text-blue-500" />{f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="rounded-xl border border-border bg-white p-4 sm:p-5">

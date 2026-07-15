@@ -59,8 +59,13 @@ export default function Page() {
 
             // ✅ signIn() a déjà posé le cookie de session NextAuth (httpOnly).
             // On ne duplique plus le token en localStorage/cookie non protégé.
+            // router.refresh() force le SessionProvider fraîchement monté dans
+            // (protected)/layout.tsx à revalider immédiatement plutôt que de
+            // dépendre uniquement de son fetch initial (même correctif que
+            // standard/app/auth/signin/page.tsx).
             toast.success("Connexion réussie")
-            router.push("/dashboard")
+            router.replace("/dashboard")
+            router.refresh()
 
         } catch (err: any) {
             toast.error(err.message)

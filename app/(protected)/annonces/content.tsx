@@ -5,10 +5,12 @@ import { useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, MapPin, Users, Eye, TrendingUp, Calendar, Edit, MoreHorizontal, Trash2 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Search, Filter, MapPin, Users, Eye, TrendingUp, Calendar, Edit, MoreHorizontal, Trash2, ListOrdered } from "lucide-react"
 import { AnnonceContentProps } from "@/@types/props"
 import type { IOffer } from "@/@types/interface"
 import { deleteJobOffer, updateJobStatus } from "@/actions/offers"
+import { candidateAssessmentService, type ICandidateRanking } from "@/lib/api/candidate-assessment.service"
 
 type JobStatus = "ACTIVE" | "CLOSED" | "DRAFT"
 
@@ -51,6 +53,25 @@ export function Content({ init }: AnnonceContentProps) {
             setJobs((prev) => prev.map((j) => j.id === job.id ? { ...j, status: nextStatus } : j))
         } catch (err) {
             console.error("[annonces] status update error:", err)
+        }
+    }
+
+    const [compareFor, setCompareFor] = useState<IOffer | null>(null)
+    const [ranking, setRanking] = useState<ICandidateRanking[] | null>(null)
+    const [compareLoading, setCompareLoading] = useState(false)
+
+    const handleCompare = async (job: IOffer) => {
+        setCompareFor(job)
+        setRanking(null)
+        setCompareLoading(true)
+        try {
+            const res = await candidateAssessmentService.compareForJobOffer(job.id)
+            setRanking(((res as any)?.data ?? res) as ICandidateRanking[])
+        } catch (err) {
+            console.error("[annonces] compare error:", err)
+            setRanking([])
+        } finally {
+            setCompareLoading(false)
         }
     }
 
@@ -108,6 +129,9 @@ export function Content({ init }: AnnonceContentProps) {
                                             <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-md text-sm" onClick={() => handleStatusToggle(job)}>
                                                 {job.status === "ACTIVE" ? "Désactiver" : "Activer"}
                                             </Button>
+                                            <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-md text-sm" onClick={() => handleCompare(job)}>
+                                                <ListOrdered className="h-4 w-4" />Comparer
+                                            </Button>
                                             <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-md text-sm">
                                                 <Edit className="h-4 w-4" />Modifier
                                             </Button>
@@ -124,6 +148,35 @@ export function Content({ init }: AnnonceContentProps) {
             )}
 
             <div className="hidden"><Link href="/poster-offre">Publier une annonce</Link></div>
+
+            <Dialog open={!!compareFor} onOpenChange={(open) => !open && setCompareFor(null)}>
+                <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Classement des candidats — {compareFor?.title}</DialogTitle>
+                    </DialogHeader>
+                    {compareLoading ? (
+                        <div className="flex items-center justify-center py-10">
+                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                        </div>
+                    ) : !ranking || ranking.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                            Pas encore assez de candidats évalués pour cette offre (au moins 2 évaluations IA requises — voir l'onglet Candidatures).
+                        </p>
+                    ) : (
+                        <ol className="space-y-2">
+                            {ranking.map((r) => (
+                                <li key={r.rank} className="flex items-start gap-3 rounded-lg border border-border px-3 py-2">
+                                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-semibold text-white">{r.rank}</span>
+                                    <div>
+                                        <p className="text-sm font-medium text-foreground">{r.name}</p>
+                                        <p className="text-xs text-muted-foreground">{r.reason}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

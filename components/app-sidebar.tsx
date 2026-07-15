@@ -20,6 +20,8 @@ import {
     CalendarDays,
     DollarSign,
     FolderOpen,
+    KeyRound,
+    Video,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -35,6 +37,7 @@ const mainNavItems = [
     { label: "Mes annonces", href: "/annonces", icon: Briefcase },
     { label: "Candidatures", href: "/candidatures", icon: Users },
     { label: "Messages", href: "/messages", icon: MessageSquare },
+    { label: "Appels vidéo", href: "/appels", icon: Video },
     // { label: "Service RH", href: "/service-rh", icon: Building2 },
     // { label: "Profil Entreprise", href: "/profil", icon: Building2 },
 ]
@@ -42,6 +45,7 @@ const mainNavItems = [
 const serviceRhItems = [
     { label: "Employés", href: "/services-rh/employes", icon: UserCheck },
     { label: "Recrutements", href: "/services-rh/recrutements", icon: UserPlus },
+    { label: "Évaluations Employés", href: "/services-rh/evaluations", icon: FileText },
     { label: "Contrats", href: "/services-rh/contrats", icon: FileSignature },
     { label: "Congés", href: "/services-rh/conges", icon: CalendarDays },
     { label: "Gestion de Paie", href: "/services-rh/paie", icon: DollarSign },
@@ -50,6 +54,7 @@ const serviceRhItems = [
 
 const settingsNavItems = [
     { label: "Paramètres", href: "/parametres", icon: Settings },
+    { label: "Intégrations API", href: "/integrations-api", icon: KeyRound },
     { label: "Centre d'assistance", href: "/assistance", icon: HelpCircle },
 ]
 

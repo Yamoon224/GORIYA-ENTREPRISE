@@ -43,7 +43,7 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-background">
             {/* Navigation */}
-            <header className="border-b border-border bg-card">
+            <header className="sticky top-0 z-50 border-b border-border bg-card">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
                     <GoriyaLogo />
                     <nav className="hidden md:flex items-center gap-6">

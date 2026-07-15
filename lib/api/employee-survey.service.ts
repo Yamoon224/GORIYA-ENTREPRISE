@@ -1,0 +1,53 @@
+import { apiRequest } from "@/lib/api-client-http"
+
+export type SurveyQuestionType = "RATING" | "TEXT"
+export type SurveyStatus = "DRAFT" | "ACTIVE" | "CLOSED"
+
+export interface ISurveyQuestion {
+    id: string
+    question: string
+    type: SurveyQuestionType
+}
+
+export interface IEmployeeSurvey {
+    id: string
+    title: string
+    description: string | null
+    questions: ISurveyQuestion[]
+    status: SurveyStatus
+    createdAt: string
+}
+
+export interface IEmployeeSurveyStats {
+    participationCount: number
+    ratings: Record<string, number>
+    trends: string[]
+    frictionPoints: string[]
+    recommendations: string[]
+}
+
+export const employeeSurveyService = {
+    list: async () => {
+        return apiRequest<IEmployeeSurvey[]>({ endpoint: "/employee-surveys", method: "GET" })
+    },
+
+    create: async (data: { title: string; description?: string; questions: ISurveyQuestion[] }) => {
+        return apiRequest<IEmployeeSurvey>({ endpoint: "/employee-surveys", method: "POST", data })
+    },
+
+    get: async (id: string) => {
+        return apiRequest<IEmployeeSurvey>({ endpoint: `/employee-surveys/${id}`, method: "GET" })
+    },
+
+    updateStatus: async (id: string, status: SurveyStatus) => {
+        return apiRequest<IEmployeeSurvey>({ endpoint: `/employee-surveys/${id}/status`, method: "PATCH", data: { status } })
+    },
+
+    stats: async (id: string) => {
+        return apiRequest<IEmployeeSurveyStats>({ endpoint: `/employee-surveys/${id}/stats`, method: "GET" })
+    },
+
+    remove: async (id: string) => {
+        return apiRequest<{ message: string }>({ endpoint: `/employee-surveys/${id}`, method: "DELETE" })
+    },
+}

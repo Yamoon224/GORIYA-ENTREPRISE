@@ -22,7 +22,7 @@ export default function AuthLayout({
             </div>
 
             {/* Header */}
-            <header className="relative z-10 flex items-center gap-4 p-6">
+            <header className="sticky top-0 z-20 flex items-center gap-4 bg-background p-6">
                 <Button variant="outline" size="sm" asChild>
                     <Link href="/" className="gap-2">
                         <ChevronLeft className="h-4 w-4" />

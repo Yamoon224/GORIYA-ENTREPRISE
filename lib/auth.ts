@@ -3,6 +3,15 @@ import { apiRequest } from "./api-client-http";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DefaultUser, DefaultSession, User, Session } from "next-auth";
 
+// NEXTAUTH_SECRET est le nom conventionnel lu implicitement par NextAuth ;
+// NEXT_AUTH_SECRET (sans le premier underscore) est celui historiquement
+// utilisé dans ce repo. Sans ce fallback, un déploiement qui ne configure
+// que NEXTAUTH_SECRET (cas standard) fait tourner ce provider avec un
+// secret vide en production : le JWT de session ne peut plus être signé de
+// façon fiable, ce qui casse silencieusement la redirection post-login
+// (voir standard/lib/auth.ts, qui a déjà ce même fallback).
+const authSecret = process.env.NEXTAUTH_SECRET ?? process.env.NEXT_AUTH_SECRET;
+
 // 🔹 Étendre les types NextAuth
 declare module "next-auth" {
     interface Session {
@@ -62,7 +71,7 @@ export const authOptions = {
         }),
     ],
     session: { strategy: "jwt" as const },
-    secret: process.env.NEXT_AUTH_SECRET,
+    secret: authSecret,
     // ✅ ICI tu ajoutes les callbacks
     callbacks: {
         async jwt({
